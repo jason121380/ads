@@ -1,0 +1,2282 @@
+<html><head>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<title>LURE AD CENTER</title>
+<link href="images/favicon.jpg" rel="icon" type="image/jpeg"/>
+<link href="images/favicon.jpg" rel="shortcut icon" type="image/jpeg"/>
+<script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body class="bg-white text-slate-900">
+
+<!-- 載入彈窗 -->
+<div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg p-6 sm:p-8 max-w-md w-full mx-4 shadow-xl">
+    <div class="text-center">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">載入中...</h3>
+      <p id="loadingText" class="text-gray-600 mb-4 text-sm sm:text-base">正在載入工作表資料</p>
+      <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+        <div id="loadingProgress" class="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
+      </div>
+      <p id="loadingProgressText" class="text-sm text-gray-500">0%</p>
+    </div>
+  </div>
+</div>
+
+<!-- 密碼驗證彈窗 -->
+<div id="passwordModal" class="fixed inset-0 bg-white flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg p-6 sm:p-8 max-w-md w-full mx-4 shadow-xl border">
+    <div class="text-center">
+      <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-4">密碼驗證</h3>
+      <p class="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">請輸入四位數密碼以進入系統</p>
+      <div class="mb-4 sm:mb-6">
+        <input type="password" id="passwordInput" maxlength="4" class="w-full px-4 py-3 text-center text-xl sm:text-2xl font-mono border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="••••" autocomplete="off">
+      </div>
+      <div class="flex gap-3">
+        <button onclick="verifyPassword()" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+          確認
+        </button>
+      </div>
+      <p id="passwordError" class="text-red-500 text-sm mt-3 hidden">密碼錯誤，請重新輸入</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- 成本指標設定彈窗 -->
+<div id="costIndicatorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg p-4 sm:p-6 max-w-2xl w-full mx-2 sm:mx-4 shadow-xl max-h-[90vh] sm:max-h-[80vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-4 sm:mb-6">
+      <h3 class="text-lg sm:text-xl font-semibold text-gray-900">
+        成本指標設定 - <span id="currentSheetName" class="text-blue-600"></span>
+      </h3>
+      <button onclick="closeCostIndicatorModal()" class="text-gray-400 hover:text-gray-600 p-1">
+        <span class="material-symbols-outlined text-xl sm:text-2xl">close</span>
+      </button>
+    </div>
+    
+    <div class="space-y-6">
+      <!-- 平均私訊成本設定 -->
+      <div class="border border-gray-200 rounded-lg p-4">
+        <h4 class="text-base font-medium text-gray-800 mb-4">平均私訊成本指標</h4>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3">
+            <input type="checkbox" id="enableMessageCost" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+            <label for="enableMessageCost" class="text-sm text-gray-700">啟用私訊成本顏色指標</label>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="flex items-center gap-2">
+              <div class="w-4 h-4 bg-green-500 rounded"></div>
+              <label class="text-sm text-gray-600">綠色 (低於)</label>
+              <input type="number" id="messageCostGreen" placeholder="0" class="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" step="0.1">
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-4 h-4 bg-red-500 rounded"></div>
+              <label class="text-sm text-gray-600">紅色 (高於)</label>
+              <input type="number" id="messageCostRed" placeholder="0" class="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" step="0.1">
+            </div>
+          </div>
+          <div class="flex items-center gap-2 mt-2">
+            <div class="w-4 h-4 bg-orange-500 rounded"></div>
+            <label class="text-sm text-gray-500">橘色 (介於綠色和紅色之間)</label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 平均點擊成本設定 -->
+      <div class="border border-gray-200 rounded-lg p-4">
+        <h4 class="text-base font-medium text-gray-800 mb-4">平均點擊成本指標</h4>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3">
+            <input type="checkbox" id="enableClickCost" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+            <label for="enableClickCost" class="text-sm text-gray-700">啟用點擊成本顏色指標</label>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="flex items-center gap-2">
+              <div class="w-4 h-4 bg-green-500 rounded"></div>
+              <label class="text-sm text-gray-600">綠色 (低於)</label>
+              <input type="number" id="clickCostGreen" placeholder="0" class="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" step="0.1">
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-4 h-4 bg-red-500 rounded"></div>
+              <label class="text-sm text-gray-600">紅色 (高於)</label>
+              <input type="number" id="clickCostRed" placeholder="0" class="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" step="0.1">
+            </div>
+          </div>
+          <div class="flex items-center gap-2 mt-2">
+            <div class="w-4 h-4 bg-orange-500 rounded"></div>
+            <label class="text-sm text-gray-500">橘色 (介於綠色和紅色之間)</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200 mt-6">
+      <button onclick="closeCostIndicatorModal()" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors order-2 sm:order-1">
+        取消
+      </button>
+      <button onclick="saveCostIndicatorSettings()" class="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors order-1 sm:order-2">
+        儲存設定
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 設定彈窗 -->
+<div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg p-4 sm:p-6 max-w-4xl w-full mx-2 sm:mx-4 shadow-xl max-h-[90vh] sm:max-h-[80vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-4 sm:mb-6">
+      <h3 class="text-lg sm:text-xl font-semibold text-gray-900">分頁設定</h3>
+      <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600 p-1">
+        <span class="material-symbols-outlined text-xl sm:text-2xl">close</span>
+      </button>
+    </div>
+    
+    <div class="mb-4 sm:mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <h4 class="text-base sm:text-lg font-medium text-gray-800">工作表配置</h4>
+        <button onclick="addNewSheet()" class="flex items-center gap-2 px-3 py-2 text-sm bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors self-start sm:self-auto">
+          <span class="material-symbols-outlined text-sm">add</span>
+          新增工作表
+        </button>
+      </div>
+      
+      <div id="sheetConfigList" class="space-y-3">
+        <!-- 工作表配置項目將在這裡動態生成 -->
+      </div>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200">
+      <button onclick="closeSettingsModal()" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors order-2 sm:order-1">
+        取消
+      </button>
+      <button onclick="saveSheetConfig()" class="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors order-1 sm:order-2">
+        儲存設定
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-white group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
+<div class="layout-container flex h-full grow flex-col">
+<header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 px-4 sm:px-6 lg:px-10 py-3 bg-white">
+<div class="flex items-center gap-2 sm:gap-4 lg:gap-8">
+<div class="flex items-center gap-2 sm:gap-4 text-slate-900">
+  <h2 class="text-slate-900 text-lg sm:text-xl font-bold leading-tight tracking-[-0.015em]">LURE AD CENTER</h2>
+</div>
+</div>
+<div class="flex items-center gap-2 sm:gap-4">
+<div class="text-xs text-slate-500 font-mono hidden sm:block" id="version-display">v20250915170325</div>
+<button id="refresh-btn" onclick="refreshData()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="重新載入資料">
+<span id="refresh-icon" class="material-symbols-outlined text-base sm:text-lg">refresh</span>
+<span class="hidden sm:inline">更新</span>
+</button>
+<button onclick="openSettingsModal()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors">
+<span class="material-symbols-outlined text-base sm:text-lg">settings</span>
+<span class="hidden sm:inline">設定</span>
+</button>
+</div>
+</header>
+<main class="flex flex-1 justify-center py-8 px-4 sm:px-6 lg:px-8 pt-24">
+<div class="layout-content-container flex flex-col w-full max-w-7xl">
+<div class="flex flex-col gap-4">
+<div class="flex flex-col lg:flex-row gap-4 lg:gap-6">
+<div class="w-full lg:w-80 lg:shrink-0 space-y-4 lg:sticky lg:top-24 lg:self-start">
+<!-- 總計卡片 -->
+<div class="rounded-md border border-slate-200 bg-slate-50">
+<div class="px-3 py-2 border-b border-slate-200">
+<p class="text-slate-700 text-xs font-medium">總計</p>
+</div>
+<div class="px-3 py-2">
+<div class="grid grid-cols-2 lg:block lg:space-y-3 gap-3 text-xs">
+<div class="flex items-center lg:flex-row">
+<div class="text-slate-500 w-16 lg:w-20 text-xs lg:text-xs">帳號數量</div>
+<div class="text-base lg:text-lg font-bold text-gray-800" id="total-accounts">-</div>
+</div>
+<div class="flex items-center lg:flex-row">
+<div class="text-slate-500 w-16 lg:w-20 text-xs lg:text-xs">總花費</div>
+<div class="text-base lg:text-lg font-bold text-gray-800" id="all-total-spend">-</div>
+</div>
+<div class="flex items-center lg:flex-row">
+<div class="text-slate-500 w-16 lg:w-20 text-xs lg:text-xs">%</div>
+<div class="text-base lg:text-lg font-bold text-gray-800" id="all-total-percentage">-</div>
+</div>
+<div class="flex items-center lg:flex-row">
+<div class="text-slate-500 w-16 lg:w-20 text-xs lg:text-xs">總花費+%</div>
+<div class="text-base lg:text-lg font-bold text-gray-800" id="all-total-spend-plus">-</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 廣告帳號卡片 -->
+<div class="rounded-md border border-slate-200 bg-white">
+<div class="px-3 py-2 bg-slate-50 border-b border-slate-200">
+<p class="text-slate-700 text-xs font-medium">廣告帳號</p>
+<div class="grid grid-cols-4 gap-1 sm:gap-2 mt-1 text-xs text-slate-500">
+<span class="truncate">名稱</span>
+<span class="text-right">數量</span>
+<span class="text-right">花費</span>
+<span class="text-right">花費+%</span>
+</div>
+</div>
+<nav id="sheet-tabs" class="flex flex-col divide-y divide-slate-200 max-h-[40vh] sm:max-h-none overflow-y-auto" aria-label="Sheets"></nav>
+</div>
+</div>
+<div class="flex-1">
+<div id="status" class="mb-3 text-sm text-slate-500">載入中...</div>
+
+<!-- 儀表板統計 -->
+<div class="mb-6 bg-white rounded-lg border border-gray-200 p-3 sm:p-4">
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+    <div class="text-center">
+      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="total-spend">-</div>
+      <div class="text-xs sm:text-sm text-gray-500">總花費</div>
+    </div>
+    <div class="text-center">
+      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="total-spend-plus">-</div>
+      <div class="text-xs sm:text-sm text-gray-500">總花費+%</div>
+    </div>
+    <div class="text-center">
+      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="avg-clicks">-</div>
+      <div class="text-xs sm:text-sm text-gray-500">平均點擊次數</div>
+    </div>
+    <div class="text-center">
+      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="avg-cpc">-</div>
+      <div class="text-xs sm:text-sm text-gray-500">平均點擊成本</div>
+    </div>
+    <div class="text-center">
+      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="avg-messages">-</div>
+      <div class="text-xs sm:text-sm text-gray-500">平均私訊數</div>
+    </div>
+    <div class="text-center">
+      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="avg-message-cost">-</div>
+      <div class="text-xs sm:text-sm text-gray-500">平均私訊成本</div>
+    </div>
+  </div>
+</div>
+
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-3">
+<label class="relative flex-col min-w-0 flex-1 sm:min-w-40 sm:max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-md h-8 sm:h-8">
+<div class="text-slate-400 flex border-none bg-slate-100 items-center justify-center pl-2 rounded-l-md border-r-0">
+<span class="material-symbols-outlined text-sm">search</span>
+</div>
+<input id="search-input" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-md text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 border-none bg-slate-100 h-full placeholder:text-slate-400 px-3 rounded-l-none border-l-0 pl-2 text-xs font-normal leading-normal" placeholder="搜尋活動名稱" value=""/>
+</div>
+</label>
+<div class="flex items-center justify-between sm:justify-end gap-3">
+<div id="table-info" class="text-xs text-slate-500 italic font-light flex-1 sm:flex-none"></div>
+<button id="download-btn" onclick="downloadTableData()" class="flex items-center gap-1 px-3 py-1.5 text-xs bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-sm">download</span>
+<span class="hidden sm:inline">下載資料</span>
+<span class="sm:hidden">下載</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto rounded-md border border-slate-200 bg-white">
+<table id="main-table" class="w-full text-left min-w-[800px]"></table>
+</div>
+</div>
+</div>
+</div>
+  </div>
+  </main>
+<script>
+
+
+(function() {
+  // Google Sheets 基礎連結和常見的工作表 GID
+  const SHEETS_BASE_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSImKWK9cURUKloCFw3mr759Id_QfTSHmd1_8DJrihHr8bichEC3ZeoYaHrxmLkLaPSfCkPsLnoka4c/pub?output=csv';
+  
+  // 所有工作表的 GID 配置
+  const ADDITIONAL_SHEET_GIDS = [
+    { name: '吸引力', gid: '1731918377' },
+    { name: '寰宇', gid: '186693734' },
+    { name: '藍蒂蔻', gid: '678515244' },
+    { name: '新技', gid: '1515508175' },
+    { name: '總部', gid: '2076528666' },
+    { name: '新城區', gid: '1314685146' },
+    { name: '第一事業部', gid: '2003263441' },
+    { name: '第二事業部', gid: '169051770' },
+    { name: '第三事業部', gid: '1585941268' },
+    { name: '第四事業部', gid: '1841114498' },
+    { name: '其他區部', gid: '2032331650' },
+    { name: '顏區', gid: '605760610' },
+    { name: '大里區', gid: '321162073' },
+    { name: '逢甲區', gid: '2039681828' },
+    { name: '基隆區', gid: '1871669787' }
+  ];
+
+  const tabsContainer = document.getElementById('sheet-tabs');
+  const statusEl = document.getElementById('status');
+  const tableInfoEl = document.getElementById('table-info');
+  const mainTable = document.getElementById('main-table');
+  const searchInput = document.getElementById('search-input');
+  
+  // 儀表板元素
+  const totalSpendEl = document.getElementById('total-spend');
+  const totalSpendPlusEl = document.getElementById('total-spend-plus');
+  const avgClicksEl = document.getElementById('avg-clicks');
+  const avgCpcEl = document.getElementById('avg-cpc');
+  const avgMessagesEl = document.getElementById('avg-messages');
+  const avgMessageCostEl = document.getElementById('avg-message-cost');
+  
+  // 總計卡片元素
+  const totalAccountsEl = document.getElementById('total-accounts');
+  const allTotalSpendEl = document.getElementById('all-total-spend');
+  const allTotalPercentageEl = document.getElementById('all-total-percentage');
+  const allTotalSpendPlusEl = document.getElementById('all-total-spend-plus');
+  
+  let workbookCache = null;
+  let originalData = [];
+  
+  // 儲存百分比數據的物件，結構：{ sheetName: { rowId: percentage } }
+  let percentageStorage = {};
+  
+  // 儲存暱稱數據的物件，結構：{ sheetName: { originalName: nickname } }
+  let nicknameStorage = {};
+  
+  // 儲存成本指標設定的物件，結構：{ sheetName: { messageCost: {...}, clickCost: {...} } }
+  let costIndicatorSettings = {};
+
+  function setStatus(message, isError) {
+    if (!statusEl) return;
+    statusEl.textContent = message || '';
+    statusEl.className = 'mb-3 text-sm ' + (isError ? 'text-red-600' : 'text-slate-500');
+  }
+
+  // 載入進度相關函式
+  function showLoadingModal() {
+    const modal = document.getElementById('loadingModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+    }
+  }
+
+  function hideLoadingModal() {
+    const modal = document.getElementById('loadingModal');
+    if (modal) {
+      modal.classList.add('hidden');
+    }
+  }
+
+  function updateLoadingProgress(percentage, text) {
+    const progressBar = document.getElementById('loadingProgress');
+    const progressText = document.getElementById('loadingProgressText');
+    const loadingText = document.getElementById('loadingText');
+    
+    if (progressBar) {
+      progressBar.style.width = percentage + '%';
+    }
+    if (progressText) {
+      progressText.textContent = Math.round(percentage) + '%';
+    }
+    if (loadingText && text) {
+      loadingText.textContent = text;
+    }
+  }
+
+  function escapeHtml(value) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return String(value == null ? '' : value).replace(/[&<>"']/g, (m) => map[m]);
+  }
+
+  function parseCSV(csvText) {
+    const lines = csvText.split('\n');
+    const result = [];
+    
+    for (let line of lines) {
+      if (line.trim() === '') continue;
+      
+      const row = [];
+      let inQuotes = false;
+      let currentField = '';
+      
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = line[i + 1];
+        
+        if (char === '"') {
+          if (inQuotes && nextChar === '"') {
+            // 處理雙引號轉義
+            currentField += '"';
+            i++; // 跳過下一個引號
+          } else {
+            // 切換引號狀態
+            inQuotes = !inQuotes;
+          }
+        } else if (char === ',' && !inQuotes) {
+          // 欄位分隔符
+          row.push(currentField.trim());
+          currentField = '';
+        } else {
+          currentField += char;
+        }
+      }
+      
+      // 添加最後一個欄位
+      row.push(currentField.trim());
+      result.push(row);
+    }
+    
+    return result;
+  }
+
+  async function fetchSheetCSV(gid = null) {
+    const url = gid ? `${SHEETS_BASE_URL}&gid=${gid}` : SHEETS_BASE_URL;
+    try {
+      const resp = await fetch(url, { mode: 'cors' });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+      return await resp.text();
+    } catch (e) {
+      console.warn(`無法載入工作表 (gid=${gid}):`, e.message);
+      return null;
+    }
+  }
+
+  function isValidValue(value) {
+    // 檢查值是否為有效的非空數值
+    if (!value || value === '' || value === '-' || value === 'null' || value === 'undefined') {
+      return false;
+    }
+    // 移除逗號和貨幣符號後檢查是否為數字
+    const cleaned = String(value).replace(/[,$]/g, '');
+    const num = parseFloat(cleaned);
+    return !isNaN(num) && num >= 0; // 允許 0 值，但不允許負數
+  }
+
+  function updateDashboard() {
+    // 直接從表格 DOM 中讀取數據進行計算
+    const tableRows = mainTable.querySelectorAll('tbody tr');
+    
+    if (!tableRows || tableRows.length === 0) {
+      // 重置儀表板
+      if (totalSpendEl) totalSpendEl.textContent = '-';
+      if (totalSpendPlusEl) totalSpendPlusEl.textContent = '-';
+      if (avgClicksEl) avgClicksEl.textContent = '-';
+      if (avgCpcEl) avgCpcEl.textContent = '-';
+      if (avgMessagesEl) avgMessagesEl.textContent = '-';
+      if (avgMessageCostEl) avgMessageCostEl.textContent = '-';
+      return;
+    }
+
+    // 找到表頭中各欄位的位置
+    const headerCells = mainTable.querySelectorAll('thead th');
+    let spendIndex = -1, clicksIndex = -1, messagesIndex = -1, messageCostIndex = -1;
+    
+    headerCells.forEach((th, index) => {
+      const headerText = th.textContent.trim();
+      if (headerText.includes('花費金額')) spendIndex = index;
+      if (headerText.includes('連結點擊次數')) clicksIndex = index;
+      if (headerText.includes('私訊數') && !headerText.includes('成本')) messagesIndex = index;
+      if (headerText.includes('私訊成本')) messageCostIndex = index;
+    });
+
+    let totalSpend = 0;
+    let totalSpendPlus = 0;  // 總花費+%
+    let totalClicks = 0;
+    let totalMessages = 0;
+    let totalMessageCost = 0;
+    
+    // 分別計算各欄位的有效行數
+    let validSpendRows = 0;
+    let validClicksRows = 0;
+    let validMessagesRows = 0;
+    let validMessageCostRows = 0;
+
+    // 遍歷每一行數據
+    tableRows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length === 0) return;
+      
+      // 檢查是否為有效的數據行（第一欄不為空）
+      const firstCell = cells[0]?.textContent.trim();
+      if (!firstCell) return;
+
+      // 計算總花費（只計算有值的行）
+      if (spendIndex >= 0 && cells[spendIndex]) {
+        const spendText = cells[spendIndex].textContent.trim();
+        if (isValidValue(spendText)) {
+          const spend = parseFloat(spendText.replace(/[,$]/g, ''));
+          if (!isNaN(spend) && spend >= 0) {
+            totalSpend += spend;
+            validSpendRows++;
+          }
+        }
+      }
+
+      // 直接從表格中讀取「金額+%」欄位的值進行合計
+      const calculatedAmountCell = row.querySelector('.calculated-amount');
+      if (calculatedAmountCell) {
+        const calculatedText = calculatedAmountCell.textContent.trim();
+        if (calculatedText && calculatedText !== '-') {
+          // 如果有計算後的金額，使用該值
+          const calculatedAmount = parseFloat(calculatedText.replace(/[,$]/g, '')) || 0;
+          if (!isNaN(calculatedAmount) && calculatedAmount > 0) {
+            totalSpendPlus += calculatedAmount;
+          }
+        } else {
+          // 如果「金額+%」顯示 "-"，則使用原始花費金額
+          if (spendIndex >= 0 && cells[spendIndex]) {
+            const spendText = cells[spendIndex].textContent.trim();
+            if (isValidValue(spendText)) {
+              const spend = parseFloat(spendText.replace(/[,$]/g, ''));
+              if (!isNaN(spend) && spend >= 0) {
+                totalSpendPlus += spend;
+              }
+            }
+          }
+        }
+      }
+
+      // 計算總點擊次數（只計算有值的行）
+      if (clicksIndex >= 0 && cells[clicksIndex]) {
+        const clicksText = cells[clicksIndex].textContent.trim();
+        if (isValidValue(clicksText)) {
+          const clicks = parseFloat(clicksText.replace(/[,$]/g, ''));
+          if (!isNaN(clicks) && clicks >= 0) {
+            totalClicks += clicks;
+            validClicksRows++;
+          }
+        }
+      }
+
+      // 計算總私訊數（只計算有值的行）
+      if (messagesIndex >= 0 && cells[messagesIndex]) {
+        const messagesText = cells[messagesIndex].textContent.trim();
+        if (isValidValue(messagesText)) {
+          const messages = parseFloat(messagesText.replace(/[,$]/g, ''));
+          if (!isNaN(messages) && messages >= 0) {
+            totalMessages += messages;
+            validMessagesRows++;
+          }
+        }
+      }
+
+      // 計算總私訊成本（只計算有值的行）
+      if (messageCostIndex >= 0 && cells[messageCostIndex]) {
+        const messageCostText = cells[messageCostIndex].textContent.trim();
+        if (isValidValue(messageCostText)) {
+          const messageCost = parseFloat(messageCostText.replace(/[,$]/g, ''));
+          if (!isNaN(messageCost) && messageCost >= 0) {
+            totalMessageCost += messageCost;
+            validMessageCostRows++;
+          }
+        }
+      }
+    });
+
+    // 更新儀表板
+    if (totalSpendEl) {
+      totalSpendEl.textContent = totalSpend > 0 ? totalSpend.toLocaleString() : '-';
+    }
+
+    if (totalSpendPlusEl) {
+      totalSpendPlusEl.textContent = totalSpendPlus > 0 ? totalSpendPlus.toLocaleString() : '-';
+    }
+
+    if (avgClicksEl) {
+      const avgClicks = validClicksRows > 0 ? Math.round(totalClicks / validClicksRows) : 0;
+      avgClicksEl.textContent = avgClicks > 0 ? avgClicks.toLocaleString() : '-';
+    }
+
+    if (avgCpcEl) {
+      // 計算平均點擊成本：直接從每行的點擊成本欄位計算平均值
+      let totalCpc = 0;
+      let validCpcRows = 0;
+      
+      tableRows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length === 0) return;
+        
+        // 檢查是否為有效的數據行（第一欄不為空）
+        const firstCell = cells[0]?.textContent.trim();
+        if (!firstCell) return;
+        
+        // 找到點擊成本欄位（CPC）
+        let cpcIndex = -1;
+        const headerCells = mainTable.querySelectorAll('thead th');
+        headerCells.forEach((th, index) => {
+          const headerText = th.textContent.trim();
+          if (headerText.includes('點擊成本') || headerText.includes('CPC')) {
+            cpcIndex = index;
+          }
+        });
+        
+        // 如果找到點擊成本欄位，計算該行的點擊成本
+        if (cpcIndex >= 0 && cells[cpcIndex]) {
+          const cpcText = cells[cpcIndex].textContent.trim();
+          if (isValidValue(cpcText)) {
+            const cpc = parseFloat(cpcText.replace(/[,$]/g, ''));
+            if (!isNaN(cpc) && cpc >= 0) {
+              totalCpc += cpc;
+              validCpcRows++;
+            }
+          }
+        }
+      });
+      
+      const avgCpc = validCpcRows > 0 ? (totalCpc / validCpcRows) : 0;
+      avgCpcEl.textContent = avgCpc > 0 ? avgCpc.toFixed(1) : '-';
+    }
+
+    if (avgMessagesEl) {
+      const avgMessages = validMessagesRows > 0 ? (totalMessages / validMessagesRows) : 0;
+      avgMessagesEl.textContent = avgMessages > 0 ? avgMessages.toFixed(1) : '-';
+    }
+
+    if (avgMessageCostEl) {
+      const avgMessageCost = validMessageCostRows > 0 ? (totalMessageCost / validMessageCostRows) : 0;
+      avgMessageCostEl.textContent = avgMessageCost > 0 ? avgMessageCost.toFixed(1) : '-';
+    }
+  }
+
+  function trimEmptyEdges(matrix) {
+    if (!matrix || !matrix.length) return matrix;
+    
+    // 找到最後一個非空欄位
+    let lastNonEmptyCol = -1;
+    for (let c = 0; c < matrix[0].length; c++) {
+      let any = false;
+      for (let r = 0; r < matrix.length; r++) {
+        const v = (matrix[r][c] ?? '').toString().trim();
+        if (v !== '') { any = true; break; }
+      }
+      if (any) lastNonEmptyCol = c;
+    }
+    
+    // 保留所有欄位，不要截斷（除非真的完全為空）
+    // 只移除完全空白的行
+    while (matrix.length && matrix[matrix.length - 1].every((v) => String(v || '').trim() === '')) {
+      matrix.pop();
+    }
+    
+    return matrix;
+  }
+
+  let currentSort = { column: -1, ascending: true };
+  let currentData = [];
+
+  function buildTableHtml(matrix) {
+    if (!matrix || matrix.length === 0 || (matrix[0] || []).every((v) => String(v || '').trim() === '')) {
+      if (tableInfoEl) tableInfoEl.textContent = '';
+      return '<tbody><tr><td class="px-2 py-1.5 text-slate-500 text-xs">無資料</td></tr></tbody>';
+    }
+    
+    // 不再處理資訊行，因為已經在 renderTable 中移除了
+    let actualMatrix = matrix;
+    
+    // 調試資訊：顯示資料結構
+    // console.log('表格資料結構:', {
+    //   totalRows: actualMatrix.length,
+    //   firstRowColumns: actualMatrix[0] ? actualMatrix[0].length : 0,
+    //   firstRowData: actualMatrix[0],
+    //   sampleDataRow: actualMatrix[1] || '無資料行'
+    // });
+    
+    // 清空資訊文字
+    if (tableInfoEl) {
+      tableInfoEl.textContent = '';
+    }
+    
+    if (actualMatrix.length === 0) {
+      return '<tbody><tr><td class="px-2 py-1.5 text-slate-500 text-xs">無資料</td></tr></tbody>';
+    }
+    
+    // currentData 現在由 renderTable 函數直接設置，這裡不需要重複設置
+    
+    // 決定使用哪個表頭和資料
+    let header, body;
+    
+    // 檢查第一行是否為正確的表頭
+    const firstRow = actualMatrix[0];
+    const isValidHeader = firstRow && (
+      String(firstRow[0]).includes('活動名稱') ||
+      String(firstRow[0]).trim() === '活動名稱' ||
+      String(firstRow[0]).includes('Campaign name')
+    );
+    
+    let originalHeader, originalBody;
+    if (isValidHeader) {
+      // 第一行是正確的表頭，但重新排列欄位順序
+      const headerMapping = {};
+      firstRow.forEach((cell, index) => {
+        const cellStr = String(cell || '').trim();
+        // 統一表頭名稱並記錄索引
+        if (cellStr === 'Campaign name' || cellStr === '活動名稱') headerMapping['活動名稱'] = index;
+        if (cellStr === 'Reporting starts' || cellStr === '報告起始') headerMapping['報告起始'] = index;
+        if (cellStr === 'Reporting ends' || cellStr === '報告結束') headerMapping['報告結束'] = index;
+        if (cellStr === 'Amount spent' || cellStr === '花費金額') headerMapping['花費金額'] = index;
+        if (cellStr === 'Link clicks' || cellStr === '連結點擊次數') headerMapping['連結點擊次數'] = index;
+        if (cellStr === 'CPC (cost per link click)' || cellStr === '點擊成本') headerMapping['點擊成本'] = index;
+        if (cellStr === 'Messaging conversations started' || cellStr === '私訊數') headerMapping['私訊數'] = index;
+        if (cellStr === 'Cost per messaging conversations started' || cellStr === '私訊成本') headerMapping['私訊成本'] = index;
+      });
+      
+      // 按照指定順序重新排列表頭，在花費金額後插入 % 和 金額+% 欄位
+      const orderedHeaders = ['活動名稱', '報告起始', '報告結束', '花費金額', '%', '金額+%', '連結點擊次數', '點擊成本', '私訊數', '私訊成本'];
+      originalHeader = orderedHeaders.filter(header => headerMapping.hasOwnProperty(header) || header === '%' || header === '金額+%');
+      
+      // 重新排列資料行
+      originalBody = actualMatrix.slice(1).map((row, rowIndex) => {
+        return originalHeader.map(header => {
+          if (header === '%' || header === '金額+%') {
+            return ''; // 新欄位預設為空
+          }
+          return row[headerMapping[header]] || '';
+        });
+      });
+    } else {
+      // 使用標準表頭 - 調整欄位順序，在花費金額後插入 % 和 金額+% 欄位
+      originalHeader = ['活動名稱', '報告起始', '報告結束', '花費金額', '%', '金額+%', '連結點擊次數', '點擊成本', '私訊數', '私訊成本'];
+      // 所有行都是資料行
+      originalBody = actualMatrix;
+    }
+    
+    // 動態添加 No. 欄位和操作欄位
+    header = ['No.', ...originalHeader, '操作'];
+    body = originalBody;
+    
+    // 確保表頭和資料行欄位數量匹配
+    // 表頭：['No.', ...originalHeader] = 1 + originalHeader.length 個欄位
+    // 資料行：No. 欄位 + originalHeader.length 個資料欄位 = 1 + originalHeader.length 個欄位
+    
+    let html = '<thead class="bg-slate-50 sticky top-0 z-20"><tr>';
+    for (let i = 0; i < header.length; i++) {
+      const h = header[i];
+      
+      // 定義可排序的欄位
+      const sortableColumns = ['活動名稱', '花費金額', '點擊成本', '私訊成本'];
+      const isSortable = sortableColumns.includes(h);
+      
+      const sortIcon = isSortable ? (currentSort.column === i 
+        ? (currentSort.ascending ? '▲' : '▼') 
+        : '⇅') : '';
+      
+      // 為「金額+%」欄位添加突出樣式
+      const isCalculatedAmount = h === '金額+%';
+      const headerClass = isCalculatedAmount 
+        ? "px-2 py-1.5 text-slate-600 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:bg-blue-100 select-none bg-blue-50 sticky top-0 z-20 border-b border-slate-200 border-l-2 border-blue-200"
+        : isSortable 
+          ? "px-2 py-1.5 text-slate-600 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:bg-slate-100 select-none bg-slate-50 sticky top-0 z-20 border-b border-slate-200"
+          : "px-2 py-1.5 text-slate-600 text-xs font-semibold uppercase tracking-wider select-none bg-slate-50 sticky top-0 z-20 border-b border-slate-200";
+      
+      const onclick = isSortable ? `onclick="sortTable(${i})"` : '';
+      
+      html += `<th class="${headerClass}" ${onclick}>
+        <div class="flex items-center justify-between">
+          <span>${escapeHtml(h)}</span>
+          ${sortIcon ? `<span class="ml-1 text-slate-400 text-xs">${sortIcon}</span>` : ''}
+        </div>
+      </th>`;
+    }
+    html += '</tr></thead><tbody class="divide-y divide-slate-200">';
+    
+    let rowNumber = 1;
+    for (const row of body) {
+      if (row.every((v) => String(v || '').trim() === '')) continue;
+      html += '<tr class="hover:bg-slate-50 transition-colors">';
+      // 第一個欄位是 No.，顯示行號
+      html += `<td class="px-2 py-1.5 text-slate-700 text-xs font-medium text-center">${rowNumber}</td>`;
+      
+      // 處理所有原始資料欄位，確保與表頭數量一致
+      for (let i = 0; i < originalHeader.length; i++) {
+        const header = originalHeader[i];
+        const cell = row[i] || '';
+        
+        if (header === '%') {
+          // % 欄位：輸入框
+          const campaignName = row[0] || '';
+          // 使用活動名稱作為唯一識別，不依賴行號
+          const rowId = `${campaignName}`;
+          const currentSheet = getCurrentSheetName();
+          const savedPercentage = (percentageStorage[currentSheet] && percentageStorage[currentSheet][rowId]) || '';
+          
+          // 找到花費金額欄位的值
+          const spendIndex = originalHeader.indexOf('花費金額');
+          const spendAmount = spendIndex >= 0 ? parseFloat(row[spendIndex]) || 0 : 0;
+          
+          html += `<td class="px-2 py-1.5 text-slate-700 text-xs">
+            <input type="number" 
+                   class="w-full px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" 
+                   placeholder="%" 
+                    value="${savedPercentage || '5'}"
+                   data-row-id="${rowId}"
+                   data-sheet="${currentSheet}"
+                   data-row="${rowNumber}"
+                   onchange="saveAndUpdatePercentage(this, ${spendAmount})"
+                   min="0" 
+                   max="100" 
+                   step="0.1">
+          </td>`;
+        } else if (header === '金額+%') {
+          // 金額+% 欄位：計算後的金額
+          const campaignName = row[0] || '';
+          // 使用活動名稱作為唯一識別，不依賴行號
+          const rowId = `${campaignName}`;
+          const currentSheet = getCurrentSheetName();
+            const savedPercentage = (percentageStorage[currentSheet] && percentageStorage[currentSheet][rowId]) || 5;
+          
+          // 找到花費金額欄位的值
+          const spendIndex = originalHeader.indexOf('花費金額');
+          const originalAmount = spendIndex >= 0 ? parseFloat(row[spendIndex]) || 0 : 0;
+          const calculatedAmount = Math.ceil(originalAmount * (1 + parseFloat(savedPercentage) / 100));
+          
+          html += `<td class="px-2 py-1.5 text-slate-700 text-xs calculated-amount bg-blue-50 border-l-2 border-blue-200" data-row="${rowNumber}">
+            ${originalAmount > 0 ? calculatedAmount.toLocaleString() : '-'}
+          </td>`;
+        } else if (header === '活動名稱') {
+          // 活動名稱欄位：支援編輯暱稱
+          const originalName = cell;
+          const currentSheet = getCurrentSheetName();
+          const nickname = (nicknameStorage[currentSheet] && nicknameStorage[currentSheet][originalName]) || '';
+          const displayName = nickname || originalName;
+          const hasNickname = nickname && nickname !== originalName;
+          
+          html += `<td class="px-2 py-1.5 text-slate-700 text-xs">
+            <div class="flex items-center justify-between group">
+              <span class="${hasNickname ? 'font-medium' : ''}">${escapeHtml(displayName)}</span>
+              <button onclick="editCampaignName(this.parentElement.parentElement, '${escapeHtml(originalName)}')" 
+                      class="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-slate-400 hover:text-slate-600">
+                <span class="material-symbols-outlined text-sm">edit</span>
+              </button>
+            </div>
+          </td>`;
+        } else if (header === '點擊成本') {
+          // 點擊成本欄位：套用顏色指標
+          const costValue = parseFloat(cell) || 0;
+          const colorClass = getClickCostColorClass(costValue);
+          html += `<td class="px-2 py-1.5 text-slate-700 text-xs ${colorClass}">${escapeHtml(cell)}</td>`;
+        } else if (header === '私訊成本') {
+          // 私訊成本欄位：套用顏色指標
+          const costValue = parseFloat(cell) || 0;
+          const colorClass = getMessageCostColorClass(costValue);
+          html += `<td class="px-2 py-1.5 text-slate-700 text-xs ${colorClass}">${escapeHtml(cell)}</td>`;
+        } else {
+          // 一般欄位
+          html += `<td class="px-2 py-1.5 text-slate-700 text-xs">${escapeHtml(cell)}</td>`;
+        }
+      }
+      
+      // 新增操作欄位（...按鈕）
+      html += `<td class="px-2 py-1.5 text-slate-700 text-xs text-center">
+        <button onclick="openCostIndicatorModal(${rowNumber})" 
+                class="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded transition-colors" 
+                title="成本指標設定">
+          <span class="material-symbols-outlined text-sm">more_horiz</span>
+        </button>
+      </td>`;
+      
+      html += '</tr>';
+      rowNumber++;
+    }
+    html += '</tbody>';
+    return html;
+  }
+
+  function isNumeric(str) {
+    if (!str || str === '') return false;
+    const cleaned = String(str).replace(/[,$%]/g, '');
+    return !isNaN(cleaned) && !isNaN(parseFloat(cleaned));
+  }
+
+  function parseValue(str) {
+    if (!str || str === '') return ''; // 空值返回空字串
+    const cleaned = String(str).replace(/[,$%]/g, '');
+    return isNumeric(str) ? parseFloat(cleaned) : String(str).toLowerCase(); // 數值返回數字，文字返回小寫字串
+  }
+
+  function sortTable(columnIndex) {
+    console.log(`sortTable 被調用，columnIndex: ${columnIndex}`);
+    console.log('currentData 狀態:', currentData ? `有資料，行數: ${currentData.length}` : '無資料');
+    
+    if (!currentData || currentData.length <= 1) {
+      console.log('currentData 無效或長度不足，無法排序');
+      return;
+    }
+    
+    const header = currentData[0];
+    const columnName = header[columnIndex];
+    console.log(`欄位名稱: ${columnName}`);
+    
+    // 定義可排序的欄位
+    const sortableColumns = ['活動名稱', '花費金額', '點擊成本', '私訊成本'];
+    if (!sortableColumns.includes(columnName)) {
+      console.log(`欄位 ${columnName} 不在可排序列表中`);
+      return;
+    }
+    
+    console.log(`開始排序欄位: ${columnName}`);
+    
+    // 切換排序方向
+    if (currentSort.column === columnIndex) {
+      currentSort.ascending = !currentSort.ascending;
+    } else {
+      currentSort.column = columnIndex;
+      currentSort.ascending = true;
+    }
+    
+    // 每次都使用原始資料進行排序，確保各欄位排序獨立
+    // 使用深拷貝確保不會影響原始資料
+    let body = JSON.parse(JSON.stringify(currentData.slice(1)));
+    
+    // 自我驗證：記錄排序前的資料狀態
+    console.log(`開始排序 ${columnName}，排序前資料行數: ${body.length}`);
+    if (body.length > 0) {
+      console.log(`排序前第一行 ${columnName} 值: ${body[0][dataColumnIndex]}`);
+      console.log(`排序前最後一行 ${columnName} 值: ${body[body.length-1][dataColumnIndex]}`);
+    }
+    
+    // 過濾掉空行
+    body = body.filter(row => !row.every(v => String(v || '').trim() === ''));
+    
+    // 排序（調整索引，因為實際資料比顯示少四欄：No.、%、金額+%、操作）
+    body.sort((a, b) => {
+      let dataColumnIndex = columnIndex - 1; // 減去 No. 欄位
+      
+      // 如果是百分比欄位之後的欄位，需要再減去2（% 和 金額+% 欄位）
+      if (columnIndex > 6) {
+        dataColumnIndex = columnIndex - 3; // 減去 No.、%、金額+% 欄位
+      }
+      
+      // 確保索引不超出範圍
+      if (dataColumnIndex < 0 || dataColumnIndex >= a.length) {
+        return 0;
+      }
+      
+      const aVal = parseValue(a[dataColumnIndex]);
+      const bVal = parseValue(b[dataColumnIndex]);
+      
+      // 根據資料類型進行不同的比較
+      let result;
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        // 數值比較
+        result = aVal - bVal;
+      } else {
+        // 文字比較（支援中文筆畫排序）
+        result = String(aVal).localeCompare(String(bVal), 'zh-TW', { 
+          numeric: true, 
+          sensitivity: 'base' 
+        });
+      }
+      
+      return currentSort.ascending ? result : -result;
+    });
+    
+    // 自我驗證：記錄排序後的資料狀態
+    console.log(`排序完成 ${columnName}，排序後資料行數: ${body.length}`);
+    if (body.length > 0) {
+      console.log(`排序後第一行 ${columnName} 值: ${body[0][dataColumnIndex]}`);
+      console.log(`排序後最後一行 ${columnName} 值: ${body[body.length-1][dataColumnIndex]}`);
+    }
+    
+    // 記住當前頁面滾動位置
+    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    // 重新組合資料並渲染（保持資訊文字）
+    const sortedMatrix = [header, ...body];
+    
+    // 保持原有的資訊文字
+    const currentInfoText = tableInfoEl ? tableInfoEl.textContent : '';
+    
+    // 直接渲染排序後的資料，不修改 currentData
+    mainTable.innerHTML = buildTableHtml(sortedMatrix);
+    
+    // 恢復資訊文字
+    if (tableInfoEl && currentInfoText) {
+      tableInfoEl.textContent = currentInfoText;
+    }
+    
+    // 更新儀表板（延遲執行確保DOM已更新）
+    setTimeout(updateDashboard, 0);
+    
+    // 恢復頁面滾動位置
+    setTimeout(() => {
+      window.scrollTo(0, Math.max(0, currentScrollTop));
+    }, 0);
+  }
+
+  // 自我驗證測試函數
+  function testSortIndependence() {
+    console.log('=== 開始排序獨立性測試 ===');
+    
+    // 記錄原始資料狀態
+    if (currentData && currentData.length > 1) {
+      const header = currentData[0];
+      const body = currentData.slice(1);
+      
+      console.log('原始資料狀態:');
+      console.log(`總行數: ${body.length}`);
+      
+      // 記錄各欄位的原始值
+      const sortableColumns = ['活動名稱', '花費金額', '點擊成本', '私訊成本'];
+      sortableColumns.forEach(columnName => {
+        const columnIndex = header.indexOf(columnName);
+        if (columnIndex >= 0) {
+          const values = body.map(row => row[columnIndex]).slice(0, 3); // 只顯示前3個值
+          console.log(`${columnName} 原始值: ${values.join(', ')}...`);
+        }
+      });
+    }
+    
+    console.log('=== 測試完成，請手動測試各欄位排序 ===');
+  }
+  
+  // 將函式掛到全域
+  window.sortTable = sortTable;
+  window.testSortIndependence = testSortIndependence;
+  
+  // 取得當前工作表名稱
+  function getCurrentSheetName() {
+    const activeTab = document.querySelector('#sheet-tabs button[aria-selected="true"]');
+    return activeTab ? activeTab.getAttribute('data-sheet') : 'default';
+  }
+  
+  // 儲存百分比並更新計算金額
+  function saveAndUpdatePercentage(input, originalAmount) {
+    const percentage = parseFloat(input.value) || 0;
+    const rowId = input.getAttribute('data-row-id');
+    const sheetName = input.getAttribute('data-sheet');
+    const row = input.getAttribute('data-row');
+    
+    // 儲存百分比到前端儲存
+    if (!percentageStorage[sheetName]) {
+      percentageStorage[sheetName] = {};
+    }
+    
+    // 允許 0% 或空值，空值時使用 5%，用戶明確輸入 0 時也保持 0%
+        const finalPercentage = (input.value.trim() === '' || isNaN(percentage)) ? 0 : percentage;
+    percentageStorage[sheetName][rowId] = finalPercentage;
+    
+    // 更新計算金額顯示（使用無條件進位）
+    const calculatedAmount = Math.ceil(originalAmount * (1 + finalPercentage / 100));
+    const calculatedCell = document.querySelector(`td.calculated-amount[data-row="${row}"]`);
+    
+    if (calculatedCell) {
+      if (originalAmount > 0) {
+        calculatedCell.textContent = calculatedAmount.toLocaleString('zh-TW', {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        });
+      } else {
+        calculatedCell.textContent = '-';
+      }
+    }
+    
+    // 儲存到 localStorage
+    try {
+      localStorage.setItem('adManagerPercentages', JSON.stringify(percentageStorage));
+    } catch (e) {
+      console.warn('無法儲存百分比到 localStorage:', e);
+    }
+    
+    // 立即更新儀表板統計
+    updateDashboard();
+    
+    // 更新分頁統計數據（使用已快取的資料）
+    setTimeout(() => {
+      try {
+        const wb = workbookCache;
+        if (wb) {
+          const currentSheet = getCurrentSheetName();
+          // 只更新統計數據，不重新載入
+          updateTabStatistics(wb, currentSheet);
+        }
+      } catch (e) {
+        console.warn('無法更新分頁統計:', e);
+      }
+    }, 100);
+  }
+  
+  // 從 localStorage 載入百分比資料
+  function loadPercentageStorage() {
+    try {
+      const stored = localStorage.getItem('adManagerPercentages');
+      if (stored) {
+        percentageStorage = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.warn('無法從 localStorage 載入百分比資料:', e);
+      percentageStorage = {};
+    }
+  }
+  
+  // 從 localStorage 載入暱稱資料
+  function loadNicknameStorage() {
+    try {
+      const stored = localStorage.getItem('adManagerNicknames');
+      if (stored) {
+        nicknameStorage = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.warn('無法從 localStorage 載入暱稱資料:', e);
+      nicknameStorage = {};
+    }
+  }
+  
+  // 儲存暱稱到 localStorage
+  function saveNicknameStorage() {
+    try {
+      localStorage.setItem('adManagerNicknames', JSON.stringify(nicknameStorage));
+    } catch (e) {
+      console.warn('無法儲存暱稱到 localStorage:', e);
+    }
+  }
+  
+  // 只更新分頁統計數據，不重新載入
+  function updateTabStatistics(wb, activeName) {
+    if (!wb || !wb.SheetNames) return;
+    
+    // 總計統計
+    let totalAccountsCount = 0;
+    let grandTotalSpend = 0;
+    let grandTotalSpendPlus = 0;
+    
+    // 為每個工作表計算統計
+    for (const name of wb.SheetNames) {
+      const matrix = getSheetMatrix(wb, name);
+      let sheetRows = 0;
+      let sheetTotalSpend = 0;
+      let sheetTotalSpendPlus = 0;
+      
+      if (matrix && matrix.length > 0) {
+        // 找到表頭行
+        let bodyStart = 0;
+        let spendColumnIndex = -1;
+        
+        for (let i = 0; i < matrix.length; i++) {
+          const row = matrix[i];
+          if (row && (String(row[0]).includes('活動名稱') || String(row[0]).trim() === '活動名稱' || String(row[0]).includes('Campaign name'))) {
+            // 找到花費金額欄位的索引
+            for (let j = 0; j < row.length; j++) {
+              if (String(row[j]).includes('花費金額') || String(row[j]).includes('Amount spent')) {
+                spendColumnIndex = j;
+                break;
+              }
+            }
+            bodyStart = i + 1;
+            break;
+          }
+        }
+        
+        // 如果找不到花費欄位，假設是第4個欄位（索引3）
+        if (spendColumnIndex === -1) {
+          spendColumnIndex = 3;
+        }
+        
+        // 計算有效資料行數和金額統計
+        for (let i = bodyStart; i < matrix.length; i++) {
+          const row = matrix[i];
+          if (row && !row.every(v => String(v || '').trim() === '') && String(row[0] || '').trim() !== '') {
+            sheetRows++;
+            
+            // 計算該行的花費金額
+            if (spendColumnIndex >= 0 && row[spendColumnIndex]) {
+              const spendText = String(row[spendColumnIndex] || '').trim();
+              const spend = parseFloat(spendText.replace(/[,$]/g, '')) || 0;
+              if (!isNaN(spend) && spend >= 0) {
+                sheetTotalSpend += spend;
+                
+                // 計算該行的花費+%金額
+                const campaignName = row[0] || '';
+                const rowId = `${campaignName}`;
+                const savedPercentage = (percentageStorage[name] && percentageStorage[name][rowId] !== undefined) ? percentageStorage[name][rowId] : 5;
+                
+                // 使用儲存的百分比計算花費+%（預設5%）
+                const spendPlusAmount = Math.ceil(spend * (1 + parseFloat(savedPercentage) / 100));
+                sheetTotalSpendPlus += spendPlusAmount;
+              }
+            }
+          }
+        }
+      }
+      
+      // 累加到總計中
+      if (sheetRows > 0) {
+        totalAccountsCount++;
+        grandTotalSpend += sheetTotalSpend;
+        grandTotalSpendPlus += sheetTotalSpendPlus;
+      }
+      
+      // 更新該分頁的統計顯示
+      const tabButton = document.querySelector(`button[data-sheet="${name}"]`);
+      if (tabButton) {
+        const gridDiv = tabButton.querySelector('.grid');
+        if (gridDiv) {
+          const cells = gridDiv.querySelectorAll('div');
+          if (cells.length >= 4) {
+            cells[1].textContent = sheetRows; // 數量
+            cells[2].textContent = sheetTotalSpend.toLocaleString(); // 花費
+            cells[3].textContent = sheetTotalSpendPlus.toLocaleString(); // 花費+%
+          }
+        }
+      }
+    }
+    
+    // 更新總計卡片
+    if (totalAccountsEl) {
+      totalAccountsEl.textContent = totalAccountsCount;
+    }
+    if (allTotalSpendEl) {
+      allTotalSpendEl.textContent = grandTotalSpend > 0 ? grandTotalSpend.toLocaleString() : '-';
+    }
+    if (allTotalPercentageEl) {
+      // 計算差距：總花費+% - 總花費
+      const difference = grandTotalSpendPlus - grandTotalSpend;
+      allTotalPercentageEl.textContent = difference > 0 ? difference.toLocaleString() : '-';
+    }
+    if (allTotalSpendPlusEl) {
+      allTotalSpendPlusEl.textContent = grandTotalSpendPlus > 0 ? grandTotalSpendPlus.toLocaleString() : '-';
+    }
+  }
+
+  // 編輯活動名稱暱稱
+  function editCampaignName(cell, originalName) {
+    const currentSheet = getCurrentSheetName();
+    const currentNickname = (nicknameStorage[currentSheet] && nicknameStorage[currentSheet][originalName]) || '';
+    
+    // 創建輸入框
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = currentNickname || originalName;
+    input.className = 'w-full px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500';
+    input.placeholder = '輸入暱稱';
+    
+    // 創建按鈕容器
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'flex gap-1 mt-1';
+    
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = '儲存';
+    saveBtn.className = 'px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600';
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = '取消';
+    cancelBtn.className = 'px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600';
+    
+    // 儲存功能
+    saveBtn.onclick = () => {
+      const newNickname = input.value.trim();
+      
+      // 儲存到前端儲存
+      if (!nicknameStorage[currentSheet]) {
+        nicknameStorage[currentSheet] = {};
+      }
+      
+      if (newNickname && newNickname !== originalName) {
+        nicknameStorage[currentSheet][originalName] = newNickname;
+      } else {
+        delete nicknameStorage[currentSheet][originalName];
+      }
+      
+      // 儲存到 localStorage
+      saveNicknameStorage();
+      
+      // 更新顯示
+      updateCampaignNameDisplay(cell, originalName, newNickname);
+    };
+    
+    // 取消功能
+    cancelBtn.onclick = () => {
+      updateCampaignNameDisplay(cell, originalName, currentNickname);
+    };
+    
+    // 按 Enter 儲存
+    input.onkeypress = (e) => {
+      if (e.key === 'Enter') {
+        saveBtn.click();
+      }
+    };
+    
+    // 按 Escape 取消
+    input.onkeydown = (e) => {
+      if (e.key === 'Escape') {
+        cancelBtn.click();
+      }
+    };
+    
+    buttonContainer.appendChild(saveBtn);
+    buttonContainer.appendChild(cancelBtn);
+    
+    // 替換內容
+    cell.innerHTML = '';
+    cell.appendChild(input);
+    cell.appendChild(buttonContainer);
+    
+    // 聚焦到輸入框
+    input.focus();
+    input.select();
+  }
+  
+  // 更新活動名稱顯示
+  function updateCampaignNameDisplay(cell, originalName, nickname) {
+    const currentSheet = getCurrentSheetName();
+    const displayName = nickname || originalName;
+    const hasNickname = nickname && nickname !== originalName;
+    
+    cell.innerHTML = `
+      <div class="flex items-center justify-between group">
+        <span class="text-slate-700 text-xs ${hasNickname ? 'font-medium' : ''}">${escapeHtml(displayName)}</span>
+        <button onclick="editCampaignName(this.parentElement.parentElement, '${escapeHtml(originalName)}')" 
+                class="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-slate-400 hover:text-slate-600">
+          <span class="material-symbols-outlined text-sm">edit</span>
+        </button>
+      </div>
+    `;
+  }
+  
+  // 下載表格資料
+  function downloadTableData() {
+    const currentSheet = getCurrentSheetName();
+    const tableRows = mainTable.querySelectorAll('tbody tr');
+    
+    if (!tableRows || tableRows.length === 0) {
+      alert('沒有資料可以下載');
+      return;
+    }
+    
+    // 獲取表頭
+    const headerCells = mainTable.querySelectorAll('thead th');
+    const headers = Array.from(headerCells).map(th => th.textContent.trim().replace('⇅', '').replace('▲', '').replace('▼', '').trim());
+    
+    // 準備 CSV 資料
+    const csvData = [];
+    csvData.push(headers); // 添加表頭
+    
+    // 處理每一行資料
+    tableRows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length === 0) return;
+      
+      const rowData = [];
+      
+      // 處理每個欄位
+      for (let i = 0; i < cells.length; i++) {
+        const cell = cells[i];
+        const header = headers[i];
+        
+        if (header === '活動名稱') {
+          // 活動名稱：顯示暱稱或原始名稱
+          const span = cell.querySelector('span');
+          const displayName = span ? span.textContent.trim() : cell.textContent.trim();
+          rowData.push(`"${displayName}"`);
+        } else if (header === '%') {
+          // 百分比：從輸入框獲取值
+          const input = cell.querySelector('input');
+          const percentage = input ? input.value : '';
+          rowData.push(percentage || '');
+        } else if (header === '金額+%') {
+          // 金額+%：顯示計算後的金額
+          const amount = cell.textContent.trim();
+          rowData.push(amount === '-' ? '' : amount.replace(/,/g, ''));
+        } else {
+          // 其他欄位：直接取文字內容
+          const text = cell.textContent.trim();
+          rowData.push(`"${text}"`);
+        }
+      }
+      
+      csvData.push(rowData);
+    });
+    
+    // 轉換為 CSV 格式
+    const csvContent = csvData.map(row => row.join(',')).join('\n');
+    
+    // 創建並下載檔案
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `廣告資料_${currentSheet}_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+  
+  // 設定彈窗相關函式
+  function openSettingsModal() {
+    const modal = document.getElementById('settingsModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      loadSheetConfig();
+    }
+  }
+  
+  function closeSettingsModal() {
+    const modal = document.getElementById('settingsModal');
+    if (modal) {
+      modal.classList.add('hidden');
+    }
+  }
+  
+  function loadSheetConfig() {
+    const configList = document.getElementById('sheetConfigList');
+    if (!configList) return;
+    
+    // 從 ADDITIONAL_SHEET_GIDS 載入現有配置
+    let html = '';
+    ADDITIONAL_SHEET_GIDS.forEach((sheet, index) => {
+      const uniqueId = `sheet-${index}-${Date.now()}`;
+      html += `
+        <div class="flex items-center gap-3 p-3 rounded-lg" data-sheet-id="${uniqueId}">
+          <div class="flex-1 grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">工作表名稱</label>
+              <input type="text" 
+                     value="${escapeHtml(sheet.name)}" 
+                     data-field="name" 
+                     class="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Grid ID</label>
+              <input type="text" 
+                     value="${escapeHtml(sheet.gid)}" 
+                     data-field="gid" 
+                     class="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+          </div>
+          <button onclick="removeSheetConfig('${uniqueId}')" class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors">
+            <span class="material-symbols-outlined text-lg">delete</span>
+          </button>
+        </div>
+      `;
+    });
+    
+    configList.innerHTML = html;
+  }
+  
+  function addNewSheet() {
+    const configList = document.getElementById('sheetConfigList');
+    if (!configList) return;
+    
+    const uniqueId = `new-sheet-${Date.now()}`;
+    const newSheetHtml = `
+      <div class="flex items-center gap-3 p-3 rounded-lg bg-blue-50" data-sheet-id="${uniqueId}">
+        <div class="flex-1 grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">工作表名稱</label>
+            <input type="text" 
+                   placeholder="輸入工作表名稱" 
+                   data-field="name" 
+                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Grid ID</label>
+            <input type="text" 
+                   placeholder="輸入 Grid ID" 
+                   data-field="gid" 
+                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+        <button onclick="removeSheetConfig('${uniqueId}')" class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors">
+          <span class="material-symbols-outlined text-lg">delete</span>
+        </button>
+      </div>
+    `;
+    
+    // 將新增的工作表放在最上方
+    configList.insertAdjacentHTML('afterbegin', newSheetHtml);
+  }
+  
+  function removeSheetConfig(sheetId) {
+    const configList = document.getElementById('sheetConfigList');
+    if (!configList) return;
+    
+    // 使用唯一 ID 來精確找到要刪除的項目
+    const targetElement = configList.querySelector(`[data-sheet-id="${sheetId}"]`);
+    if (targetElement) {
+      targetElement.remove();
+    }
+  }
+  
+  function saveSheetConfig() {
+    // 要求再次輸入密碼驗證
+    const password = prompt('請輸入密碼以儲存設定：');
+    if (password !== systemPassword) {
+      alert('密碼錯誤，無法儲存設定');
+      return;
+    }
+    
+    const configList = document.getElementById('sheetConfigList');
+    if (!configList) return;
+    
+    const newConfig = [];
+    const items = configList.children;
+    
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const nameInput = item.querySelector('input[data-field="name"]');
+      const gidInput = item.querySelector('input[data-field="gid"]');
+      
+      if (nameInput && gidInput) {
+        const name = nameInput.value.trim();
+        const gid = gidInput.value.trim();
+        
+        if (name && gid) {
+          newConfig.push({ name, gid });
+        }
+      }
+    }
+    
+    // 更新 ADDITIONAL_SHEET_GIDS
+    ADDITIONAL_SHEET_GIDS.length = 0;
+    ADDITIONAL_SHEET_GIDS.push(...newConfig);
+    
+    // 儲存到 localStorage
+    try {
+      localStorage.setItem('adManagerSheetConfig', JSON.stringify(newConfig));
+    } catch (e) {
+      console.warn('無法儲存工作表配置:', e);
+    }
+    
+    // 關閉彈窗
+    closeSettingsModal();
+    
+    // 重新載入資料
+    if (confirm('設定已儲存，是否重新載入資料？')) {
+      location.reload();
+    }
+  }
+  
+  // 載入儲存的工作表配置
+  function loadStoredSheetConfig() {
+    try {
+      const stored = localStorage.getItem('adManagerSheetConfig');
+      if (stored) {
+        const config = JSON.parse(stored);
+        ADDITIONAL_SHEET_GIDS.length = 0;
+        ADDITIONAL_SHEET_GIDS.push(...config);
+      }
+    } catch (e) {
+      console.warn('無法載入工作表配置:', e);
+    }
+  }
+  
+  // 重新載入資料功能
+  async function refreshData() {
+    const refreshBtn = document.getElementById('refresh-btn');
+    const refreshIcon = document.getElementById('refresh-icon');
+    
+    if (!refreshBtn || !refreshIcon) return;
+    
+    // 禁用按鈕並顯示載入狀態
+    refreshBtn.disabled = true;
+    refreshBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    refreshIcon.classList.add('animate-spin');
+    
+    try {
+      // 重新載入資料（每次都從 Google Sheets 獲取最新資料）
+      setStatus('正在重新載入資料...');
+      const wb = await loadWorkbook();
+      const names = wb.SheetNames || [];
+      
+      if (!names.length) { 
+        setStatus('沒有可用的工作表', true); 
+        return; 
+      }
+      
+      // 重新渲染分頁
+      const firstSheet = names[0];
+      await renderTabs(names, firstSheet);
+      
+      // 載入第一個工作表資料
+      const matrix = getSheetMatrix(wb, firstSheet);
+      renderTable(matrix);
+      setStatus('資料已更新');
+      
+      // 短暫顯示成功訊息後清除
+      setTimeout(() => {
+        setStatus('');
+      }, 2000);
+      
+    } catch (err) {
+      console.error('重新載入資料失敗:', err);
+      setStatus(`重新載入失敗: ${err.message}`, true);
+    } finally {
+      // 恢復按鈕狀態
+      refreshBtn.disabled = false;
+      refreshBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      refreshIcon.classList.remove('animate-spin');
+    }
+  }
+
+  // 成本指標相關函數
+  
+  // 取得點擊成本顏色類別
+  function getClickCostColorClass(costValue) {
+    const currentSheet = getCurrentSheetName();
+    const sheetSettings = costIndicatorSettings[currentSheet];
+    
+    if (!sheetSettings || !sheetSettings.clickCost || !sheetSettings.clickCost.enabled) return '';
+    
+    // 檢查是否為有效數值（非空、非零、非負數）
+    if (!costValue || costValue === 0 || costValue === '' || isNaN(costValue)) {
+      return '';
+    }
+    
+    const { green, red } = sheetSettings.clickCost;
+    
+    if (costValue <= green) {
+      return 'bg-green-100 text-green-800 font-medium';
+    } else if (costValue >= red) {
+      return 'bg-red-100 text-red-800 font-medium';
+    } else {
+      // 介於綠色和紅色之間
+      return 'bg-orange-100 text-orange-800 font-medium';
+    }
+  }
+  
+  // 取得私訊成本顏色類別
+  function getMessageCostColorClass(costValue) {
+    const currentSheet = getCurrentSheetName();
+    const sheetSettings = costIndicatorSettings[currentSheet];
+    
+    if (!sheetSettings || !sheetSettings.messageCost || !sheetSettings.messageCost.enabled) return '';
+    
+    // 檢查是否為有效數值（非空、非零、非負數）
+    if (!costValue || costValue === 0 || costValue === '' || isNaN(costValue)) {
+      return '';
+    }
+    
+    const { green, red } = sheetSettings.messageCost;
+    
+    if (costValue <= green) {
+      return 'bg-green-100 text-green-800 font-medium';
+    } else if (costValue >= red) {
+      return 'bg-red-100 text-red-800 font-medium';
+    } else {
+      // 介於綠色和紅色之間
+      return 'bg-orange-100 text-orange-800 font-medium';
+    }
+  }
+  
+  // 開啟成本指標設定彈窗
+  function openCostIndicatorModal(rowNumber) {
+    const modal = document.getElementById('costIndicatorModal');
+    const currentSheetNameEl = document.getElementById('currentSheetName');
+    
+    if (modal) {
+      // 顯示當前工作表名稱
+      const currentSheet = getCurrentSheetName();
+      if (currentSheetNameEl) {
+        currentSheetNameEl.textContent = currentSheet;
+      }
+      
+      modal.classList.remove('hidden');
+      loadCostIndicatorSettings();
+    }
+  }
+  
+  // 關閉成本指標設定彈窗
+  function closeCostIndicatorModal() {
+    const modal = document.getElementById('costIndicatorModal');
+    if (modal) {
+      modal.classList.add('hidden');
+    }
+  }
+  
+  // 載入成本指標設定到表單
+  function loadCostIndicatorSettings() {
+    const currentSheet = getCurrentSheetName();
+    const sheetSettings = costIndicatorSettings[currentSheet] || {
+      messageCost: { enabled: false, green: 0, red: 0 },
+      clickCost: { enabled: false, green: 0, red: 0 }
+    };
+    
+    // 載入私訊成本設定
+    document.getElementById('enableMessageCost').checked = sheetSettings.messageCost.enabled;
+    document.getElementById('messageCostGreen').value = sheetSettings.messageCost.green;
+    document.getElementById('messageCostRed').value = sheetSettings.messageCost.red;
+    
+    // 載入點擊成本設定
+    document.getElementById('enableClickCost').checked = sheetSettings.clickCost.enabled;
+    document.getElementById('clickCostGreen').value = sheetSettings.clickCost.green;
+    document.getElementById('clickCostRed').value = sheetSettings.clickCost.red;
+  }
+  
+  // 儲存成本指標設定
+  function saveCostIndicatorSettings() {
+    const currentSheet = getCurrentSheetName();
+    
+    // 確保當前工作表的設定物件存在
+    if (!costIndicatorSettings[currentSheet]) {
+      costIndicatorSettings[currentSheet] = {
+        messageCost: { enabled: false, green: 0, red: 0 },
+        clickCost: { enabled: false, green: 0, red: 0 }
+      };
+    }
+    
+    // 儲存私訊成本設定
+    costIndicatorSettings[currentSheet].messageCost.enabled = document.getElementById('enableMessageCost').checked;
+    costIndicatorSettings[currentSheet].messageCost.green = parseFloat(document.getElementById('messageCostGreen').value) || 0;
+    costIndicatorSettings[currentSheet].messageCost.red = parseFloat(document.getElementById('messageCostRed').value) || 0;
+    
+    // 儲存點擊成本設定
+    costIndicatorSettings[currentSheet].clickCost.enabled = document.getElementById('enableClickCost').checked;
+    costIndicatorSettings[currentSheet].clickCost.green = parseFloat(document.getElementById('clickCostGreen').value) || 0;
+    costIndicatorSettings[currentSheet].clickCost.red = parseFloat(document.getElementById('clickCostRed').value) || 0;
+    
+    // 儲存到 localStorage
+    try {
+      localStorage.setItem('adManagerCostIndicatorSettings', JSON.stringify(costIndicatorSettings));
+    } catch (e) {
+      console.warn('無法儲存成本指標設定:', e);
+    }
+    
+    // 關閉彈窗
+    closeCostIndicatorModal();
+    
+    // 重新渲染表格以套用新的顏色設定
+    if (currentData && currentData.length > 0) {
+      mainTable.innerHTML = buildTableHtml(currentData);
+      setTimeout(updateDashboard, 0);
+    }
+  }
+  
+  // 從 localStorage 載入成本指標設定
+  function loadCostIndicatorStorage() {
+    try {
+      const stored = localStorage.getItem('adManagerCostIndicatorSettings');
+      if (stored) {
+        costIndicatorSettings = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.warn('無法從 localStorage 載入成本指標設定:', e);
+      costIndicatorSettings = {};
+    }
+  }
+
+  // 將函式掛到全域
+  window.saveAndUpdatePercentage = saveAndUpdatePercentage;
+  window.getCurrentSheetName = getCurrentSheetName;
+  window.editCampaignName = editCampaignName;
+  window.downloadTableData = downloadTableData;
+  window.openSettingsModal = openSettingsModal;
+  window.closeSettingsModal = closeSettingsModal;
+  window.addNewSheet = addNewSheet;
+  window.removeSheetConfig = removeSheetConfig;
+  window.saveSheetConfig = saveSheetConfig;
+  window.refreshData = refreshData;
+  window.openCostIndicatorModal = openCostIndicatorModal;
+  window.closeCostIndicatorModal = closeCostIndicatorModal;
+  window.saveCostIndicatorSettings = saveCostIndicatorSettings;
+  window.getClickCostColorClass = getClickCostColorClass;
+  window.getMessageCostColorClass = getMessageCostColorClass;
+
+  // 密碼相關變數
+  let systemPassword = null;
+  let isAuthenticated = false;
+
+  // 載入密碼設定
+  function loadPassword() {
+    try {
+      const saved = localStorage.getItem('systemPassword');
+      if (saved) {
+        systemPassword = saved;
+      } else {
+        // 如果沒有儲存的密碼，設定預設密碼為 1982
+        systemPassword = '1982';
+        savePasswordToStorage('1982');
+      }
+    } catch (e) {
+      console.warn('無法載入密碼設定:', e);
+      // 如果載入失敗，使用預設密碼
+      systemPassword = '1982';
+    }
+  }
+
+  // 儲存密碼設定
+  function savePasswordToStorage(password) {
+    try {
+      localStorage.setItem('systemPassword', password);
+      systemPassword = password;
+    } catch (e) {
+      console.warn('無法儲存密碼設定:', e);
+    }
+  }
+
+  // 顯示密碼驗證彈窗
+  function showPasswordModal() {
+    const modal = document.getElementById('passwordModal');
+    const input = document.getElementById('passwordInput');
+    const error = document.getElementById('passwordError');
+    
+    modal.classList.remove('hidden');
+    input.value = '';
+    input.focus();
+    error.classList.add('hidden');
+    
+    // 如果沒有設定密碼，直接顯示設定密碼彈窗
+    if (!systemPassword) {
+      showPasswordSettings();
+      return;
+    }
+  }
+
+  // 隱藏密碼驗證彈窗
+  function hidePasswordModal() {
+    const modal = document.getElementById('passwordModal');
+    modal.classList.add('hidden');
+  }
+
+  // 驗證密碼
+  function verifyPassword() {
+    const input = document.getElementById('passwordInput');
+    const error = document.getElementById('passwordError');
+    const password = input.value.trim();
+    
+    if (password.length !== 4) {
+      error.textContent = '請輸入四位數密碼';
+      error.classList.remove('hidden');
+      return;
+    }
+    
+    if (password === systemPassword) {
+      isAuthenticated = true;
+      hidePasswordModal();
+      setStatus(`資料載入成功 (${workbookCache ? workbookCache.SheetNames.length : 0} 個工作表)`);
+    } else {
+      error.textContent = '密碼錯誤，請重新輸入';
+      error.classList.remove('hidden');
+      input.value = '';
+      input.focus();
+    }
+  }
+
+
+  // 密碼輸入框鍵盤事件
+  function setupPasswordInputEvents() {
+    const passwordInput = document.getElementById('passwordInput');
+    
+    if (passwordInput) {
+      passwordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          verifyPassword();
+        }
+      });
+    }
+  }
+
+  
+  // 版本管理相關函式
+  // 手動設定的版本號 - 每次程式碼改動時需要手動更新
+  const APP_VERSION = '20250915170325';
+  
+  function updateVersionDisplay() {
+    const versionEl = document.getElementById('version-display');
+    if (versionEl) {
+      versionEl.textContent = `v${APP_VERSION}`;
+    }
+  }
+  
+  // 生成新版本號的輔助函式（供開發者使用）
+  function generateNewVersion() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    return `${year}${month}${day}${hours}${minutes}${seconds}`;
+  }
+  
+  // 將密碼相關函數掛到全域
+  window.verifyPassword = verifyPassword;
+  window.updateVersionDisplay = updateVersionDisplay;
+  window.generateNewVersion = generateNewVersion;
+
+
+  async function loadWorkbook() {
+    // 顯示載入彈窗
+    showLoadingModal();
+    updateLoadingProgress(0, '正在載入 Google Sheets 資料...');
+    
+    const HTMLSheets = {};
+    const SheetNames = [];
+    
+    try {
+      // 直接載入配置的工作表，不載入主要工作表
+      if (ADDITIONAL_SHEET_GIDS.length === 0) {
+        throw new Error('沒有配置任何工作表');
+      }
+      
+      updateLoadingProgress(10, `正在並行載入 ${ADDITIONAL_SHEET_GIDS.length} 個工作表...`);
+      
+      // 並行載入所有工作表
+      const loadPromises = ADDITIONAL_SHEET_GIDS.map(async (sheet, index) => {
+        try {
+          const csvText = await fetchSheetCSV(sheet.gid);
+          if (csvText && !csvText.includes('<!DOCTYPE html>') && !csvText.includes('找不到網頁')) {
+            const csvData = parseCSV(csvText);
+            if (csvData.length > 1) { // 至少要有表頭和一行資料
+              return { name: sheet.name, data: csvData, success: true };
+            }
+          }
+          return { name: sheet.name, data: null, success: false };
+        } catch (e) {
+          console.warn(`無法載入工作表 ${sheet.name} (gid=${sheet.gid}):`, e.message);
+          return { name: sheet.name, data: null, success: false };
+        }
+      });
+      
+      // 等待所有載入完成，並即時更新進度
+      let completedCount = 0;
+      const totalSheets = ADDITIONAL_SHEET_GIDS.length;
+      
+      // 使用 Promise.allSettled 等待所有請求完成
+      const results = await Promise.allSettled(loadPromises);
+      
+      // 處理結果
+      for (const result of results) {
+        if (result.status === 'fulfilled' && result.value.success) {
+          HTMLSheets[result.value.name] = result.value.data;
+          SheetNames.push(result.value.name);
+        }
+        completedCount++;
+        
+        // 更新進度 (10-90%)
+        const progress = 10 + (completedCount / totalSheets) * 80;
+        updateLoadingProgress(progress, `已載入 ${completedCount}/${totalSheets} 個工作表`);
+      }
+      
+      console.log(`成功載入 ${SheetNames.length} 個工作表`);
+      
+      // 構建「仿 Workbook」結構供後續流程使用
+      updateLoadingProgress(95, '正在處理資料...');
+      const wb = { __CSV__: true, SheetNames, HTMLSheets };
+      workbookCache = wb;
+      
+      updateLoadingProgress(100, '載入完成！');
+      setTimeout(() => {
+        hideLoadingModal();
+        showPasswordModal();
+      }, 500);
+      
+      return wb;
+      
+    } catch (e) {
+      console.error('載入工作表失敗：', e);
+      hideLoadingModal();
+      setStatus(`🚫 Google Sheets 連線失敗：${e.message}。請檢查：1) 試算表是否公開 2) 網路連線狀態 3) 試算表連結是否正確`, true);
+      throw e;
+    }
+  }
+  function getSheetMatrix(workbook, sheetName) {
+    // 支援 CSV 仿 Workbook（主要用於 Google Sheets CSV）
+    if (workbook && (workbook.__CSV__ || workbook.__HTML__)) {
+      const aoa = workbook.HTMLSheets[sheetName] || [];
+      return aoa;
+    }
+    
+    // 如果不是 CSV/HTML 格式且沒有 XLSX 函式庫，返回空陣列
+    if (typeof XLSX === 'undefined') {
+      console.warn('XLSX library not available, only CSV/HTML format supported');
+      return [];
+    }
+    
+    // XLSX 格式支援（備用）
+    const ws = workbook.Sheets[sheetName];
+    if (!ws) {
+      return [];
+    }
+    const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false });
+    return aoa;
+  }
+
+  function renderTable(matrix) {
+    matrix = trimEmptyEdges(matrix);
+    
+    // 清理和處理資料矩陣
+    if (matrix && matrix.length > 0) {
+      let processedMatrix = [];
+      
+      for (let i = 0; i < matrix.length; i++) {
+        const row = matrix[i];
+        
+        // 跳過各種資訊行和空行
+        const firstCell = String(row[0] || '').trim();
+        
+        // 跳過以下類型的行：
+        // 1. Facebook Ads Import 資訊行
+        // 2. Last updated 資訊行  
+        // 3. 空行或只有空白的行
+        if (firstCell.includes('Facebook Ads Import') ||
+            firstCell.includes('Last updated') ||
+            firstCell === '' ||
+            row.every(cell => String(cell || '').trim() === '')) {
+          continue;
+        }
+        
+        // 保持原始資料結構，確保所有欄位都被保留
+        processedMatrix.push(row);
+      }
+      
+      matrix = processedMatrix;
+    }
+    
+    // 儲存原始資料
+    originalData = matrix;
+    currentData = matrix; // 確保 currentData 正確設置
+    // 重置排序狀態
+    currentSort = { column: -1, ascending: true };
+    // 重置搜尋框
+    if (searchInput) searchInput.value = '';
+    mainTable.innerHTML = buildTableHtml(matrix);
+    // 更新儀表板（延遲執行確保DOM已更新）
+    setTimeout(updateDashboard, 0);
+  }
+
+
+  function filterData(searchTerm) {
+    if (!originalData || originalData.length <= 1) return originalData;
+    
+    if (!searchTerm || searchTerm.trim() === '') {
+      return originalData;
+    }
+    
+    const header = originalData[0];
+    const body = originalData.slice(1);
+    const searchLower = searchTerm.toLowerCase().trim();
+    
+    // 單一工作表格式：只搜尋活動名稱（第一欄）
+    const filteredBody = body.filter(row => {
+      const campaignName = String(row[0] || '').toLowerCase(); // 活動名稱
+      return campaignName.includes(searchLower);
+    });
+    
+    return [header, ...filteredBody];
+  }
+
+  function performSearch() {
+    if (!searchInput) return;
+    
+    const searchTerm = searchInput.value;
+    const filteredData = filterData(searchTerm);
+    
+    // 保持原有的資訊文字
+    const currentInfoText = tableInfoEl ? tableInfoEl.textContent : '';
+    
+    // 重置排序狀態
+    currentSort = { column: -1, ascending: true };
+    
+    // 建立表格（會自動使用正確的表頭）
+    mainTable.innerHTML = buildTableHtml(filteredData);
+    
+    // 恢復資訊文字
+    if (tableInfoEl && currentInfoText) {
+      tableInfoEl.textContent = currentInfoText;
+    }
+    
+    // 更新儀表板（延遲執行確保DOM已更新）
+    setTimeout(updateDashboard, 0);
+  }
+
+
+  async function renderTabs(sheetNames, activeName) {
+    const parts = [];
+    // 使用已快取的 workbook，避免重複載入
+    const wb = workbookCache || await loadWorkbook();
+    
+    // 總計統計
+    let totalAccountsCount = 0;
+    let grandTotalSpend = 0;
+    let grandTotalSpendPlus = 0;
+    
+    // 為每個工作表計算行數和金額統計
+    for (const name of sheetNames) {
+      const matrix = getSheetMatrix(wb, name);
+      let sheetRows = 0;
+      let sheetTotalSpend = 0;
+      let sheetTotalSpendPlus = 0;
+      
+      if (matrix && matrix.length > 0) {
+        // 找到表頭行
+        let bodyStart = 0;
+        let spendColumnIndex = -1;
+        
+        for (let i = 0; i < matrix.length; i++) {
+          const row = matrix[i];
+          if (row && (String(row[0]).includes('活動名稱') || String(row[0]).trim() === '活動名稱' || String(row[0]).includes('Campaign'))) {
+            // 找到花費金額欄位的索引
+            for (let j = 0; j < row.length; j++) {
+              if (String(row[j]).includes('花費金額') || String(row[j]).includes('Amount spent')) {
+                spendColumnIndex = j;
+                break;
+              }
+            }
+            bodyStart = i + 1;
+            break;
+          }
+        }
+        
+        // 如果找不到花費欄位，假設是第4個欄位（索引3）
+        if (spendColumnIndex === -1) {
+          spendColumnIndex = 3;
+        }
+        
+        // 計算有效資料行數和金額統計
+        for (let i = bodyStart; i < matrix.length; i++) {
+          const row = matrix[i];
+          if (row && !row.every(v => String(v || '').trim() === '') && String(row[0] || '').trim() !== '') {
+            sheetRows++;
+            
+            // 計算該行的花費金額
+            if (spendColumnIndex >= 0 && row[spendColumnIndex]) {
+              const spendText = String(row[spendColumnIndex] || '').trim();
+              const spend = parseFloat(spendText.replace(/[,$]/g, '')) || 0;
+              if (!isNaN(spend) && spend >= 0) {
+                sheetTotalSpend += spend;
+                
+                // 計算該行的花費+%金額
+                const campaignName = row[0] || '';
+                const rowId = `${campaignName}`;
+                const savedPercentage = (percentageStorage[name] && percentageStorage[name][rowId] !== undefined) ? percentageStorage[name][rowId] : 5;
+                
+                // 使用儲存的百分比計算花費+%（預設5%）
+                const spendPlusAmount = Math.ceil(spend * (1 + parseFloat(savedPercentage) / 100));
+                sheetTotalSpendPlus += spendPlusAmount;
+              }
+            }
+          }
+        }
+      }
+      
+      // 累加到總計中
+      if (sheetRows > 0) {
+        totalAccountsCount++;
+        grandTotalSpend += sheetTotalSpend;
+        grandTotalSpendPlus += sheetTotalSpendPlus;
+      }
+      
+      const active = String(name) === String(activeName);
+      parts.push(
+        `<button type="button" data-sheet="${escapeHtml(name)}" aria-selected="${active ? 'true' : 'false'}" class="text-left px-2 py-2 text-xs ${active ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}">
+          <div class="grid grid-cols-4 gap-2 items-center w-full">
+            <div class="font-medium truncate">${escapeHtml(name)}</div>
+            <div class="text-right text-slate-400">${sheetRows}</div>
+            <div class="text-right text-slate-400">${sheetTotalSpend.toLocaleString()}</div>
+            <div class="text-right text-slate-400">${sheetTotalSpendPlus.toLocaleString()}</div>
+          </div>
+        </button>`
+      );
+    }
+    tabsContainer.innerHTML = parts.join('');
+    Array.from(tabsContainer.querySelectorAll('button[data-sheet]')).forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const sheet = btn.getAttribute('data-sheet');
+        Array.from(tabsContainer.children).forEach((el) => {
+          el.setAttribute('aria-selected', el === btn ? 'true' : 'false');
+          el.className = 'text-left px-2 py-2 text-xs ' + (el === btn ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50');
+        });
+        try {
+          setStatus('切換工作表中...');
+          // 使用已快取的 workbook，避免重複載入
+          const wb = workbookCache;
+          if (!wb) {
+            setStatus('資料尚未載入，請重新整理頁面', true);
+            return;
+          }
+          
+          // 載入單一工作表資料
+          const matrix = getSheetMatrix(wb, sheet);
+          
+          renderTable(matrix);
+          
+          setStatus('');
+        } catch (e) {
+          setStatus('讀取資料失敗，請稍後再試或檢查權限/連線。', true);
+        }
+      });
+    });
+    
+    // 更新總計卡片
+    if (totalAccountsEl) {
+      totalAccountsEl.textContent = totalAccountsCount;
+    }
+    if (allTotalSpendEl) {
+      allTotalSpendEl.textContent = grandTotalSpend > 0 ? grandTotalSpend.toLocaleString() : '-';
+    }
+    if (allTotalPercentageEl) {
+      // 計算差距：總花費+% - 總花費
+      const difference = grandTotalSpendPlus - grandTotalSpend;
+      allTotalPercentageEl.textContent = difference > 0 ? difference.toLocaleString() : '-';
+    }
+    if (allTotalSpendPlusEl) {
+      allTotalSpendPlusEl.textContent = grandTotalSpendPlus > 0 ? grandTotalSpendPlus.toLocaleString() : '-';
+    }
+  }
+
+  async function init() {
+    
+    // 更新版本號顯示
+    updateVersionDisplay();
+    
+    // 載入儲存的百分比資料
+    loadPercentageStorage();
+    
+    // 載入儲存的暱稱資料
+    loadNicknameStorage();
+    
+    // 載入儲存的工作表配置
+    loadStoredSheetConfig();
+    
+    // 載入成本指標設定
+    loadCostIndicatorStorage();
+    
+    // 載入密碼設定
+    loadPassword();
+    
+    // 設置密碼輸入框事件
+    setupPasswordInputEvents();
+    
+    try {
+      setStatus('載入試算表與工作表中...');
+      const wb = await loadWorkbook();
+      const names = wb.SheetNames || [];
+      if (!names.length) { 
+        setStatus('沒有可用的工作表', true); 
+        return; 
+      }
+      
+      // 渲染分頁並設定第一個工作表為 active
+      const firstSheet = names[0];
+      await renderTabs(names, firstSheet);
+      
+      // 載入第一個工作表資料
+      const matrix = getSheetMatrix(wb, firstSheet);
+      renderTable(matrix);
+      setStatus('');
+    } catch (err) {
+      setStatus(`無法載入 Google Sheets 資料: ${err.message}`, true);
+    }
+  }
+
+  function setupSearch() {
+    if (searchInput) {
+      searchInput.addEventListener('input', performSearch);
+      searchInput.addEventListener('keyup', performSearch);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      init();
+      setupSearch();
+    });
+  } else {
+    init();
+    setupSearch();
+  }
+})();
+</script>
+</div>
+</div>
+</body></html>
+</body></html>
