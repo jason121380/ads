@@ -174,10 +174,6 @@
 <span id="refresh-icon" class="material-symbols-outlined text-base sm:text-lg">refresh</span>
 <span class="hidden sm:inline">更新</span>
 </button>
-<button onclick="testSortFunction()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="測試排序功能">
-<span class="material-symbols-outlined text-base sm:text-lg">bug_report</span>
-<span class="hidden sm:inline">測試</span>
-</button>
 <button onclick="openSettingsModal()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors">
 <span class="material-symbols-outlined text-base sm:text-lg">settings</span>
 <span class="hidden sm:inline">設定</span>
@@ -778,10 +774,6 @@
         </div>
       </th>`;
       
-      // 調試：記錄可排序的欄位
-      if (isSortable) {
-        console.log(`Added sortable column: ${h} at index ${i}`);
-      }
     }
     html += '</tr></thead><tbody class="divide-y divide-slate-200">';
     
@@ -900,29 +892,14 @@
   }
 
   function sortTable(columnIndex) {
-    console.log('=== sortTable 調用開始 ===');
-    console.log('點擊欄位 index:', columnIndex);
-    console.log('currentData exists:', !!currentData);
-    console.log('currentData length:', currentData ? currentData.length : 0);
-    
-    if (!currentData || currentData.length <= 1) {
-      console.log('No data to sort');
-      return;
-    }
+    if (!currentData || currentData.length <= 1) return;
     
     const header = currentData[0];
     const columnName = header[columnIndex];
-    console.log('欄位名稱:', columnName);
-    console.log('目前可排序欄位:', ['活動名稱', '花費金額', '點擊成本', '私訊成本']);
     
     // 定義可排序的欄位
     const sortableColumns = ['活動名稱', '花費金額', '點擊成本', '私訊成本'];
-    if (!sortableColumns.includes(columnName)) {
-      console.log('Column not sortable:', columnName);
-      return;
-    }
-    
-    console.log('Starting sort for:', columnName);
+    if (!sortableColumns.includes(columnName)) return;
     
     // 切換排序方向
     if (currentSort.column === columnIndex) {
@@ -990,10 +967,8 @@
     // 渲染排序後的資料
     mainTable.innerHTML = buildTableHtml(sortedMatrix);
     
-    // 🔥 關鍵修正：同步更新 currentData
+    // 同步更新 currentData
     currentData = sortedMatrix;
-    console.log('currentData 已更新，新長度:', currentData.length);
-    console.log('=== sortTable 調用完成 ===');
     
     // 恢復資訊文字
     if (tableInfoEl && currentInfoText) {
@@ -1009,31 +984,8 @@
     }, 0);
   }
 
-  // 測試排序功能
-  function testSortFunction() {
-    console.log('=== 測試排序功能 ===');
-    console.log('currentData:', currentData);
-    console.log('sortTable 函數:', typeof sortTable);
-    
-    if (currentData && currentData.length > 1) {
-      const header = currentData[0];
-      console.log('表頭:', header);
-      
-      // 測試點擊活動名稱排序
-      const nameIndex = header.indexOf('活動名稱');
-      if (nameIndex >= 0) {
-        console.log(`活動名稱索引: ${nameIndex}`);
-        console.log('嘗試調用 sortTable...');
-        sortTable(nameIndex);
-      }
-    }
-    
-    console.log('=== 測試完成 ===');
-  }
-  
   // 將函式掛到全域
   window.sortTable = sortTable;
-  window.testSortFunction = testSortFunction;
   
   // 取得當前工作表名稱
   function getCurrentSheetName() {
