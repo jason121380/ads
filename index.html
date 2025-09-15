@@ -900,7 +900,8 @@
   }
 
   function sortTable(columnIndex) {
-    console.log('sortTable called with columnIndex:', columnIndex);
+    console.log('=== sortTable 調用開始 ===');
+    console.log('點擊欄位 index:', columnIndex);
     console.log('currentData exists:', !!currentData);
     console.log('currentData length:', currentData ? currentData.length : 0);
     
@@ -911,7 +912,8 @@
     
     const header = currentData[0];
     const columnName = header[columnIndex];
-    console.log('Column name:', columnName);
+    console.log('欄位名稱:', columnName);
+    console.log('目前可排序欄位:', ['活動名稱', '花費金額', '點擊成本', '私訊成本']);
     
     // 定義可排序的欄位
     const sortableColumns = ['活動名稱', '花費金額', '點擊成本', '私訊成本'];
@@ -985,8 +987,13 @@
     // 保持原有的資訊文字
     const currentInfoText = tableInfoEl ? tableInfoEl.textContent : '';
     
-    // 直接渲染排序後的資料，不修改 currentData
+    // 渲染排序後的資料
     mainTable.innerHTML = buildTableHtml(sortedMatrix);
+    
+    // 🔥 關鍵修正：同步更新 currentData
+    currentData = sortedMatrix;
+    console.log('currentData 已更新，新長度:', currentData.length);
+    console.log('=== sortTable 調用完成 ===');
     
     // 恢復資訊文字
     if (tableInfoEl && currentInfoText) {
