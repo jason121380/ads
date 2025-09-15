@@ -891,26 +891,14 @@
   }
 
   function sortTable(columnIndex) {
-    console.log(`sortTable 被調用，columnIndex: ${columnIndex}`);
-    console.log('currentData 狀態:', currentData ? `有資料，行數: ${currentData.length}` : '無資料');
-    
-    if (!currentData || currentData.length <= 1) {
-      console.log('currentData 無效或長度不足，無法排序');
-      return;
-    }
+    if (!currentData || currentData.length <= 1) return;
     
     const header = currentData[0];
     const columnName = header[columnIndex];
-    console.log(`欄位名稱: ${columnName}`);
     
     // 定義可排序的欄位
     const sortableColumns = ['活動名稱', '花費金額', '點擊成本', '私訊成本'];
-    if (!sortableColumns.includes(columnName)) {
-      console.log(`欄位 ${columnName} 不在可排序列表中`);
-      return;
-    }
-    
-    console.log(`開始排序欄位: ${columnName}`);
+    if (!sortableColumns.includes(columnName)) return;
     
     // 切換排序方向
     if (currentSort.column === columnIndex) {
@@ -925,11 +913,7 @@
     let body = JSON.parse(JSON.stringify(currentData.slice(1)));
     
     // 自我驗證：記錄排序前的資料狀態
-    console.log(`開始排序 ${columnName}，排序前資料行數: ${body.length}`);
-    if (body.length > 0) {
-      console.log(`排序前第一行 ${columnName} 值: ${body[0][dataColumnIndex]}`);
-      console.log(`排序前最後一行 ${columnName} 值: ${body[body.length-1][dataColumnIndex]}`);
-    }
+    // console.log(`開始排序 ${columnName}，排序前資料行數: ${body.length}`);
     
     // 過濾掉空行
     body = body.filter(row => !row.every(v => String(v || '').trim() === ''));
@@ -968,11 +952,7 @@
     });
     
     // 自我驗證：記錄排序後的資料狀態
-    console.log(`排序完成 ${columnName}，排序後資料行數: ${body.length}`);
-    if (body.length > 0) {
-      console.log(`排序後第一行 ${columnName} 值: ${body[0][dataColumnIndex]}`);
-      console.log(`排序後最後一行 ${columnName} 值: ${body[body.length-1][dataColumnIndex]}`);
-    }
+    // console.log(`排序完成 ${columnName}，排序後資料行數: ${body.length}`);
     
     // 記住當前頁面滾動位置
     const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -1000,35 +980,31 @@
     }, 0);
   }
 
-  // 自我驗證測試函數
-  function testSortIndependence() {
-    console.log('=== 開始排序獨立性測試 ===');
+  // 測試排序功能
+  function testSortFunction() {
+    console.log('=== 測試排序功能 ===');
+    console.log('currentData:', currentData);
+    console.log('sortTable 函數:', typeof sortTable);
     
-    // 記錄原始資料狀態
     if (currentData && currentData.length > 1) {
       const header = currentData[0];
-      const body = currentData.slice(1);
+      console.log('表頭:', header);
       
-      console.log('原始資料狀態:');
-      console.log(`總行數: ${body.length}`);
-      
-      // 記錄各欄位的原始值
-      const sortableColumns = ['活動名稱', '花費金額', '點擊成本', '私訊成本'];
-      sortableColumns.forEach(columnName => {
-        const columnIndex = header.indexOf(columnName);
-        if (columnIndex >= 0) {
-          const values = body.map(row => row[columnIndex]).slice(0, 3); // 只顯示前3個值
-          console.log(`${columnName} 原始值: ${values.join(', ')}...`);
-        }
-      });
+      // 測試點擊活動名稱排序
+      const nameIndex = header.indexOf('活動名稱');
+      if (nameIndex >= 0) {
+        console.log(`活動名稱索引: ${nameIndex}`);
+        console.log('嘗試調用 sortTable...');
+        sortTable(nameIndex);
+      }
     }
     
-    console.log('=== 測試完成，請手動測試各欄位排序 ===');
+    console.log('=== 測試完成 ===');
   }
   
   // 將函式掛到全域
   window.sortTable = sortTable;
-  window.testSortIndependence = testSortIndependence;
+  window.testSortFunction = testSortFunction;
   
   // 取得當前工作表名稱
   function getCurrentSheetName() {
