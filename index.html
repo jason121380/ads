@@ -50,9 +50,7 @@
 <div id="costIndicatorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
   <div class="bg-white rounded-lg p-4 sm:p-6 max-w-2xl w-full mx-2 sm:mx-4 shadow-xl max-h-[90vh] sm:max-h-[80vh] overflow-y-auto">
     <div class="flex items-center justify-between mb-4 sm:mb-6">
-      <h3 class="text-lg sm:text-xl font-semibold text-gray-900">
-        成本指標設定 - <span id="currentSheetName" class="text-blue-600"></span>
-      </h3>
+      <h3 class="text-lg sm:text-xl font-semibold text-gray-900">成本指標設定</h3>
       <button onclick="closeCostIndicatorModal()" class="text-gray-400 hover:text-gray-600 p-1">
         <span class="material-symbols-outlined text-xl sm:text-2xl">close</span>
       </button>
@@ -169,7 +167,7 @@
 </div>
 </div>
 <div class="flex items-center gap-2 sm:gap-4">
-<div class="text-xs text-slate-500 font-mono hidden sm:block" id="version-display">v20250115180000</div>
+<div class="text-xs text-slate-500 font-mono hidden sm:block" id="version-display">v20250915170325</div>
 <button id="refresh-btn" onclick="refreshData()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="重新載入資料">
 <span id="refresh-icon" class="material-symbols-outlined text-base sm:text-lg">refresh</span>
 <span class="hidden sm:inline">更新</span>
@@ -340,8 +338,19 @@
   // 儲存暱稱數據的物件，結構：{ sheetName: { originalName: nickname } }
   let nicknameStorage = {};
   
-  // 儲存成本指標設定的物件，結構：{ sheetName: { messageCost: {...}, clickCost: {...} } }
-  let costIndicatorSettings = {};
+  // 儲存成本指標設定的物件
+  let costIndicatorSettings = {
+    messageCost: {
+      enabled: false,
+      green: 0,
+      red: 0
+    },
+    clickCost: {
+      enabled: false,
+      green: 0,
+      red: 0
+    }
+  };
 
   function setStatus(message, isError) {
     if (!statusEl) return;
@@ -660,7 +669,6 @@
 
   let currentSort = { column: -1, ascending: true };
   let currentData = [];
-  let displayHeader = [];
 
   function buildTableHtml(matrix) {
     if (!matrix || matrix.length === 0 || (matrix[0] || []).every((v) => String(v || '').trim() === '')) {
@@ -672,12 +680,12 @@
     let actualMatrix = matrix;
     
     // 調試資訊：顯示資料結構
-    // console.log('表格資料結構:', {
-    //   totalRows: actualMatrix.length,
-    //   firstRowColumns: actualMatrix[0] ? actualMatrix[0].length : 0,
-    //   firstRowData: actualMatrix[0],
-    //   sampleDataRow: actualMatrix[1] || '無資料行'
-    // });
+    console.log('表格資料結構:', {
+      totalRows: actualMatrix.length,
+      firstRowColumns: actualMatrix[0] ? actualMatrix[0].length : 0,
+      firstRowData: actualMatrix[0],
+      sampleDataRow: actualMatrix[1] || '無資料行'
+    });
     
     // 清空資訊文字
     if (tableInfoEl) {
@@ -688,7 +696,7 @@
       return '<tbody><tr><td class="px-2 py-1.5 text-slate-500 text-xs">無資料</td></tr></tbody>';
     }
     
-    // currentData 現在由 renderTable 函數直接設置，這裡不需要重複設置
+    currentData = actualMatrix;
     
     // 決定使用哪個表頭和資料
     let header, body;
@@ -740,7 +748,6 @@
     
     // 動態添加 No. 欄位和操作欄位
     header = ['No.', ...originalHeader, '操作'];
-    displayHeader = header.slice();
     body = originalBody;
     
     // 確保表頭和資料行欄位數量匹配
@@ -751,9 +758,9 @@
     for (let i = 0; i < header.length; i++) {
       const h = header[i];
       
-      // 定義可排序的欄位
-      const sortableColumns = ['活動名稱', '花費金額', '點擊成本', '私訊成本'];
-      const isSortable = sortableColumns.includes(h);
+      // 定義不可排序的欄位
+      const nonSortableColumns = ['No.', '報告起始', '報告結束', '%', '操作'];
+      const isSortable = !nonSortableColumns.includes(h);
       
       const sortIcon = isSortable ? (currentSort.column === i 
         ? (currentSort.ascending ? '▲' : '▼') 
@@ -775,7 +782,6 @@
           ${sortIcon ? `<span class="ml-1 text-slate-400 text-xs">${sortIcon}</span>` : ''}
         </div>
       </th>`;
-      
     }
     html += '</tr></thead><tbody class="divide-y divide-slate-200">';
     
@@ -888,9 +894,9 @@
   }
 
   function parseValue(str) {
-    if (!str || str === '') return ''; // 空值返回空字串
+    if (!str || str === '') return '';
     const cleaned = String(str).replace(/[,$%]/g, '');
-    return isNumeric(str) ? parseFloat(cleaned) : String(str).toLowerCase(); // 數值返回數字，文字返回小寫字串
+    return isNumeric(str) ? parseFloat(cleaned) : str.toLowerCase();
   }
 
   function sortTable(columnIndex) {
@@ -899,9 +905,14 @@
     const header = currentData[0];
     const columnName = header[columnIndex];
     
-    // 定義可排序的欄位
-    const sortableColumns = ['活動名稱', '花費金額', '點擊成本', '私訊成本'];
-    if (!sortableColumns.includes(columnName)) return;
+    // 定義不可排序的欄位
+    const nonSortableColumns = ['No.', '報告起始', '報告結束', '%', '操作'];
+    if (nonSortableColumns.includes(columnName)) return;
+    
+    let body = currentData.slice(1);
+    
+    // 過濾掉空行
+    body = body.filter(row => !row.every(v => String(v || '').trim() === ''));
     
     // 切換排序方向
     if (currentSort.column === columnIndex) {
@@ -911,61 +922,38 @@
       currentSort.ascending = true;
     }
     
-    // 每次都使用原始資料進行排序，確保各欄位排序獨立
-    // 使用深拷貝確保不會影響原始資料
-    let body = JSON.parse(JSON.stringify(currentData.slice(1)));
-    
-    // 自我驗證：記錄排序前的資料狀態
-    // console.log(`開始排序 ${columnName}，排序前資料行數: ${body.length}`);
-    
-    // 過濾掉空行
-    body = body.filter(row => !row.every(v => String(v || '').trim() === ''));
-
-    const dataHeader = currentData[0];
-    const dataColumnIndex = dataHeader.indexOf(columnName);
-    if (dataColumnIndex === -1) {
-      console.log('Column not found in data:', columnName);
-      return;
-    }
-
-    // 排序
+    // 排序（調整索引，因為實際資料比顯示少四欄：No.、%、金額+%、操作）
     body.sort((a, b) => {
+      let dataColumnIndex = columnIndex - 1; // 減去 No. 欄位
+      
+      // 如果是百分比欄位之後的欄位，需要再減去2（% 和 金額+% 欄位）
+      if (columnIndex > 6) {
+        dataColumnIndex = columnIndex - 3; // 減去 No.、%、金額+% 欄位
+      }
+      
       const aVal = parseValue(a[dataColumnIndex]);
       const bVal = parseValue(b[dataColumnIndex]);
       
-      // 根據資料類型進行不同的比較
       let result;
       if (typeof aVal === 'number' && typeof bVal === 'number') {
-        // 數值比較
         result = aVal - bVal;
       } else {
-        // 文字比較（支援中文筆畫排序）
-        result = String(aVal).localeCompare(String(bVal), 'zh-TW', { 
-          numeric: true, 
-          sensitivity: 'base' 
-        });
+        result = String(aVal).localeCompare(String(bVal));
       }
       
       return currentSort.ascending ? result : -result;
     });
     
-    // 自我驗證：記錄排序後的資料狀態
-    // console.log(`排序完成 ${columnName}，排序後資料行數: ${body.length}`);
-    
     // 記住當前頁面滾動位置
     const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
     
     // 重新組合資料並渲染（保持資訊文字）
-    const sortedMatrix = [dataHeader, ...body];
+    const sortedMatrix = [header, ...body];
     
     // 保持原有的資訊文字
     const currentInfoText = tableInfoEl ? tableInfoEl.textContent : '';
     
-    // 渲染排序後的資料
     mainTable.innerHTML = buildTableHtml(sortedMatrix);
-    
-    // 同步更新 currentData
-    currentData = sortedMatrix;
     
     // 恢復資訊文字
     if (tableInfoEl && currentInfoText) {
@@ -981,7 +969,7 @@
     }, 0);
   }
 
-  // 將函式掛到全域
+  // 將 sortTable 函式掛到全域，讓 onclick 可以呼叫
   window.sortTable = sortTable;
   
   // 取得當前工作表名稱
@@ -1563,17 +1551,14 @@
   
   // 取得點擊成本顏色類別
   function getClickCostColorClass(costValue) {
-    const currentSheet = getCurrentSheetName();
-    const sheetSettings = costIndicatorSettings[currentSheet];
-    
-    if (!sheetSettings || !sheetSettings.clickCost || !sheetSettings.clickCost.enabled) return '';
+    if (!costIndicatorSettings.clickCost.enabled) return '';
     
     // 檢查是否為有效數值（非空、非零、非負數）
     if (!costValue || costValue === 0 || costValue === '' || isNaN(costValue)) {
       return '';
     }
     
-    const { green, red } = sheetSettings.clickCost;
+    const { green, red } = costIndicatorSettings.clickCost;
     
     if (costValue <= green) {
       return 'bg-green-100 text-green-800 font-medium';
@@ -1587,17 +1572,14 @@
   
   // 取得私訊成本顏色類別
   function getMessageCostColorClass(costValue) {
-    const currentSheet = getCurrentSheetName();
-    const sheetSettings = costIndicatorSettings[currentSheet];
-    
-    if (!sheetSettings || !sheetSettings.messageCost || !sheetSettings.messageCost.enabled) return '';
+    if (!costIndicatorSettings.messageCost.enabled) return '';
     
     // 檢查是否為有效數值（非空、非零、非負數）
     if (!costValue || costValue === 0 || costValue === '' || isNaN(costValue)) {
       return '';
     }
     
-    const { green, red } = sheetSettings.messageCost;
+    const { green, red } = costIndicatorSettings.messageCost;
     
     if (costValue <= green) {
       return 'bg-green-100 text-green-800 font-medium';
@@ -1612,15 +1594,7 @@
   // 開啟成本指標設定彈窗
   function openCostIndicatorModal(rowNumber) {
     const modal = document.getElementById('costIndicatorModal');
-    const currentSheetNameEl = document.getElementById('currentSheetName');
-    
     if (modal) {
-      // 顯示當前工作表名稱
-      const currentSheet = getCurrentSheetName();
-      if (currentSheetNameEl) {
-        currentSheetNameEl.textContent = currentSheet;
-      }
-      
       modal.classList.remove('hidden');
       loadCostIndicatorSettings();
     }
@@ -1636,44 +1610,28 @@
   
   // 載入成本指標設定到表單
   function loadCostIndicatorSettings() {
-    const currentSheet = getCurrentSheetName();
-    const sheetSettings = costIndicatorSettings[currentSheet] || {
-      messageCost: { enabled: false, green: 0, red: 0 },
-      clickCost: { enabled: false, green: 0, red: 0 }
-    };
-    
     // 載入私訊成本設定
-    document.getElementById('enableMessageCost').checked = sheetSettings.messageCost.enabled;
-    document.getElementById('messageCostGreen').value = sheetSettings.messageCost.green;
-    document.getElementById('messageCostRed').value = sheetSettings.messageCost.red;
+    document.getElementById('enableMessageCost').checked = costIndicatorSettings.messageCost.enabled;
+    document.getElementById('messageCostGreen').value = costIndicatorSettings.messageCost.green;
+    document.getElementById('messageCostRed').value = costIndicatorSettings.messageCost.red;
     
     // 載入點擊成本設定
-    document.getElementById('enableClickCost').checked = sheetSettings.clickCost.enabled;
-    document.getElementById('clickCostGreen').value = sheetSettings.clickCost.green;
-    document.getElementById('clickCostRed').value = sheetSettings.clickCost.red;
+    document.getElementById('enableClickCost').checked = costIndicatorSettings.clickCost.enabled;
+    document.getElementById('clickCostGreen').value = costIndicatorSettings.clickCost.green;
+    document.getElementById('clickCostRed').value = costIndicatorSettings.clickCost.red;
   }
   
   // 儲存成本指標設定
   function saveCostIndicatorSettings() {
-    const currentSheet = getCurrentSheetName();
-    
-    // 確保當前工作表的設定物件存在
-    if (!costIndicatorSettings[currentSheet]) {
-      costIndicatorSettings[currentSheet] = {
-        messageCost: { enabled: false, green: 0, red: 0 },
-        clickCost: { enabled: false, green: 0, red: 0 }
-      };
-    }
-    
     // 儲存私訊成本設定
-    costIndicatorSettings[currentSheet].messageCost.enabled = document.getElementById('enableMessageCost').checked;
-    costIndicatorSettings[currentSheet].messageCost.green = parseFloat(document.getElementById('messageCostGreen').value) || 0;
-    costIndicatorSettings[currentSheet].messageCost.red = parseFloat(document.getElementById('messageCostRed').value) || 0;
+    costIndicatorSettings.messageCost.enabled = document.getElementById('enableMessageCost').checked;
+    costIndicatorSettings.messageCost.green = parseFloat(document.getElementById('messageCostGreen').value) || 0;
+    costIndicatorSettings.messageCost.red = parseFloat(document.getElementById('messageCostRed').value) || 0;
     
     // 儲存點擊成本設定
-    costIndicatorSettings[currentSheet].clickCost.enabled = document.getElementById('enableClickCost').checked;
-    costIndicatorSettings[currentSheet].clickCost.green = parseFloat(document.getElementById('clickCostGreen').value) || 0;
-    costIndicatorSettings[currentSheet].clickCost.red = parseFloat(document.getElementById('clickCostRed').value) || 0;
+    costIndicatorSettings.clickCost.enabled = document.getElementById('enableClickCost').checked;
+    costIndicatorSettings.clickCost.green = parseFloat(document.getElementById('clickCostGreen').value) || 0;
+    costIndicatorSettings.clickCost.red = parseFloat(document.getElementById('clickCostRed').value) || 0;
     
     // 儲存到 localStorage
     try {
@@ -1701,7 +1659,10 @@
       }
     } catch (e) {
       console.warn('無法從 localStorage 載入成本指標設定:', e);
-      costIndicatorSettings = {};
+      costIndicatorSettings = {
+        messageCost: { enabled: false, green: 0, red: 0 },
+        clickCost: { enabled: false, green: 0, red: 0 }
+      };
     }
   }
 
@@ -1977,7 +1938,6 @@
     
     // 儲存原始資料
     originalData = matrix;
-    currentData = matrix; // 確保 currentData 正確設置
     // 重置排序狀態
     currentSort = { column: -1, ascending: true };
     // 重置搜尋框
