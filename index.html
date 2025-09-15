@@ -46,83 +46,6 @@
 </div>
 
 
-<!-- 成本指標設定彈窗 -->
-<div id="costIndicatorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-  <div class="bg-white rounded-lg p-4 sm:p-6 max-w-2xl w-full mx-2 sm:mx-4 shadow-xl max-h-[90vh] sm:max-h-[80vh] overflow-y-auto">
-    <div class="flex items-center justify-between mb-4 sm:mb-6">
-      <h3 class="text-lg sm:text-xl font-semibold text-gray-900">成本指標設定</h3>
-      <button onclick="closeCostIndicatorModal()" class="text-gray-400 hover:text-gray-600 p-1">
-        <span class="material-symbols-outlined text-xl sm:text-2xl">close</span>
-      </button>
-    </div>
-    
-    <div class="space-y-6">
-      <!-- 平均私訊成本設定 -->
-      <div class="border border-gray-200 rounded-lg p-4">
-        <h4 class="text-base font-medium text-gray-800 mb-4">平均私訊成本指標</h4>
-        <div class="space-y-3">
-          <div class="flex items-center gap-3">
-            <input type="checkbox" id="enableMessageCost" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-            <label for="enableMessageCost" class="text-sm text-gray-700">啟用私訊成本顏色指標</label>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div class="flex items-center gap-2">
-              <div class="w-4 h-4 bg-green-500 rounded"></div>
-              <label class="text-sm text-gray-600">綠色 (低於)</label>
-              <input type="number" id="messageCostGreen" placeholder="0" class="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" step="0.1">
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="w-4 h-4 bg-red-500 rounded"></div>
-              <label class="text-sm text-gray-600">紅色 (高於)</label>
-              <input type="number" id="messageCostRed" placeholder="0" class="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" step="0.1">
-            </div>
-          </div>
-          <div class="flex items-center gap-2 mt-2">
-            <div class="w-4 h-4 bg-orange-500 rounded"></div>
-            <label class="text-sm text-gray-500">橘色 (介於綠色和紅色之間)</label>
-          </div>
-        </div>
-      </div>
-      
-      <!-- 平均點擊成本設定 -->
-      <div class="border border-gray-200 rounded-lg p-4">
-        <h4 class="text-base font-medium text-gray-800 mb-4">平均點擊成本指標</h4>
-        <div class="space-y-3">
-          <div class="flex items-center gap-3">
-            <input type="checkbox" id="enableClickCost" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-            <label for="enableClickCost" class="text-sm text-gray-700">啟用點擊成本顏色指標</label>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div class="flex items-center gap-2">
-              <div class="w-4 h-4 bg-green-500 rounded"></div>
-              <label class="text-sm text-gray-600">綠色 (低於)</label>
-              <input type="number" id="clickCostGreen" placeholder="0" class="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" step="0.1">
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="w-4 h-4 bg-red-500 rounded"></div>
-              <label class="text-sm text-gray-600">紅色 (高於)</label>
-              <input type="number" id="clickCostRed" placeholder="0" class="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" step="0.1">
-            </div>
-          </div>
-          <div class="flex items-center gap-2 mt-2">
-            <div class="w-4 h-4 bg-orange-500 rounded"></div>
-            <label class="text-sm text-gray-500">橘色 (介於綠色和紅色之間)</label>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200 mt-6">
-      <button onclick="closeCostIndicatorModal()" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors order-2 sm:order-1">
-        取消
-      </button>
-      <button onclick="saveCostIndicatorSettings()" class="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors order-1 sm:order-2">
-        儲存設定
-      </button>
-    </div>
-  </div>
-</div>
-
 <!-- 設定彈窗 -->
 <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
   <div class="bg-white rounded-lg p-4 sm:p-6 max-w-4xl w-full mx-2 sm:mx-4 shadow-xl max-h-[90vh] sm:max-h-[80vh] overflow-y-auto">
@@ -337,20 +260,6 @@
   
   // 儲存暱稱數據的物件，結構：{ sheetName: { originalName: nickname } }
   let nicknameStorage = {};
-  
-  // 儲存成本指標設定的物件
-  let costIndicatorSettings = {
-    messageCost: {
-      enabled: false,
-      green: 0,
-      red: 0
-    },
-    clickCost: {
-      enabled: false,
-      green: 0,
-      red: 0
-    }
-  };
 
   function setStatus(message, isError) {
     if (!statusEl) return;
@@ -746,8 +655,8 @@
       originalBody = actualMatrix;
     }
     
-    // 動態添加 No. 欄位和操作欄位
-    header = ['No.', ...originalHeader, '操作'];
+    // 動態添加 No. 欄位
+    header = ['No.', ...originalHeader];
     body = originalBody;
     
     // 確保表頭和資料行欄位數量匹配
@@ -757,29 +666,20 @@
     let html = '<thead class="bg-slate-50 sticky top-0 z-20"><tr>';
     for (let i = 0; i < header.length; i++) {
       const h = header[i];
-      
-      // 定義不可排序的欄位
-      const nonSortableColumns = ['No.', '報告起始', '報告結束', '%', '操作'];
-      const isSortable = !nonSortableColumns.includes(h);
-      
-      const sortIcon = isSortable ? (currentSort.column === i 
+      const sortIcon = currentSort.column === i 
         ? (currentSort.ascending ? '▲' : '▼') 
-        : '⇅') : '';
+        : '⇅';
       
       // 為「金額+%」欄位添加突出樣式
       const isCalculatedAmount = h === '金額+%';
       const headerClass = isCalculatedAmount 
         ? "px-2 py-1.5 text-slate-600 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:bg-blue-100 select-none bg-blue-50 sticky top-0 z-20 border-b border-slate-200 border-l-2 border-blue-200"
-        : isSortable 
-          ? "px-2 py-1.5 text-slate-600 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:bg-slate-100 select-none bg-slate-50 sticky top-0 z-20 border-b border-slate-200"
-          : "px-2 py-1.5 text-slate-600 text-xs font-semibold uppercase tracking-wider select-none bg-slate-50 sticky top-0 z-20 border-b border-slate-200";
+        : "px-2 py-1.5 text-slate-600 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:bg-slate-100 select-none bg-slate-50 sticky top-0 z-20 border-b border-slate-200";
       
-      const onclick = isSortable ? `onclick="sortTable(${i})"` : '';
-      
-      html += `<th class="${headerClass}" ${onclick}>
+      html += `<th class="${headerClass}" onclick="sortTable(${i})">
         <div class="flex items-center justify-between">
           <span>${escapeHtml(h)}</span>
-          ${sortIcon ? `<span class="ml-1 text-slate-400 text-xs">${sortIcon}</span>` : ''}
+          <span class="ml-1 text-slate-400 text-xs">${sortIcon}</span>
         </div>
       </th>`;
     }
@@ -855,30 +755,11 @@
               </button>
             </div>
           </td>`;
-        } else if (header === '點擊成本') {
-          // 點擊成本欄位：套用顏色指標
-          const costValue = parseFloat(cell) || 0;
-          const colorClass = getClickCostColorClass(costValue);
-          html += `<td class="px-2 py-1.5 text-slate-700 text-xs ${colorClass}">${escapeHtml(cell)}</td>`;
-        } else if (header === '私訊成本') {
-          // 私訊成本欄位：套用顏色指標
-          const costValue = parseFloat(cell) || 0;
-          const colorClass = getMessageCostColorClass(costValue);
-          html += `<td class="px-2 py-1.5 text-slate-700 text-xs ${colorClass}">${escapeHtml(cell)}</td>`;
         } else {
           // 一般欄位
           html += `<td class="px-2 py-1.5 text-slate-700 text-xs">${escapeHtml(cell)}</td>`;
         }
       }
-      
-      // 新增操作欄位（...按鈕）
-      html += `<td class="px-2 py-1.5 text-slate-700 text-xs text-center">
-        <button onclick="openCostIndicatorModal(${rowNumber})" 
-                class="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded transition-colors" 
-                title="成本指標設定">
-          <span class="material-symbols-outlined text-sm">more_horiz</span>
-        </button>
-      </td>`;
       
       html += '</tr>';
       rowNumber++;
@@ -902,13 +783,10 @@
   function sortTable(columnIndex) {
     if (!currentData || currentData.length <= 1) return;
     
+    // No. 欄位（索引 0）不參與排序
+    if (columnIndex === 0) return;
+    
     const header = currentData[0];
-    const columnName = header[columnIndex];
-    
-    // 定義不可排序的欄位
-    const nonSortableColumns = ['No.', '報告起始', '報告結束', '%', '操作'];
-    if (nonSortableColumns.includes(columnName)) return;
-    
     let body = currentData.slice(1);
     
     // 過濾掉空行
@@ -922,12 +800,15 @@
       currentSort.ascending = true;
     }
     
-    // 排序（調整索引，因為實際資料比顯示少四欄：No.、%、金額+%、操作）
+    // 排序（調整索引，因為實際資料比顯示少三欄：No.、%、金額+%）
     body.sort((a, b) => {
       let dataColumnIndex = columnIndex - 1; // 減去 No. 欄位
       
+      // 如果是百分比欄位（索引4）或計算金額欄位（索引5），不進行排序
+      if (columnIndex === 4 || columnIndex === 5) return 0;
+      
       // 如果是百分比欄位之後的欄位，需要再減去2（% 和 金額+% 欄位）
-      if (columnIndex > 6) {
+      if (columnIndex > 5) {
         dataColumnIndex = columnIndex - 3; // 減去 No.、%、金額+% 欄位
       }
       
@@ -1547,125 +1428,6 @@
     }
   }
 
-  // 成本指標相關函數
-  
-  // 取得點擊成本顏色類別
-  function getClickCostColorClass(costValue) {
-    if (!costIndicatorSettings.clickCost.enabled) return '';
-    
-    // 檢查是否為有效數值（非空、非零、非負數）
-    if (!costValue || costValue === 0 || costValue === '' || isNaN(costValue)) {
-      return '';
-    }
-    
-    const { green, red } = costIndicatorSettings.clickCost;
-    
-    if (costValue <= green) {
-      return 'bg-green-100 text-green-800 font-medium';
-    } else if (costValue >= red) {
-      return 'bg-red-100 text-red-800 font-medium';
-    } else {
-      // 介於綠色和紅色之間
-      return 'bg-orange-100 text-orange-800 font-medium';
-    }
-  }
-  
-  // 取得私訊成本顏色類別
-  function getMessageCostColorClass(costValue) {
-    if (!costIndicatorSettings.messageCost.enabled) return '';
-    
-    // 檢查是否為有效數值（非空、非零、非負數）
-    if (!costValue || costValue === 0 || costValue === '' || isNaN(costValue)) {
-      return '';
-    }
-    
-    const { green, red } = costIndicatorSettings.messageCost;
-    
-    if (costValue <= green) {
-      return 'bg-green-100 text-green-800 font-medium';
-    } else if (costValue >= red) {
-      return 'bg-red-100 text-red-800 font-medium';
-    } else {
-      // 介於綠色和紅色之間
-      return 'bg-orange-100 text-orange-800 font-medium';
-    }
-  }
-  
-  // 開啟成本指標設定彈窗
-  function openCostIndicatorModal(rowNumber) {
-    const modal = document.getElementById('costIndicatorModal');
-    if (modal) {
-      modal.classList.remove('hidden');
-      loadCostIndicatorSettings();
-    }
-  }
-  
-  // 關閉成本指標設定彈窗
-  function closeCostIndicatorModal() {
-    const modal = document.getElementById('costIndicatorModal');
-    if (modal) {
-      modal.classList.add('hidden');
-    }
-  }
-  
-  // 載入成本指標設定到表單
-  function loadCostIndicatorSettings() {
-    // 載入私訊成本設定
-    document.getElementById('enableMessageCost').checked = costIndicatorSettings.messageCost.enabled;
-    document.getElementById('messageCostGreen').value = costIndicatorSettings.messageCost.green;
-    document.getElementById('messageCostRed').value = costIndicatorSettings.messageCost.red;
-    
-    // 載入點擊成本設定
-    document.getElementById('enableClickCost').checked = costIndicatorSettings.clickCost.enabled;
-    document.getElementById('clickCostGreen').value = costIndicatorSettings.clickCost.green;
-    document.getElementById('clickCostRed').value = costIndicatorSettings.clickCost.red;
-  }
-  
-  // 儲存成本指標設定
-  function saveCostIndicatorSettings() {
-    // 儲存私訊成本設定
-    costIndicatorSettings.messageCost.enabled = document.getElementById('enableMessageCost').checked;
-    costIndicatorSettings.messageCost.green = parseFloat(document.getElementById('messageCostGreen').value) || 0;
-    costIndicatorSettings.messageCost.red = parseFloat(document.getElementById('messageCostRed').value) || 0;
-    
-    // 儲存點擊成本設定
-    costIndicatorSettings.clickCost.enabled = document.getElementById('enableClickCost').checked;
-    costIndicatorSettings.clickCost.green = parseFloat(document.getElementById('clickCostGreen').value) || 0;
-    costIndicatorSettings.clickCost.red = parseFloat(document.getElementById('clickCostRed').value) || 0;
-    
-    // 儲存到 localStorage
-    try {
-      localStorage.setItem('adManagerCostIndicatorSettings', JSON.stringify(costIndicatorSettings));
-    } catch (e) {
-      console.warn('無法儲存成本指標設定:', e);
-    }
-    
-    // 關閉彈窗
-    closeCostIndicatorModal();
-    
-    // 重新渲染表格以套用新的顏色設定
-    if (currentData && currentData.length > 0) {
-      mainTable.innerHTML = buildTableHtml(currentData);
-      setTimeout(updateDashboard, 0);
-    }
-  }
-  
-  // 從 localStorage 載入成本指標設定
-  function loadCostIndicatorStorage() {
-    try {
-      const stored = localStorage.getItem('adManagerCostIndicatorSettings');
-      if (stored) {
-        costIndicatorSettings = JSON.parse(stored);
-      }
-    } catch (e) {
-      console.warn('無法從 localStorage 載入成本指標設定:', e);
-      costIndicatorSettings = {
-        messageCost: { enabled: false, green: 0, red: 0 },
-        clickCost: { enabled: false, green: 0, red: 0 }
-      };
-    }
-  }
-
   // 將函式掛到全域
   window.saveAndUpdatePercentage = saveAndUpdatePercentage;
   window.getCurrentSheetName = getCurrentSheetName;
@@ -1677,11 +1439,6 @@
   window.removeSheetConfig = removeSheetConfig;
   window.saveSheetConfig = saveSheetConfig;
   window.refreshData = refreshData;
-  window.openCostIndicatorModal = openCostIndicatorModal;
-  window.closeCostIndicatorModal = closeCostIndicatorModal;
-  window.saveCostIndicatorSettings = saveCostIndicatorSettings;
-  window.getClickCostColorClass = getClickCostColorClass;
-  window.getMessageCostColorClass = getMessageCostColorClass;
 
   // 密碼相關變數
   let systemPassword = null;
@@ -2140,9 +1897,6 @@
     
     // 載入儲存的工作表配置
     loadStoredSheetConfig();
-    
-    // 載入成本指標設定
-    loadCostIndicatorStorage();
     
     // 載入密碼設定
     loadPassword();
