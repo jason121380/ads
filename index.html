@@ -174,6 +174,10 @@
 <span id="refresh-icon" class="material-symbols-outlined text-base sm:text-lg">refresh</span>
 <span class="hidden sm:inline">更新</span>
 </button>
+<button onclick="testSortFunction()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="測試排序功能">
+<span class="material-symbols-outlined text-base sm:text-lg">bug_report</span>
+<span class="hidden sm:inline">測試</span>
+</button>
 <button onclick="openSettingsModal()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors">
 <span class="material-symbols-outlined text-base sm:text-lg">settings</span>
 <span class="hidden sm:inline">設定</span>
@@ -773,6 +777,11 @@
           ${sortIcon ? `<span class="ml-1 text-slate-400 text-xs">${sortIcon}</span>` : ''}
         </div>
       </th>`;
+      
+      // 調試：記錄可排序的欄位
+      if (isSortable) {
+        console.log(`Added sortable column: ${h} at index ${i}`);
+      }
     }
     html += '</tr></thead><tbody class="divide-y divide-slate-200">';
     
@@ -891,14 +900,27 @@
   }
 
   function sortTable(columnIndex) {
-    if (!currentData || currentData.length <= 1) return;
+    console.log('sortTable called with columnIndex:', columnIndex);
+    console.log('currentData exists:', !!currentData);
+    console.log('currentData length:', currentData ? currentData.length : 0);
+    
+    if (!currentData || currentData.length <= 1) {
+      console.log('No data to sort');
+      return;
+    }
     
     const header = currentData[0];
     const columnName = header[columnIndex];
+    console.log('Column name:', columnName);
     
     // 定義可排序的欄位
     const sortableColumns = ['活動名稱', '花費金額', '點擊成本', '私訊成本'];
-    if (!sortableColumns.includes(columnName)) return;
+    if (!sortableColumns.includes(columnName)) {
+      console.log('Column not sortable:', columnName);
+      return;
+    }
+    
+    console.log('Starting sort for:', columnName);
     
     // 切換排序方向
     if (currentSort.column === columnIndex) {
