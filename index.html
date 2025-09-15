@@ -660,6 +660,7 @@
 
   let currentSort = { column: -1, ascending: true };
   let currentData = [];
+  let displayHeader = [];
 
   function buildTableHtml(matrix) {
     if (!matrix || matrix.length === 0 || (matrix[0] || []).every((v) => String(v || '').trim() === '')) {
@@ -739,6 +740,7 @@
     
     // 動態添加 No. 欄位和操作欄位
     header = ['No.', ...originalHeader, '操作'];
+    displayHeader = header.slice();
     body = originalBody;
     
     // 確保表頭和資料行欄位數量匹配
@@ -918,21 +920,16 @@
     
     // 過濾掉空行
     body = body.filter(row => !row.every(v => String(v || '').trim() === ''));
-    
-    // 排序（調整索引，因為實際資料比顯示少四欄：No.、%、金額+%、操作）
+
+    const dataHeader = currentData[0];
+    const dataColumnIndex = dataHeader.indexOf(columnName);
+    if (dataColumnIndex === -1) {
+      console.log('Column not found in data:', columnName);
+      return;
+    }
+
+    // 排序
     body.sort((a, b) => {
-      let dataColumnIndex = columnIndex - 1; // 減去 No. 欄位
-      
-      // 如果是百分比欄位之後的欄位，需要再減去2（% 和 金額+% 欄位）
-      if (columnIndex > 6) {
-        dataColumnIndex = columnIndex - 3; // 減去 No.、%、金額+% 欄位
-      }
-      
-      // 確保索引不超出範圍
-      if (dataColumnIndex < 0 || dataColumnIndex >= a.length) {
-        return 0;
-      }
-      
       const aVal = parseValue(a[dataColumnIndex]);
       const bVal = parseValue(b[dataColumnIndex]);
       
@@ -959,7 +956,7 @@
     const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
     
     // 重新組合資料並渲染（保持資訊文字）
-    const sortedMatrix = [header, ...body];
+    const sortedMatrix = [dataHeader, ...body];
     
     // 保持原有的資訊文字
     const currentInfoText = tableInfoEl ? tableInfoEl.textContent : '';
