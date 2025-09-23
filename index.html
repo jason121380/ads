@@ -13,8 +13,8 @@
 <body class="bg-white text-slate-900">
 
 <!-- 載入彈窗 -->
-<div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-  <div class="bg-white rounded-lg p-6 sm:p-8 max-w-md w-full mx-4 shadow-xl">
+<div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] hidden">
+  <div class="bg-white rounded-lg p-6 sm:p-8 max-w-md w-full mx-4 shadow-xl mt-16 sm:mt-0">
     <div class="text-center">
       <h3 class="text-lg font-semibold text-gray-900 mb-4">載入中...</h3>
       <p id="loadingText" class="text-gray-600 mb-4 text-sm sm:text-base">正在載入工作表資料</p>
@@ -27,13 +27,13 @@
 </div>
 
 <!-- 密碼驗證彈窗 -->
-<div id="passwordModal" class="fixed inset-0 bg-white flex items-center justify-center z-50 hidden">
-  <div class="bg-white rounded-lg p-6 sm:p-8 max-w-md w-full mx-4 shadow-xl border">
+<div id="passwordModal" class="fixed inset-0 bg-white flex items-center justify-center z-[60] hidden">
+  <div class="bg-white rounded-lg p-6 sm:p-8 max-w-md w-full mx-4 shadow-xl border mt-16 sm:mt-0">
     <div class="text-center">
       <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-4">密碼驗證</h3>
       <p class="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">請輸入四位數密碼以進入系統</p>
       <div class="mb-4 sm:mb-6">
-        <input type="password" id="passwordInput" maxlength="4" class="w-full px-4 py-3 text-center text-xl sm:text-2xl font-mono border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="••••" autocomplete="off">
+        <input type="password" id="passwordInput" maxlength="4" class="w-full px-4 py-3 text-center text-xl sm:text-2xl font-mono border border-gray-300 rounded-lg focus:outline-none" placeholder="••••" autocomplete="off">
       </div>
       <div class="flex gap-3">
         <button onclick="verifyPassword()" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
@@ -46,35 +46,172 @@
 </div>
 
 
-<!-- 設定彈窗 -->
-<div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-  <div class="bg-white rounded-lg p-4 sm:p-6 max-w-4xl w-full mx-2 sm:mx-4 shadow-xl max-h-[90vh] sm:max-h-[80vh] overflow-y-auto">
-    <div class="flex items-center justify-between mb-4 sm:mb-6">
-      <h3 class="text-lg sm:text-xl font-semibold text-gray-900">分頁設定</h3>
-      <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600 p-1">
-        <span class="material-symbols-outlined text-xl sm:text-2xl">close</span>
+<!-- 每列顏色設定彈窗 -->
+<div id="rowColorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] hidden">
+  <div class="bg-white rounded-lg p-4 sm:p-6 max-w-md w-full mx-2 sm:mx-4 shadow-xl mt-16 sm:mt-0">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-gray-900">設定顏色閾值</h3>
+      <button onclick="closeRowColorModal()" class="text-gray-400 hover:text-gray-600 p-1">
+        <span class="material-symbols-outlined text-xl">close</span>
       </button>
     </div>
     
-    <div class="mb-4 sm:mb-6">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-        <h4 class="text-base sm:text-lg font-medium text-gray-800">工作表配置</h4>
-        <button onclick="addNewSheet()" class="flex items-center gap-2 px-3 py-2 text-sm bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors self-start sm:self-auto">
-          <span class="material-symbols-outlined text-sm">add</span>
-          新增工作表
-        </button>
-      </div>
+    <div class="mb-4">
+      <p class="text-sm text-gray-600 mb-3" id="rowColorModalTitle">為此列設定專屬的顏色閾值</p>
       
-      <div id="sheetConfigList" class="space-y-3">
-        <!-- 工作表配置項目將在這裡動態生成 -->
+      <div class="bg-gray-50 rounded-lg p-3">
+        <div class="flex items-center justify-between mb-3">
+          <h5 class="text-sm font-medium text-gray-700" id="rowColorTypeTitle">私訊成本標示</h5>
+          <label class="flex items-center gap-2">
+            <input type="checkbox" id="rowColorEnabled" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+            <span class="text-sm text-gray-600">啟用</span>
+          </label>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">綠色 (小於)</label>
+            <input type="number" id="rowColorGreen" class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" step="0.1">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">紅色 (大於)</label>
+            <input type="number" id="rowColorRed" class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" step="0.1">
+          </div>
+        </div>
+        <div class="mt-2 text-xs text-gray-500">
+          <span class="inline-block w-3 h-3 bg-green-100 border border-green-300 rounded mr-1"></span>綠色：小於設定值
+          <span class="inline-block w-3 h-3 bg-orange-100 border border-orange-300 rounded mx-2"></span>橘色：介於中間
+          <span class="inline-block w-3 h-3 bg-red-100 border border-red-300 rounded mr-1"></span>紅色：大於設定值
+        </div>
       </div>
     </div>
     
     <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200">
-      <button onclick="closeSettingsModal()" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors order-2 sm:order-1">
+      <button onclick="closeRowColorModal()" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors order-2 sm:order-1">
         取消
       </button>
-      <button onclick="saveSheetConfig()" class="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors order-1 sm:order-2">
+      <button onclick="saveRowColorSettings()" class="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors order-1 sm:order-2">
+        儲存設定
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 設定彈窗 -->
+<div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] hidden">
+  <div class="bg-white rounded-lg p-3 sm:p-6 max-w-6xl w-full mx-2 sm:mx-4 shadow-xl max-h-[90vh] sm:max-h-[80vh] overflow-hidden flex flex-col mt-16 sm:mt-0">
+    <div class="flex items-center justify-between mb-3 sm:mb-6">
+      <h3 class="text-base sm:text-xl font-semibold text-gray-900">系統設定</h3>
+      <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600 p-1">
+        <span class="material-symbols-outlined text-lg sm:text-2xl">close</span>
+      </button>
+    </div>
+    
+    <!-- 手機版：垂直佈局 -->
+    <div class="flex-1 flex flex-col sm:flex-row gap-3 sm:gap-4 min-h-0">
+      <!-- 手機版標籤頁：水平排列 -->
+      <div class="sm:w-48 sm:flex-shrink-0">
+        <nav class="flex sm:flex-col gap-1 sm:space-y-1 sm:gap-0">
+          <button onclick="switchSettingsTab('sheets')" id="sheets-tab" class="flex-1 sm:w-full text-left px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-md bg-blue-100 text-blue-700 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600">
+            <div class="flex items-center justify-center sm:justify-start gap-1 sm:gap-2">
+              <span class="material-symbols-outlined text-sm">table_chart</span>
+              <span class="hidden sm:inline">工作表配置</span>
+              <span class="sm:hidden">工作表</span>
+            </div>
+          </button>
+          <button onclick="switchSettingsTab('colors')" id="colors-tab" class="flex-1 sm:w-full text-left px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-50">
+            <div class="flex items-center justify-center sm:justify-start gap-1 sm:gap-2">
+              <span class="material-symbols-outlined text-sm">palette</span>
+              <span class="hidden sm:inline">顏色標示</span>
+              <span class="sm:hidden">顏色</span>
+            </div>
+          </button>
+        </nav>
+      </div>
+      
+      <!-- 右側內容區域 -->
+      <div class="flex-1 flex flex-col min-h-0">
+        <!-- 工作表配置內容 -->
+        <div id="sheets-content" class="flex-1 flex flex-col min-h-0">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3 sm:mb-4 flex-shrink-0">
+            <h4 class="text-sm sm:text-lg font-medium text-gray-800">工作表配置</h4>
+            <button onclick="addNewSheet()" class="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">
+              <span class="material-symbols-outlined text-sm">add</span>
+              <span class="hidden sm:inline">新增工作表</span>
+              <span class="sm:hidden">新增</span>
+            </button>
+          </div>
+          
+          <div id="sheetConfigList" class="flex-1 overflow-y-auto space-y-2 sm:space-y-3 pr-1 sm:pr-2" style="max-height: calc(100vh - 280px);">
+            <!-- 工作表配置項目將在這裡動態生成 -->
+          </div>
+        </div>
+        
+        <!-- 顏色標示設定內容 -->
+        <div id="colors-content" class="flex-1 flex flex-col min-h-0 hidden">
+          <h4 class="text-sm sm:text-lg font-medium text-gray-800 mb-3 sm:mb-4 flex-shrink-0">顏色標示設定</h4>
+          
+          <div class="flex-1 overflow-y-auto pr-1 sm:pr-2" style="max-height: calc(100vh - 280px);">
+            <!-- 私訊成本設定 -->
+            <div class="bg-gray-50 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3">
+                <h5 class="text-xs sm:text-sm font-medium text-gray-700">私訊成本標示</h5>
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" id="enableMessageCostColor" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                  <span class="text-xs sm:text-sm text-gray-600">啟用</span>
+                </label>
+              </div>
+              <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">綠色 (小於)</label>
+                  <input type="number" id="messageCostGreen" class="w-full px-2 py-1.5 sm:py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="0" step="0.1">
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">紅色 (大於)</label>
+                  <input type="number" id="messageCostRed" class="w-full px-2 py-1.5 sm:py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="100" step="0.1">
+                </div>
+              </div>
+              <div class="mt-2 text-xs text-gray-500">
+                <span class="inline-block w-3 h-3 bg-green-100 border border-green-300 rounded mr-1"></span>綠色：小於設定值
+                <span class="inline-block w-3 h-3 bg-orange-100 border border-orange-300 rounded mx-1 sm:mx-2"></span>橘色：介於中間
+                <span class="inline-block w-3 h-3 bg-red-100 border border-red-300 rounded mr-1"></span>紅色：大於設定值
+              </div>
+            </div>
+            
+            <!-- 點擊成本設定 -->
+            <div class="bg-gray-50 rounded-lg p-3 sm:p-4">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3">
+                <h5 class="text-xs sm:text-sm font-medium text-gray-700">點擊成本標示</h5>
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" id="enableClickCostColor" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                  <span class="text-xs sm:text-sm text-gray-600">啟用</span>
+                </label>
+              </div>
+              <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">綠色 (小於)</label>
+                  <input type="number" id="clickCostGreen" class="w-full px-2 py-1.5 sm:py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="0" step="0.1">
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">紅色 (大於)</label>
+                  <input type="number" id="clickCostRed" class="w-full px-2 py-1.5 sm:py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="10" step="0.1">
+                </div>
+              </div>
+              <div class="mt-2 text-xs text-gray-500">
+                <span class="inline-block w-3 h-3 bg-green-100 border border-green-300 rounded mr-1"></span>綠色：小於設定值
+                <span class="inline-block w-3 h-3 bg-orange-100 border border-orange-300 rounded mx-1 sm:mx-2"></span>橘色：介於中間
+                <span class="inline-block w-3 h-3 bg-red-100 border border-red-300 rounded mr-1"></span>紅色：大於設定值
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-200 mt-3 sm:mt-4">
+      <button onclick="closeSettingsModal()" class="px-3 sm:px-4 py-2 text-xs sm:text-sm text-gray-600 hover:text-gray-800 transition-colors order-2 sm:order-1">
+        取消
+      </button>
+      <button onclick="saveSheetConfig()" class="px-3 sm:px-4 py-2 text-xs sm:text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors order-1 sm:order-2">
         儲存設定
       </button>
     </div>
@@ -93,11 +230,9 @@
 <div class="text-xs text-slate-500 font-mono hidden sm:block" id="version-display">v20250915170325</div>
 <button id="refresh-btn" onclick="refreshData()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="重新載入資料">
 <span id="refresh-icon" class="material-symbols-outlined text-base sm:text-lg">refresh</span>
-<span class="hidden sm:inline">更新</span>
 </button>
-<button onclick="openSettingsModal()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors">
+<button onclick="openSettingsModal()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="設定">
 <span class="material-symbols-outlined text-base sm:text-lg">settings</span>
-<span class="hidden sm:inline">設定</span>
 </button>
 </div>
 </header>
@@ -260,6 +395,23 @@
   
   // 儲存暱稱數據的物件，結構：{ sheetName: { originalName: nickname } }
   let nicknameStorage = {};
+  
+  // 儲存顏色閾值設定（全域預設值）
+  let colorThresholds = {
+    messageCost: {
+      enabled: false,
+      green: 0,
+      red: 100
+    },
+    clickCost: {
+      enabled: false,
+      green: 0,
+      red: 10
+    }
+  };
+  
+  // 儲存每列的顏色閾值設定，結構：{ sheetName: { rowId: { messageCost: {...}, clickCost: {...} } } }
+  let rowColorThresholds = {};
 
   function setStatus(message, isError) {
     if (!statusEl) return;
@@ -755,6 +907,40 @@
               </button>
             </div>
           </td>`;
+        } else if (header === '私訊成本') {
+          // 私訊成本欄位：套用顏色標示並新增設定按鈕
+          const campaignName = row[0] || '';
+          const rowId = `${campaignName}`;
+          const colorClass = getColorClass(cell, 'messageCost', rowId);
+          const baseClass = 'px-2 py-1.5 text-slate-700 text-xs';
+          const finalClass = colorClass ? `${baseClass} ${colorClass} border rounded` : baseClass;
+          
+          html += `<td class="${finalClass}">
+            <div class="flex items-center justify-between group">
+              <span>${escapeHtml(cell)}</span>
+              <button onclick="openRowColorSettings('${escapeHtml(rowId)}', 'messageCost')" 
+                      class="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-slate-400 hover:text-slate-600" title="設定顏色閾值">
+                <span class="material-symbols-outlined text-sm">palette</span>
+              </button>
+            </div>
+          </td>`;
+        } else if (header === '點擊成本') {
+          // 點擊成本欄位：套用顏色標示並新增設定按鈕
+          const campaignName = row[0] || '';
+          const rowId = `${campaignName}`;
+          const colorClass = getColorClass(cell, 'clickCost', rowId);
+          const baseClass = 'px-2 py-1.5 text-slate-700 text-xs';
+          const finalClass = colorClass ? `${baseClass} ${colorClass} border rounded` : baseClass;
+          
+          html += `<td class="${finalClass}">
+            <div class="flex items-center justify-between group">
+              <span>${escapeHtml(cell)}</span>
+              <button onclick="openRowColorSettings('${escapeHtml(rowId)}', 'clickCost')" 
+                      class="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-slate-400 hover:text-slate-600" title="設定顏色閾值">
+                <span class="material-symbols-outlined text-sm">palette</span>
+              </button>
+            </div>
+          </td>`;
         } else {
           // 一般欄位
           html += `<td class="px-2 py-1.5 text-slate-700 text-xs">${escapeHtml(cell)}</td>`;
@@ -938,6 +1124,83 @@
     } catch (e) {
       console.warn('無法從 localStorage 載入暱稱資料:', e);
       nicknameStorage = {};
+    }
+  }
+  
+  // 從 localStorage 載入顏色閾值設定
+  function loadColorThresholds() {
+    try {
+      const stored = localStorage.getItem('adManagerColorThresholds');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // 合併預設值和儲存的值
+        colorThresholds = {
+          messageCost: { ...colorThresholds.messageCost, ...parsed.messageCost },
+          clickCost: { ...colorThresholds.clickCost, ...parsed.clickCost }
+        };
+      }
+    } catch (e) {
+      console.warn('無法從 localStorage 載入顏色閾值設定:', e);
+    }
+  }
+  
+  // 儲存顏色閾值設定到 localStorage
+  function saveColorThresholds() {
+    try {
+      localStorage.setItem('adManagerColorThresholds', JSON.stringify(colorThresholds));
+    } catch (e) {
+      console.warn('無法儲存顏色閾值設定:', e);
+    }
+  }
+  
+  // 儲存每列顏色閾值設定到 localStorage
+  function saveRowColorThresholds() {
+    try {
+      localStorage.setItem('adManagerRowColorThresholds', JSON.stringify(rowColorThresholds));
+    } catch (e) {
+      console.warn('無法儲存每列顏色閾值設定:', e);
+    }
+  }
+  
+  // 從 localStorage 載入每列顏色閾值設定
+  function loadRowColorThresholds() {
+    try {
+      const stored = localStorage.getItem('adManagerRowColorThresholds');
+      if (stored) {
+        rowColorThresholds = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.warn('無法載入每列顏色閾值設定:', e);
+      rowColorThresholds = {};
+    }
+  }
+  
+  // 根據數值判斷顏色類別
+  function getColorClass(value, thresholdType, rowId = null) {
+    if (!value || isNaN(value)) return '';
+    
+    const currentSheet = getCurrentSheetName();
+    let threshold = null;
+    
+    // 優先使用該列的設定，如果沒有則使用全域設定
+    if (rowId && rowColorThresholds[currentSheet] && rowColorThresholds[currentSheet][rowId]) {
+      threshold = rowColorThresholds[currentSheet][rowId][thresholdType];
+    }
+    
+    // 如果該列沒有設定，使用全域設定
+    if (!threshold) {
+      threshold = colorThresholds[thresholdType];
+    }
+    
+    if (!threshold || !threshold.enabled) return '';
+    
+    const numValue = parseFloat(value);
+    if (numValue < threshold.green) {
+      return 'bg-green-100 text-green-800 border-green-200';
+    } else if (numValue > threshold.red) {
+      return 'bg-red-100 text-red-800 border-red-200';
+    } else {
+      return 'bg-orange-100 text-orange-800 border-orange-200';
     }
   }
   
@@ -1246,31 +1509,55 @@
     ADDITIONAL_SHEET_GIDS.forEach((sheet, index) => {
       const uniqueId = `sheet-${index}-${Date.now()}`;
       html += `
-        <div class="flex items-center gap-3 p-3 rounded-lg" data-sheet-id="${uniqueId}">
-          <div class="flex-1 grid grid-cols-2 gap-3">
+        <div class="flex items-center gap-2 p-2 sm:p-3 rounded-lg" data-sheet-id="${uniqueId}">
+          <div class="flex-1 grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">工作表名稱</label>
+              <label class="block text-xs font-medium text-gray-600 mb-1">工作表名稱</label>
               <input type="text" 
                      value="${escapeHtml(sheet.name)}" 
                      data-field="name" 
-                     class="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                     class="w-full px-2 py-1.5 text-xs sm:text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Grid ID</label>
+              <label class="block text-xs font-medium text-gray-600 mb-1">Grid ID</label>
               <input type="text" 
                      value="${escapeHtml(sheet.gid)}" 
                      data-field="gid" 
-                     class="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                     class="w-full px-2 py-1.5 text-xs sm:text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
             </div>
           </div>
-          <button onclick="removeSheetConfig('${uniqueId}')" class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors">
-            <span class="material-symbols-outlined text-lg">delete</span>
+          <button onclick="removeSheetConfig('${uniqueId}')" class="p-1.5 sm:p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors flex-shrink-0" title="刪除">
+            <span class="material-symbols-outlined text-sm sm:text-base">delete</span>
           </button>
         </div>
       `;
     });
     
     configList.innerHTML = html;
+    
+    // 載入顏色閾值設定到表單
+    loadColorThresholdsToForm();
+  }
+  
+  // 載入顏色閾值設定到表單
+  function loadColorThresholdsToForm() {
+    // 私訊成本設定
+    const messageCostEnabled = document.getElementById('enableMessageCostColor');
+    const messageCostGreen = document.getElementById('messageCostGreen');
+    const messageCostRed = document.getElementById('messageCostRed');
+    
+    if (messageCostEnabled) messageCostEnabled.checked = colorThresholds.messageCost.enabled;
+    if (messageCostGreen) messageCostGreen.value = colorThresholds.messageCost.green;
+    if (messageCostRed) messageCostRed.value = colorThresholds.messageCost.red;
+    
+    // 點擊成本設定
+    const clickCostEnabled = document.getElementById('enableClickCostColor');
+    const clickCostGreen = document.getElementById('clickCostGreen');
+    const clickCostRed = document.getElementById('clickCostRed');
+    
+    if (clickCostEnabled) clickCostEnabled.checked = colorThresholds.clickCost.enabled;
+    if (clickCostGreen) clickCostGreen.value = colorThresholds.clickCost.green;
+    if (clickCostRed) clickCostRed.value = colorThresholds.clickCost.red;
   }
   
   function addNewSheet() {
@@ -1279,25 +1566,25 @@
     
     const uniqueId = `new-sheet-${Date.now()}`;
     const newSheetHtml = `
-      <div class="flex items-center gap-3 p-3 rounded-lg bg-blue-50" data-sheet-id="${uniqueId}">
-        <div class="flex-1 grid grid-cols-2 gap-3">
+      <div class="flex items-center gap-2 p-2 sm:p-3 rounded-lg bg-blue-50" data-sheet-id="${uniqueId}">
+        <div class="flex-1 grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">工作表名稱</label>
+            <label class="block text-xs font-medium text-gray-600 mb-1">工作表名稱</label>
             <input type="text" 
                    placeholder="輸入工作表名稱" 
                    data-field="name" 
-                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                   class="w-full px-2 py-1.5 text-xs sm:text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Grid ID</label>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Grid ID</label>
             <input type="text" 
                    placeholder="輸入 Grid ID" 
                    data-field="gid" 
-                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                   class="w-full px-2 py-1.5 text-xs sm:text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
           </div>
         </div>
-        <button onclick="removeSheetConfig('${uniqueId}')" class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors">
-          <span class="material-symbols-outlined text-lg">delete</span>
+        <button onclick="removeSheetConfig('${uniqueId}')" class="p-1.5 sm:p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors flex-shrink-0" title="刪除">
+          <span class="material-symbols-outlined text-sm sm:text-base">delete</span>
         </button>
       </div>
     `;
@@ -1350,12 +1637,15 @@
     ADDITIONAL_SHEET_GIDS.length = 0;
     ADDITIONAL_SHEET_GIDS.push(...newConfig);
     
-    // 儲存到 localStorage
+    // 儲存工作表配置到 localStorage
     try {
       localStorage.setItem('adManagerSheetConfig', JSON.stringify(newConfig));
     } catch (e) {
       console.warn('無法儲存工作表配置:', e);
     }
+    
+    // 儲存顏色閾值設定
+    saveColorThresholdsFromForm();
     
     // 關閉彈窗
     closeSettingsModal();
@@ -1364,6 +1654,34 @@
     if (confirm('設定已儲存，是否重新載入資料？')) {
       location.reload();
     }
+  }
+  
+  // 從表單儲存顏色閾值設定
+  function saveColorThresholdsFromForm() {
+    // 私訊成本設定
+    const messageCostEnabled = document.getElementById('enableMessageCostColor');
+    const messageCostGreen = document.getElementById('messageCostGreen');
+    const messageCostRed = document.getElementById('messageCostRed');
+    
+    if (messageCostEnabled && messageCostGreen && messageCostRed) {
+      colorThresholds.messageCost.enabled = messageCostEnabled.checked;
+      colorThresholds.messageCost.green = parseFloat(messageCostGreen.value) || 0;
+      colorThresholds.messageCost.red = parseFloat(messageCostRed.value) || 100;
+    }
+    
+    // 點擊成本設定
+    const clickCostEnabled = document.getElementById('enableClickCostColor');
+    const clickCostGreen = document.getElementById('clickCostGreen');
+    const clickCostRed = document.getElementById('clickCostRed');
+    
+    if (clickCostEnabled && clickCostGreen && clickCostRed) {
+      colorThresholds.clickCost.enabled = clickCostEnabled.checked;
+      colorThresholds.clickCost.green = parseFloat(clickCostGreen.value) || 0;
+      colorThresholds.clickCost.red = parseFloat(clickCostRed.value) || 10;
+    }
+    
+    // 儲存到 localStorage
+    saveColorThresholds();
   }
   
   // 載入儲存的工作表配置
@@ -1428,6 +1746,133 @@
     }
   }
 
+  
+  // 每列顏色設定相關變數
+  let currentRowColorSettings = {
+    rowId: null,
+    thresholdType: null
+  };
+  
+  // 開啟每列顏色設定彈窗
+  function openRowColorSettings(rowId, thresholdType) {
+    currentRowColorSettings.rowId = rowId;
+    currentRowColorSettings.thresholdType = thresholdType;
+    
+    const modal = document.getElementById('rowColorModal');
+    const title = document.getElementById('rowColorModalTitle');
+    const typeTitle = document.getElementById('rowColorTypeTitle');
+    const enabledCheckbox = document.getElementById('rowColorEnabled');
+    const greenInput = document.getElementById('rowColorGreen');
+    const redInput = document.getElementById('rowColorRed');
+    
+    if (!modal || !title || !typeTitle || !enabledCheckbox || !greenInput || !redInput) return;
+    
+    // 設定標題
+    title.textContent = `為「${rowId}」設定專屬的顏色閾值`;
+    typeTitle.textContent = thresholdType === 'messageCost' ? '私訊成本標示' : '點擊成本標示';
+    
+    // 載入現有設定或預設值
+    const currentSheet = getCurrentSheetName();
+    let currentSettings = null;
+    
+    if (rowColorThresholds[currentSheet] && rowColorThresholds[currentSheet][rowId]) {
+      currentSettings = rowColorThresholds[currentSheet][rowId][thresholdType];
+    }
+    
+    if (currentSettings) {
+      // 使用該列的設定
+      enabledCheckbox.checked = currentSettings.enabled;
+      greenInput.value = currentSettings.green;
+      redInput.value = currentSettings.red;
+    } else {
+      // 使用全域預設設定
+      const defaultSettings = colorThresholds[thresholdType];
+      enabledCheckbox.checked = defaultSettings.enabled;
+      greenInput.value = defaultSettings.green;
+      redInput.value = defaultSettings.red;
+    }
+    
+    modal.classList.remove('hidden');
+  }
+  
+  // 關閉每列顏色設定彈窗
+  function closeRowColorModal() {
+    const modal = document.getElementById('rowColorModal');
+    if (modal) {
+      modal.classList.add('hidden');
+    }
+    currentRowColorSettings.rowId = null;
+    currentRowColorSettings.thresholdType = null;
+  }
+  
+  // 儲存每列顏色設定
+  function saveRowColorSettings() {
+    const enabledCheckbox = document.getElementById('rowColorEnabled');
+    const greenInput = document.getElementById('rowColorGreen');
+    const redInput = document.getElementById('rowColorRed');
+    
+    if (!enabledCheckbox || !greenInput || !redInput) return;
+    
+    const { rowId, thresholdType } = currentRowColorSettings;
+    if (!rowId || !thresholdType) return;
+    
+    const currentSheet = getCurrentSheetName();
+    
+    // 初始化資料結構
+    if (!rowColorThresholds[currentSheet]) {
+      rowColorThresholds[currentSheet] = {};
+    }
+    if (!rowColorThresholds[currentSheet][rowId]) {
+      rowColorThresholds[currentSheet][rowId] = {};
+    }
+    
+    // 儲存設定
+    rowColorThresholds[currentSheet][rowId][thresholdType] = {
+      enabled: enabledCheckbox.checked,
+      green: parseFloat(greenInput.value) || 0,
+      red: parseFloat(redInput.value) || 100
+    };
+    
+    // 儲存到 localStorage
+    saveRowColorThresholds();
+    
+    // 關閉彈窗
+    closeRowColorModal();
+    
+    // 重新渲染表格以套用新設定
+    if (originalData && originalData.length > 0) {
+      mainTable.innerHTML = buildTableHtml(originalData);
+      setTimeout(updateDashboard, 0);
+    }
+  }
+  
+  // 切換設定標籤頁
+  function switchSettingsTab(tabName) {
+    // 移除所有標籤頁的 active 樣式
+    const allTabs = document.querySelectorAll('#settingsModal button[id$="-tab"]');
+    allTabs.forEach(tab => {
+      tab.className = 'flex-1 sm:w-full text-left px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-50';
+    });
+    
+    // 移除所有內容區域的顯示
+    const allContents = document.querySelectorAll('#settingsModal div[id$="-content"]');
+    allContents.forEach(content => {
+      content.classList.add('hidden');
+    });
+    
+    // 設定當前標籤頁為 active
+    const currentTab = document.getElementById(`${tabName}-tab`);
+    if (currentTab) {
+      currentTab.className = 'flex-1 sm:w-full text-left px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-md bg-blue-100 text-blue-700 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600';
+    }
+    
+    // 顯示對應的內容區域
+    const currentContent = document.getElementById(`${tabName}-content`);
+    if (currentContent) {
+      currentContent.classList.remove('hidden');
+    }
+  }
+  
   // 將函式掛到全域
   window.saveAndUpdatePercentage = saveAndUpdatePercentage;
   window.getCurrentSheetName = getCurrentSheetName;
@@ -1439,6 +1884,10 @@
   window.removeSheetConfig = removeSheetConfig;
   window.saveSheetConfig = saveSheetConfig;
   window.refreshData = refreshData;
+  window.openRowColorSettings = openRowColorSettings;
+  window.closeRowColorModal = closeRowColorModal;
+  window.saveRowColorSettings = saveRowColorSettings;
+  window.switchSettingsTab = switchSettingsTab;
 
   // 密碼相關變數
   let systemPassword = null;
@@ -1537,7 +1986,7 @@
   
   // 版本管理相關函式
   // 手動設定的版本號 - 每次程式碼改動時需要手動更新
-  const APP_VERSION = '20250915170325';
+  const APP_VERSION = '20250923.02';
   
   function updateVersionDisplay() {
     const versionEl = document.getElementById('version-display');
@@ -1897,6 +2346,12 @@
     
     // 載入儲存的工作表配置
     loadStoredSheetConfig();
+    
+    // 載入顏色閾值設定
+    loadColorThresholds();
+    
+    // 載入每列顏色閾值設定
+    loadRowColorThresholds();
     
     // 載入密碼設定
     loadPassword();
