@@ -12,7 +12,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="LURE AD" />
   <meta name="theme-color" content="#ffffff" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <title>LURE AD CENTER</title>
   <link href="images/icon.png" rel="icon" type="image/png" />
@@ -115,7 +116,7 @@
 
       /* 主體留底部 nav 空間 */
       main {
-        padding-bottom: calc(72px + env(safe-area-inset-bottom, 12px)) !important;
+        padding-bottom: calc(72px + env(safe-area-inset-bottom, 34px)) !important;
       }
 
       /* 底部 nav 顯示 */
@@ -130,8 +131,8 @@
         z-index: 100;
         /* 按鈕高度 56px + iPhone Home Indicator 安全距離 */
         padding-top: 4px;
-        padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
-        min-height: calc(56px + env(safe-area-inset-bottom, 20px));
+        padding-bottom: max(34px, env(safe-area-inset-bottom, 34px));
+        min-height: calc(56px + env(safe-area-inset-bottom, 34px));
       }
 
       /* 各帳號模式：隱藏 sidebar，主面板全寬 */
