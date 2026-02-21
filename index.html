@@ -15,8 +15,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <title>LURE AD CENTER</title>
-  <link href="images/favicon.jpg" rel="icon" type="image/jpeg" />
-  <link href="images/favicon.jpg" rel="shortcut icon" type="image/jpeg" />
+  <link href="images/icon.png" rel="icon" type="image/png" />
+  <link href="images/icon.png" rel="shortcut icon" type="image/png" />
+  <link href="images/icon.png" rel="apple-touch-icon" />
   <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
@@ -104,35 +105,52 @@
       font-variant-numeric: tabular-nums;
       letter-spacing: 0.03em;
     }
-  
-  /* ── PWA 手機版 ────────────────────────────────── */
-  #mobile-bottom-nav { display: none; }
 
-  @media (max-width: 1023px) {
-    /* 主體留底部 nav 空間 */
-    main { padding-bottom: 72px !important; }
-
-    /* 底部 nav 顯示 */
+    /* ── PWA 手機版 ────────────────────────────────── */
     #mobile-bottom-nav {
-      display: flex !important;
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      height: 56px;
-      background: #ffffff;
-      border-top: 1px solid #e2e8f0;
-      z-index: 100;
-      padding-bottom: env(safe-area-inset-bottom, 0px);
+      display: none;
     }
 
-    /* 各帳號模式：隱藏 sidebar，主面板全寬 */
-    body.mv-accounts .w-full.lg\:w-80 { display: none !important; }
-    body.mv-accounts #main-panel { display: block !important; }
+    @media (max-width: 1023px) {
 
-    /* 總覽模式：顯示 sidebar，隱藏主面板 */  
-    body.mv-overview .w-full.lg\:w-80 { display: block !important; }
-    body.mv-overview #main-panel { display: none !important; }
-  }
-</style>
+      /* 主體留底部 nav 空間 */
+      main {
+        padding-bottom: 72px !important;
+      }
+
+      /* 底部 nav 顯示 */
+      #mobile-bottom-nav {
+        display: flex !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 56px;
+        background: #ffffff;
+        border-top: 1px solid #e2e8f0;
+        z-index: 100;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+
+      /* 各帳號模式：隱藏 sidebar，主面板全寬 */
+      body.mv-accounts .w-full.lg\:w-80 {
+        display: none !important;
+      }
+
+      body.mv-accounts #main-panel {
+        display: block !important;
+      }
+
+      /* 總覽模式：顯示 sidebar，隱藏主面板 */
+      body.mv-overview .w-full.lg\:w-80 {
+        display: block !important;
+      }
+
+      body.mv-overview #main-panel {
+        display: none !important;
+      }
+    }
+  </style>
   <div id="loadingModal" class="fixed inset-0 flex items-center justify-center z-[60] hidden">
     <div class="ld-wrap">
       <div class="ld-spinner"></div>
@@ -2479,7 +2497,7 @@
 
             // 更新按鈕顏色
             if (btnO) btnO.style.color = view === 'overview' ? '#0f172a' : '#94a3b8';
-            if (btnA) btnA.style.color = view === 'accounts'  ? '#0f172a' : '#94a3b8';
+            if (btnA) btnA.style.color = view === 'accounts' ? '#0f172a' : '#94a3b8';
           }
 
           function initMobileView() {
