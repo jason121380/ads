@@ -1366,8 +1366,10 @@
                 // 計算有效資料行數和金額統計
                 for (let i = bodyStart; i < matrix.length; i++) {
                   const row = matrix[i];
-                  if (row && !row.every(v => String(v || '').trim() === '') && String(row[0] || '').trim() !== '') {
-                    sheetRows++;
+                  const fc = String(row && row[0] || '').trim();
+                  if (!row || row.every(v => String(v || '').trim() === '') || fc === '') continue;
+                  if (fc.includes('Facebook Ads Import') || fc.toLowerCase().includes('meta ads import') || fc.includes('Last updated')) continue;
+sheetRows++;
 
                     // 計算該行的花費金額
                     if (spendColumnIndex >= 0 && row[spendColumnIndex]) {
@@ -2285,8 +2287,10 @@
                 // 計算有效資料行數和金額統計
                 for (let i = bodyStart; i < matrix.length; i++) {
                   const row = matrix[i];
-                  if (row && !row.every(v => String(v || '').trim() === '') && String(row[0] || '').trim() !== '') {
-                    sheetRows++;
+                  const fc = String(row && row[0] || '').trim();
+                  if (!row || row.every(v => String(v || '').trim() === '') || fc === '') continue;
+                  if (fc.includes('Facebook Ads Import') || fc.toLowerCase().includes('meta ads import') || fc.includes('Last updated')) continue;
+sheetRows++;
 
                     // 計算該行的花費金額
                     if (spendColumnIndex >= 0 && row[spendColumnIndex]) {
