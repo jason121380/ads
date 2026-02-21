@@ -443,6 +443,11 @@
               <div id="main-panel" class="flex-1">
                 <div id="status" class="mb-3 text-sm text-slate-500">載入中...</div>
 
+                <!-- 手機版帳號選擇列（各帳號模式用）-->
+                <div id="mobile-account-tabs" class="lg:hidden mb-3 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto">
+                  <div id="mobile-account-tabs-inner" class="flex gap-2 pb-1" style="width:max-content"></div>
+                </div>
+
                 <!-- 儀表板統計 -->
                 <div class="mb-6 bg-white rounded-lg border border-gray-200 p-3 sm:p-4">
                   <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
@@ -2380,6 +2385,55 @@
               _sheetIdx++;
             }
             tabsContainer.innerHTML = parts.join('');
+
+            // ── 手機版水平帳號 tabs ───────────────────────────────────────
+            const mobileTabsInner = document.getElementById('mobile-account-tabs-inner');
+            if (mobileTabsInner) {
+              const visibleNames = sheetNames.filter(n => {
+                // 只顯示有花費的帳號（和 renderTabs 同邏輯在 parts 裡已過濾）
+                const btn = tabsContainer.querySelector(`button[data-sheet="${CSS.escape(n)}"]`);
+                return !!btn;
+              });
+              mobileTabsInner.innerHTML = visibleNames.map(n => {
+                const isActive = String(n) === String(activeName);
+                return `<button type="button" data-msheet="${n.replace(/"/g, '&quot;')}"
+                  style="flex-shrink:0;padding:6px 14px;border-radius:999px;border:1px solid ${isActive ? '#1e293b' : '#e2e8f0'};
+                         background:${isActive ? '#1e293b' : '#fff'};color:${isActive ? '#fff' : '#374151'};
+                         font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;transition:all 0.15s">${n}</button>`;
+              }).join('');
+
+              // 點擊手機版 tab → 切換帳號
+              Array.from(mobileTabsInner.querySelectorAll('button[data-msheet]')).forEach(btn => {
+                btn.addEventListener('click', async () => {
+                  const sheet = btn.getAttribute('data-msheet');
+                  // 更新手機版 pills 樣式
+                  Array.from(mobileTabsInner.children).forEach(b => {
+                    const active = b === btn;
+                    b.style.background = active ? '#1e293b' : '#fff';
+                    b.style.color = active ? '#fff' : '#374151';
+                    b.style.borderColor = active ? '#1e293b' : '#e2e8f0';
+                  });
+                  // 同步左側 desktop tab
+                  Array.from(tabsContainer.querySelectorAll('button[data-sheet]')).forEach(el => {
+                    const active = el.getAttribute('data-sheet') === sheet;
+                    el.setAttribute('aria-selected', active ? 'true' : 'false');
+                    el.className = 'text-left px-2 py-2 text-xs ' + (active ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50');
+                  });
+                  try {
+                    setStatus('切換工作表中...');
+                    const wb = workbookCache;
+                    if (!wb) { setStatus('資料尚未載入，請重新整理頁面', true); return; }
+                    renderTable(getSheetMatrix(wb, sheet));
+                    updateDashboard();
+                    setStatus('');
+                  } catch (e) {
+                    setStatus('讀取資料失敗', true);
+                  }
+                });
+              });
+            }
+            // ─────────────────────────────────────────────────────────────
+
             Array.from(tabsContainer.querySelectorAll('button[data-sheet]')).forEach((btn) => {
               btn.addEventListener('click', async () => {
                 const sheet = btn.getAttribute('data-sheet');
@@ -2387,20 +2441,24 @@
                   el.setAttribute('aria-selected', el === btn ? 'true' : 'false');
                   el.className = 'text-left px-2 py-2 text-xs ' + (el === btn ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50');
                 });
+                // 同步手機版 pills
+                if (mobileTabsInner) {
+                  Array.from(mobileTabsInner.children).forEach(b => {
+                    const active = b.getAttribute('data-msheet') === sheet;
+                    b.style.background = active ? '#1e293b' : '#fff';
+                    b.style.color = active ? '#fff' : '#374151';
+                    b.style.borderColor = active ? '#1e293b' : '#e2e8f0';
+                  });
+                }
                 try {
                   setStatus('切換工作表中...');
-                  // 使用已快取的 workbook，避免重複載入
                   const wb = workbookCache;
                   if (!wb) {
                     setStatus('資料尚未載入，請重新整理頁面', true);
                     return;
                   }
-
-                  // 載入單一工作表資料
                   const matrix = getSheetMatrix(wb, sheet);
-
                   renderTable(matrix);
-
                   setStatus('');
                 } catch (e) {
                   setStatus('讀取資料失敗，請稍後再試或檢查權限/連線。', true);
