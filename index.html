@@ -326,7 +326,10 @@
           </div>
         </div>
         <div class="flex items-center gap-2 sm:gap-4">
-          <div class="text-xs text-slate-500 font-mono hidden sm:block" id="version-display">v2026.0221</div>
+          <div class="flex items-center gap-2">
+            <span id="last-updated-time" class="text-[10px] text-slate-400 font-mono hidden sm:block"></span>
+            <div class="text-[10px] text-slate-400 font-mono hidden sm:block" id="version-display">v2026.0221</div>
+          </div>
           <button id="refresh-btn" onclick="refreshData()"
             class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors"
             title="重新載入資料">
@@ -375,7 +378,7 @@
                 <div class="rounded-md border border-slate-200 bg-white">
                   <div class="px-3 py-2 bg-slate-50 border-b border-slate-200">
                     <p class="text-slate-700 text-xs font-medium">廣告帳號</p>
-                    <div class="grid grid-cols-5 gap-1 sm:gap-2 mt-1 text-xs text-slate-500">
+                    <div class="grid gap-1 sm:gap-2 mt-1 text-xs text-slate-500" style="grid-template-columns: 24px minmax(80px, 2.5fr) 1fr 1.4fr 1.4fr">
                       <span class="text-center">No.</span>
                       <span class="truncate">名稱</span>
                       <span class="text-right">數量</span>
@@ -2122,6 +2125,11 @@
               workbookCache = wb;
 
               updateLoadingProgress(100, '載入完成！');
+              const lastUpdatedEl = document.getElementById('last-updated-time');
+              if (lastUpdatedEl) {
+                const now = new Date();
+                lastUpdatedEl.textContent = '最後更新: ' + now.toLocaleTimeString('zh-TW', {hour: '2-digit', minute:'2-digit'});
+              }
               setTimeout(() => {
                 hideLoadingModal();
               }, 500);
@@ -2333,7 +2341,7 @@
               const active = String(name) === String(activeName);
               parts.push(
                 `<button type="button" data-sheet="${escapeHtml(name)}" aria-selected="${active ? 'true' : 'false'}" class="text-left px-2 py-2 text-xs ${active ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}">
-          <div class="grid grid-cols-5 gap-2 items-center w-full">
+          <div class="grid gap-2 items-center w-full" style="grid-template-columns: 24px minmax(80px, 2.5fr) 1fr 1.4fr 1.4fr">
             <div class="text-center text-slate-400 font-mono">${_sheetIdx + 1}</div>
             <div class="font-medium truncate">${escapeHtml(name)}</div>
             <div class="text-right text-slate-400">${sheetRows}</div>
