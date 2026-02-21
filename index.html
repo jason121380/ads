@@ -1407,10 +1407,10 @@
                 const gridDiv = tabButton.querySelector('.grid');
                 if (gridDiv) {
                   const cells = gridDiv.querySelectorAll('div');
-                  if (cells.length >= 4) {
-                    cells[1].textContent = sheetRows; // 數量
-                    cells[2].textContent = sheetTotalSpend.toLocaleString(); // 花費
-                    cells[3].textContent = sheetTotalSpendPlus.toLocaleString(); // 花費+%
+                  if (cells.length >= 5) {
+                    cells[2].textContent = sheetRows; // 數量
+                    cells[3].textContent = sheetTotalSpend.toLocaleString(); // 花費
+                    cells[4].textContent = sheetTotalSpendPlus.toLocaleString(); // 花費+%
                   }
                 }
               }
@@ -2256,7 +2256,7 @@
 
             // 為每個工作表計算行數和金額統計
             let _sheetIdx = 0;
-          for (const name of sheetNames) {
+            for (const name of sheetNames) {
               const matrix = getSheetMatrix(wb, name);
               let sheetRows = 0;
               let sheetTotalSpend = 0;
