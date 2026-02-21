@@ -6,6 +6,12 @@
     href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
     onload="this.rel='stylesheet'" rel="stylesheet" />
   <meta charset="utf-8" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="LURE AD" />
+  <meta name="theme-color" content="#ffffff" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <title>LURE AD CENTER</title>
@@ -98,7 +104,35 @@
       font-variant-numeric: tabular-nums;
       letter-spacing: 0.03em;
     }
-  </style>
+  
+  /* ── PWA 手機版 ────────────────────────────────── */
+  #mobile-bottom-nav { display: none; }
+
+  @media (max-width: 1023px) {
+    /* 主體留底部 nav 空間 */
+    main { padding-bottom: 72px !important; }
+
+    /* 底部 nav 顯示 */
+    #mobile-bottom-nav {
+      display: flex !important;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 56px;
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    /* 各帳號模式：隱藏 sidebar，主面板全寬 */
+    body.mv-accounts .w-full.lg\:w-80 { display: none !important; }
+    body.mv-accounts #main-panel { display: block !important; }
+
+    /* 總覽模式：顯示 sidebar，隱藏主面板 */  
+    body.mv-overview .w-full.lg\:w-80 { display: block !important; }
+    body.mv-overview #main-panel { display: none !important; }
+  }
+</style>
   <div id="loadingModal" class="fixed inset-0 flex items-center justify-center z-[60] hidden">
     <div class="ld-wrap">
       <div class="ld-spinner"></div>
@@ -390,7 +424,7 @@
                     aria-label="Sheets"></nav>
                 </div>
               </div>
-              <div class="flex-1">
+              <div id="main-panel" class="flex-1">
                 <div id="status" class="mb-3 text-sm text-slate-500">載入中...</div>
 
                 <!-- 儀表板統計 -->
@@ -2426,15 +2460,53 @@
             document.addEventListener('DOMContentLoaded', () => {
               init();
               setupSearch();
+              initMobileView();
             });
           } else {
             init();
             setupSearch();
           }
+
+          function switchMobileView(view) {
+            const sidebar = document.querySelector('.w-full.lg\\:w-80');
+            const mainPanel = document.getElementById('main-panel');
+            const nav = document.getElementById('mobile-bottom-nav');
+            const btnO = document.getElementById('nav-btn-overview');
+            const btnA = document.getElementById('nav-btn-accounts');
+
+            document.body.classList.remove('mv-overview', 'mv-accounts');
+            document.body.classList.add('mv-' + view);
+
+            // 更新按鈕顏色
+            if (btnO) btnO.style.color = view === 'overview' ? '#0f172a' : '#94a3b8';
+            if (btnA) btnA.style.color = view === 'accounts'  ? '#0f172a' : '#94a3b8';
+          }
+
+          function initMobileView() {
+            if (window.innerWidth < 1024) {
+              switchMobileView('accounts');
+            }
+          }
+          window.switchMobileView = switchMobileView;
+
         })();
       </script>
     </div>
   </div>
+
+  <!-- 手機版底部導覽 -->
+  <nav id="mobile-bottom-nav">
+    <button id="nav-btn-overview" onclick="switchMobileView('overview')"
+      style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:none;background:transparent;cursor:pointer;color:#94a3b8;transition:color 0.15s">
+      <span class="material-symbols-outlined" style="font-size:22px">bar_chart</span>
+      <span style="font-size:10px;font-weight:600;white-space:nowrap">總覽</span>
+    </button>
+    <button id="nav-btn-accounts" onclick="switchMobileView('accounts')"
+      style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:none;background:transparent;cursor:pointer;color:#0f172a;transition:color 0.15s">
+      <span class="material-symbols-outlined" style="font-size:22px">view_list</span>
+      <span style="font-size:10px;font-weight:600;white-space:nowrap">各帳號</span>
+    </button>
+  </nav>
 </body>
 
 </html>
