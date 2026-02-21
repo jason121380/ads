@@ -2231,10 +2231,13 @@
                 const firstCell = String(row[0] || '').trim();
 
                 // 跳過以下類型的行：
-                // 1. Facebook Ads Import 資訊行
-                // 2. Last updated 資訊行  
-                // 3. 空行或只有空白的行
+                // 1. Facebook Ads Import / Meta Ads Import 資訊行
+                // 2. Last updated 資訊行
+                // 3. Meta Ads import is empty 等空資料提示行
+                // 4. 空行或只有空白的行
                 if (firstCell.includes('Facebook Ads Import') ||
+                  firstCell.includes('Meta Ads Import') ||
+                  firstCell.toLowerCase().includes('meta ads import') ||
                   firstCell.includes('Last updated') ||
                   firstCell === '' ||
                   row.every(cell => String(cell || '').trim() === '')) {
