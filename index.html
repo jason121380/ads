@@ -125,11 +125,13 @@
         bottom: 0;
         left: 0;
         right: 0;
-        height: 56px;
         background: #ffffff;
         border-top: 1px solid #e2e8f0;
         z-index: 100;
-        padding-bottom: env(safe-area-inset-bottom, 0px);
+        /* 按鈕高度 56px + iPhone Home Indicator 安全距離 */
+        padding-top: 4px;
+        padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+        min-height: calc(56px + env(safe-area-inset-bottom, 20px));
       }
 
       /* 各帳號模式：隱藏 sidebar，主面板全寬 */
