@@ -115,7 +115,7 @@
 
       /* 主體留底部 nav 空間 */
       main {
-        padding-bottom: 72px !important;
+        padding-bottom: calc(72px + env(safe-area-inset-bottom, 12px)) !important;
       }
 
       /* 底部 nav 顯示 */
@@ -226,7 +226,9 @@
   <!-- 設定彈窗 -->
   <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-end sm:items-center z-[60] hidden">
     <!-- 手機：從底部滑入 sheet；桌機：正中彈窗 -->
-    <div style="background:#fff;width:100%;max-height:92dvh;overflow:hidden;display:flex;flex-direction:column;border-radius:20px 20px 0 0;" class="sm:rounded-xl sm:w-full sm:max-w-4xl sm:mx-4 sm:max-h-[85vh] shadow-2xl">
+    <div
+      style="background:#fff;width:100%;max-height:92dvh;overflow:hidden;display:flex;flex-direction:column;border-radius:20px 20px 0 0;"
+      class="sm:rounded-xl sm:w-full sm:max-w-4xl sm:mx-4 sm:max-h-[85vh] shadow-2xl">
       <!-- 手機拖曳把手 -->
       <div class="sm:hidden flex justify-center pt-3 pb-1 flex-shrink-0">
         <div style="width:40px;height:4px;border-radius:2px;background:#d1d5db"></div>
@@ -278,8 +280,7 @@
               </button>
             </div>
 
-            <div id="sheetConfigList" class="flex-1 overflow-y-auto space-y-2 sm:space-y-3 pr-1 sm:pr-2"
-              >
+            <div id="sheetConfigList" class="flex-1 overflow-y-auto space-y-2 sm:space-y-3 pr-1 sm:pr-2">
               <!-- 工作表配置項目將在這裡動態生成 -->
             </div>
           </div>
@@ -288,7 +289,7 @@
           <div id="colors-content" class="flex-1 flex flex-col min-h-0 hidden">
             <h4 class="text-sm sm:text-lg font-medium text-gray-800 mb-3 sm:mb-4 flex-shrink-0">顏色標示設定</h4>
 
-            <div class="flex-1 overflow-y-auto pr-1 sm:pr-2" >
+            <div class="flex-1 overflow-y-auto pr-1 sm:pr-2">
               <!-- 私訊成本設定 -->
               <div class="bg-gray-50 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3">
@@ -2565,7 +2566,7 @@
 
           function initMobileView() {
             if (window.innerWidth < 1024) {
-              switchMobileView('accounts');
+              switchMobileView('overview');
             }
           }
           window.switchMobileView = switchMobileView;
