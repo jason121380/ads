@@ -1,850 +1,1076 @@
-<html><head>
-<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
-<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<title>LURE AD CENTER</title>
-<link href="images/favicon.jpg" rel="icon" type="image/jpeg"/>
-<link href="images/favicon.jpg" rel="shortcut icon" type="image/jpeg"/>
-<script src="https://cdn.tailwindcss.com"></script>
+<html>
+
+<head>
+  <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+  <link as="style"
+    href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
+    onload="this.rel='stylesheet'" rel="stylesheet" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <title>LURE AD CENTER</title>
+  <link href="images/favicon.jpg" rel="icon" type="image/jpeg" />
+  <link href="images/favicon.jpg" rel="shortcut icon" type="image/jpeg" />
+  <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
+
 <body class="bg-white text-slate-900">
 
-<!-- 載入彈窗 -->
-<div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] hidden">
-  <div class="bg-white rounded-lg p-6 sm:p-8 max-w-md w-full mx-4 shadow-xl mt-16 sm:mt-0">
-    <div class="text-center">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">載入中...</h3>
-      <p id="loadingText" class="text-gray-600 mb-4 text-sm sm:text-base">正在載入工作表資料</p>
-      <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-        <div id="loadingProgress" class="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
+  <!-- 載入彈窗 -->
+  <style>
+    @keyframes lure-pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.08);
+        opacity: 0.85;
+      }
+    }
+
+    @keyframes lure-spin-ring {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes lure-dot {
+
+      0%,
+      80%,
+      100% {
+        transform: scale(0.6);
+        opacity: 0.3;
+      }
+
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes lure-shimmer {
+      0% {
+        background-position: -200% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    #loadingModal {
+      backdrop-filter: blur(4px);
+      background: rgba(15, 23, 42, 0.65);
+    }
+
+    .lure-card {
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 20px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.2);
+      padding: 40px 36px 32px;
+      max-width: 380px;
+      width: calc(100% - 32px);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lure-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #6366f1, #8b5cf6, #3b82f6);
+      background-size: 200% 100%;
+      animation: lure-shimmer 2s linear infinite;
+    }
+
+    .lure-icon-wrap {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 24px;
+    }
+
+    .lure-icon-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #3b82f6;
+      border-right-color: #6366f1;
+      animation: lure-spin-ring 1.2s linear infinite;
+    }
+
+    .lure-icon-inner {
+      position: absolute;
+      inset: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #dbeafe, #ede9fe);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: lure-pulse 2s ease-in-out infinite;
+      font-size: 22px;
+    }
+
+    .lure-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+
+    .lure-subtitle {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 24px;
+      min-height: 18px;
+      transition: opacity 0.3s;
+    }
+
+    .lure-bar-track {
+      width: 100%;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .lure-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #3b82f6, #6366f1);
+      background-size: 200% 100%;
+      animation: lure-shimmer 1.5s linear infinite;
+      transition: width 0.4s cubic-bezier(.4, 0, .2, 1);
+      width: 0%;
+    }
+
+    .lure-pct {
+      font-size: 12px;
+      font-weight: 600;
+      color: #3b82f6;
+      letter-spacing: 0.5px;
+    }
+
+    .lure-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 20px;
+    }
+
+    .lure-dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #3b82f6;
+      animation: lure-dot 1.4s ease-in-out infinite;
+    }
+
+    .lure-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+      background: #6366f1;
+    }
+
+    .lure-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+      background: #8b5cf6;
+    }
+  </style>
+  <div id="loadingModal" class="fixed inset-0 flex items-center justify-center z-[60] hidden">
+    <div class="lure-card">
+      <div class="lure-icon-wrap">
+        <div class="lure-icon-ring"></div>
+        <div class="lure-icon-inner">📊</div>
       </div>
-      <p id="loadingProgressText" class="text-sm text-gray-500">0%</p>
+      <div class="lure-title">LURE AD CENTER</div>
+      <p id="loadingText" class="lure-subtitle">正在載入工作表資料</p>
+      <div class="lure-bar-track">
+        <div id="loadingProgress" class="lure-bar-fill"></div>
+      </div>
+      <div class="lure-pct" id="loadingProgressText">0%</div>
+      <div class="lure-dots">
+        <span></span><span></span><span></span>
+      </div>
     </div>
   </div>
-</div>
 
 
 
 
-<!-- 每列顏色設定彈窗 -->
-<div id="rowColorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] hidden">
-  <div class="bg-white rounded-lg p-4 sm:p-6 max-w-md w-full mx-2 sm:mx-4 shadow-xl mt-16 sm:mt-0">
-    <div class="flex items-center justify-between mb-4">
-      <h3 class="text-lg font-semibold text-gray-900">設定顏色閾值</h3>
-      <button onclick="closeRowColorModal()" class="text-gray-400 hover:text-gray-600 p-1">
-        <span class="material-symbols-outlined text-xl">close</span>
-      </button>
-    </div>
-    
-    <div class="mb-4">
-      <p class="text-sm text-gray-600 mb-3" id="rowColorModalTitle">為此列設定專屬的顏色閾值</p>
-      
-      <div class="bg-gray-50 rounded-lg p-3">
-        <div class="flex items-center justify-between mb-3">
-          <h5 class="text-sm font-medium text-gray-700" id="rowColorTypeTitle">私訊成本標示</h5>
-          <label class="flex items-center gap-2">
-            <input type="checkbox" id="rowColorEnabled" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-            <span class="text-sm text-gray-600">啟用</span>
-          </label>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">綠色 (小於)</label>
-            <input type="number" id="rowColorGreen" class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" step="0.1">
+  <!-- 每列顏色設定彈窗 -->
+  <div id="rowColorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] hidden">
+    <div class="bg-white rounded-lg p-4 sm:p-6 max-w-md w-full mx-2 sm:mx-4 shadow-xl mt-16 sm:mt-0">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">設定顏色閾值</h3>
+        <button onclick="closeRowColorModal()" class="text-gray-400 hover:text-gray-600 p-1">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <div class="mb-4">
+        <p class="text-sm text-gray-600 mb-3" id="rowColorModalTitle">為此列設定專屬的顏色閾值</p>
+
+        <div class="bg-gray-50 rounded-lg p-3">
+          <div class="flex items-center justify-between mb-3">
+            <h5 class="text-sm font-medium text-gray-700" id="rowColorTypeTitle">私訊成本標示</h5>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" id="rowColorEnabled"
+                class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+              <span class="text-sm text-gray-600">啟用</span>
+            </label>
           </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">紅色 (大於)</label>
-            <input type="number" id="rowColorRed" class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" step="0.1">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-gray-600 mb-1">綠色 (小於)</label>
+              <input type="number" id="rowColorGreen"
+                class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                step="0.1">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-600 mb-1">紅色 (大於)</label>
+              <input type="number" id="rowColorRed"
+                class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                step="0.1">
+            </div>
           </div>
-        </div>
-        <div class="mt-2 text-xs text-gray-500">
-          <span class="inline-block w-3 h-3 bg-green-100 border border-green-300 rounded mr-1"></span>綠色：小於設定值
-          <span class="inline-block w-3 h-3 bg-orange-100 border border-orange-300 rounded mx-2"></span>橘色：介於中間
-          <span class="inline-block w-3 h-3 bg-red-100 border border-red-300 rounded mr-1"></span>紅色：大於設定值
+          <div class="mt-2 text-xs text-gray-500">
+            <span class="inline-block w-3 h-3 bg-green-100 border border-green-300 rounded mr-1"></span>綠色：小於設定值
+            <span class="inline-block w-3 h-3 bg-orange-100 border border-orange-300 rounded mx-2"></span>橘色：介於中間
+            <span class="inline-block w-3 h-3 bg-red-100 border border-red-300 rounded mr-1"></span>紅色：大於設定值
+          </div>
         </div>
       </div>
-    </div>
-    
-    <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200">
-      <button onclick="closeRowColorModal()" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors order-2 sm:order-1">
-        取消
-      </button>
-      <button onclick="saveRowColorSettings()" class="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors order-1 sm:order-2">
-        儲存設定
-      </button>
+
+      <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200">
+        <button onclick="closeRowColorModal()"
+          class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors order-2 sm:order-1">
+          取消
+        </button>
+        <button onclick="saveRowColorSettings()"
+          class="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors order-1 sm:order-2">
+          儲存設定
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- 設定彈窗 -->
-<div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] hidden">
-  <div class="bg-white rounded-lg p-3 sm:p-6 max-w-6xl w-full mx-2 sm:mx-4 shadow-xl max-h-[90vh] sm:max-h-[80vh] overflow-hidden flex flex-col mt-16 sm:mt-0">
-    <div class="flex items-center justify-between mb-3 sm:mb-6">
-      <h3 class="text-base sm:text-xl font-semibold text-gray-900">系統設定</h3>
-      <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600 p-1">
-        <span class="material-symbols-outlined text-lg sm:text-2xl">close</span>
-      </button>
-    </div>
-    
-    <!-- 手機版：垂直佈局 -->
-    <div class="flex-1 flex flex-col sm:flex-row gap-3 sm:gap-4 min-h-0">
-      <!-- 手機版標籤頁：水平排列 -->
-      <div class="sm:w-48 sm:flex-shrink-0">
-        <nav class="flex sm:flex-col gap-1 sm:space-y-1 sm:gap-0">
-          <button onclick="switchSettingsTab('sheets')" id="sheets-tab" class="flex-1 sm:w-full text-left px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-md bg-blue-100 text-blue-700 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600">
-            <div class="flex items-center justify-center sm:justify-start gap-1 sm:gap-2">
-              <span class="material-symbols-outlined text-sm">table_chart</span>
-              <span class="hidden sm:inline">工作表配置</span>
-              <span class="sm:hidden">工作表</span>
-            </div>
-          </button>
-          <button onclick="switchSettingsTab('colors')" id="colors-tab" class="flex-1 sm:w-full text-left px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-50">
-            <div class="flex items-center justify-center sm:justify-start gap-1 sm:gap-2">
-              <span class="material-symbols-outlined text-sm">palette</span>
-              <span class="hidden sm:inline">顏色標示</span>
-              <span class="sm:hidden">顏色</span>
-            </div>
-          </button>
-        </nav>
+  <!-- 設定彈窗 -->
+  <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] hidden">
+    <div
+      class="bg-white rounded-lg p-3 sm:p-6 max-w-6xl w-full mx-2 sm:mx-4 shadow-xl max-h-[90vh] sm:max-h-[80vh] overflow-hidden flex flex-col mt-16 sm:mt-0">
+      <div class="flex items-center justify-between mb-3 sm:mb-6">
+        <h3 class="text-base sm:text-xl font-semibold text-gray-900">系統設定</h3>
+        <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600 p-1">
+          <span class="material-symbols-outlined text-lg sm:text-2xl">close</span>
+        </button>
       </div>
-      
-      <!-- 右側內容區域 -->
-      <div class="flex-1 flex flex-col min-h-0">
-        <!-- 工作表配置內容 -->
-        <div id="sheets-content" class="flex-1 flex flex-col min-h-0">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3 sm:mb-4 flex-shrink-0">
-            <h4 class="text-sm sm:text-lg font-medium text-gray-800">工作表配置</h4>
-            <button onclick="addNewSheet()" class="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">
-              <span class="material-symbols-outlined text-sm">add</span>
-              <span class="hidden sm:inline">新增工作表</span>
-              <span class="sm:hidden">新增</span>
+
+      <!-- 手機版：垂直佈局 -->
+      <div class="flex-1 flex flex-col sm:flex-row gap-3 sm:gap-4 min-h-0">
+        <!-- 手機版標籤頁：水平排列 -->
+        <div class="sm:w-48 sm:flex-shrink-0">
+          <nav class="flex sm:flex-col gap-1 sm:space-y-1 sm:gap-0">
+            <button onclick="switchSettingsTab('sheets')" id="sheets-tab"
+              class="flex-1 sm:w-full text-left px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-md bg-blue-100 text-blue-700 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600">
+              <div class="flex items-center justify-center sm:justify-start gap-1 sm:gap-2">
+                <span class="material-symbols-outlined text-sm">table_chart</span>
+                <span class="hidden sm:inline">工作表配置</span>
+                <span class="sm:hidden">工作表</span>
+              </div>
             </button>
-          </div>
-          
-          <div id="sheetConfigList" class="flex-1 overflow-y-auto space-y-2 sm:space-y-3 pr-1 sm:pr-2" style="max-height: calc(100vh - 280px);">
-            <!-- 工作表配置項目將在這裡動態生成 -->
-          </div>
+            <button onclick="switchSettingsTab('colors')" id="colors-tab"
+              class="flex-1 sm:w-full text-left px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-50">
+              <div class="flex items-center justify-center sm:justify-start gap-1 sm:gap-2">
+                <span class="material-symbols-outlined text-sm">palette</span>
+                <span class="hidden sm:inline">顏色標示</span>
+                <span class="sm:hidden">顏色</span>
+              </div>
+            </button>
+          </nav>
         </div>
-        
-        <!-- 顏色標示設定內容 -->
-        <div id="colors-content" class="flex-1 flex flex-col min-h-0 hidden">
-          <h4 class="text-sm sm:text-lg font-medium text-gray-800 mb-3 sm:mb-4 flex-shrink-0">顏色標示設定</h4>
-          
-          <div class="flex-1 overflow-y-auto pr-1 sm:pr-2" style="max-height: calc(100vh - 280px);">
-            <!-- 私訊成本設定 -->
-            <div class="bg-gray-50 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3">
-                <h5 class="text-xs sm:text-sm font-medium text-gray-700">私訊成本標示</h5>
-                <label class="flex items-center gap-2">
-                  <input type="checkbox" id="enableMessageCostColor" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                  <span class="text-xs sm:text-sm text-gray-600">啟用</span>
-                </label>
-              </div>
-              <div class="grid grid-cols-2 gap-2 sm:gap-3">
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">綠色 (小於)</label>
-                  <input type="number" id="messageCostGreen" class="w-full px-2 py-1.5 sm:py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="0" step="0.1">
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">紅色 (大於)</label>
-                  <input type="number" id="messageCostRed" class="w-full px-2 py-1.5 sm:py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="100" step="0.1">
-                </div>
-              </div>
-              <div class="mt-2 text-xs text-gray-500">
-                <span class="inline-block w-3 h-3 bg-green-100 border border-green-300 rounded mr-1"></span>綠色：小於設定值
-                <span class="inline-block w-3 h-3 bg-orange-100 border border-orange-300 rounded mx-1 sm:mx-2"></span>橘色：介於中間
-                <span class="inline-block w-3 h-3 bg-red-100 border border-red-300 rounded mr-1"></span>紅色：大於設定值
-              </div>
+
+        <!-- 右側內容區域 -->
+        <div class="flex-1 flex flex-col min-h-0">
+          <!-- 工作表配置內容 -->
+          <div id="sheets-content" class="flex-1 flex flex-col min-h-0">
+            <div
+              class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3 sm:mb-4 flex-shrink-0">
+              <h4 class="text-sm sm:text-lg font-medium text-gray-800">工作表配置</h4>
+              <button onclick="addNewSheet()"
+                class="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">
+                <span class="material-symbols-outlined text-sm">add</span>
+                <span class="hidden sm:inline">新增工作表</span>
+                <span class="sm:hidden">新增</span>
+              </button>
             </div>
-            
-            <!-- 點擊成本設定 -->
-            <div class="bg-gray-50 rounded-lg p-3 sm:p-4">
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3">
-                <h5 class="text-xs sm:text-sm font-medium text-gray-700">點擊成本標示</h5>
-                <label class="flex items-center gap-2">
-                  <input type="checkbox" id="enableClickCostColor" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                  <span class="text-xs sm:text-sm text-gray-600">啟用</span>
-                </label>
-              </div>
-              <div class="grid grid-cols-2 gap-2 sm:gap-3">
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">綠色 (小於)</label>
-                  <input type="number" id="clickCostGreen" class="w-full px-2 py-1.5 sm:py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="0" step="0.1">
+
+            <div id="sheetConfigList" class="flex-1 overflow-y-auto space-y-2 sm:space-y-3 pr-1 sm:pr-2"
+              style="max-height: calc(100vh - 280px);">
+              <!-- 工作表配置項目將在這裡動態生成 -->
+            </div>
+          </div>
+
+          <!-- 顏色標示設定內容 -->
+          <div id="colors-content" class="flex-1 flex flex-col min-h-0 hidden">
+            <h4 class="text-sm sm:text-lg font-medium text-gray-800 mb-3 sm:mb-4 flex-shrink-0">顏色標示設定</h4>
+
+            <div class="flex-1 overflow-y-auto pr-1 sm:pr-2" style="max-height: calc(100vh - 280px);">
+              <!-- 私訊成本設定 -->
+              <div class="bg-gray-50 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3">
+                  <h5 class="text-xs sm:text-sm font-medium text-gray-700">私訊成本標示</h5>
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" id="enableMessageCostColor"
+                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="text-xs sm:text-sm text-gray-600">啟用</span>
+                  </label>
                 </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">紅色 (大於)</label>
-                  <input type="number" id="clickCostRed" class="w-full px-2 py-1.5 sm:py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="10" step="0.1">
+                <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">綠色 (小於)</label>
+                    <input type="number" id="messageCostGreen"
+                      class="w-full px-2 py-1.5 sm:py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      placeholder="0" step="0.1">
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">紅色 (大於)</label>
+                    <input type="number" id="messageCostRed"
+                      class="w-full px-2 py-1.5 sm:py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      placeholder="100" step="0.1">
+                  </div>
+                </div>
+                <div class="mt-2 text-xs text-gray-500">
+                  <span class="inline-block w-3 h-3 bg-green-100 border border-green-300 rounded mr-1"></span>綠色：小於設定值
+                  <span
+                    class="inline-block w-3 h-3 bg-orange-100 border border-orange-300 rounded mx-1 sm:mx-2"></span>橘色：介於中間
+                  <span class="inline-block w-3 h-3 bg-red-100 border border-red-300 rounded mr-1"></span>紅色：大於設定值
                 </div>
               </div>
-              <div class="mt-2 text-xs text-gray-500">
-                <span class="inline-block w-3 h-3 bg-green-100 border border-green-300 rounded mr-1"></span>綠色：小於設定值
-                <span class="inline-block w-3 h-3 bg-orange-100 border border-orange-300 rounded mx-1 sm:mx-2"></span>橘色：介於中間
-                <span class="inline-block w-3 h-3 bg-red-100 border border-red-300 rounded mr-1"></span>紅色：大於設定值
+
+              <!-- 點擊成本設定 -->
+              <div class="bg-gray-50 rounded-lg p-3 sm:p-4">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3">
+                  <h5 class="text-xs sm:text-sm font-medium text-gray-700">點擊成本標示</h5>
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" id="enableClickCostColor"
+                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="text-xs sm:text-sm text-gray-600">啟用</span>
+                  </label>
+                </div>
+                <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">綠色 (小於)</label>
+                    <input type="number" id="clickCostGreen"
+                      class="w-full px-2 py-1.5 sm:py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      placeholder="0" step="0.1">
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">紅色 (大於)</label>
+                    <input type="number" id="clickCostRed"
+                      class="w-full px-2 py-1.5 sm:py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      placeholder="10" step="0.1">
+                  </div>
+                </div>
+                <div class="mt-2 text-xs text-gray-500">
+                  <span class="inline-block w-3 h-3 bg-green-100 border border-green-300 rounded mr-1"></span>綠色：小於設定值
+                  <span
+                    class="inline-block w-3 h-3 bg-orange-100 border border-orange-300 rounded mx-1 sm:mx-2"></span>橘色：介於中間
+                  <span class="inline-block w-3 h-3 bg-red-100 border border-red-300 rounded mr-1"></span>紅色：大於設定值
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    
-    <div class="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-200 mt-3 sm:mt-4">
-      <button onclick="closeSettingsModal()" class="px-3 sm:px-4 py-2 text-xs sm:text-sm text-gray-600 hover:text-gray-800 transition-colors order-2 sm:order-1">
-        取消
-      </button>
-      <button onclick="saveSheetConfig()" class="px-3 sm:px-4 py-2 text-xs sm:text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors order-1 sm:order-2">
-        儲存設定
-      </button>
-    </div>
-  </div>
-</div>
 
-<div class="relative flex h-auto min-h-screen w-full flex-col bg-white group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
-<div class="layout-container flex h-full grow flex-col">
-<header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 px-4 sm:px-6 lg:px-10 py-3 bg-white">
-<div class="flex items-center gap-2 sm:gap-4 lg:gap-8">
-<div class="flex items-center gap-2 sm:gap-4 text-slate-900">
-  <h2 class="text-slate-900 text-lg sm:text-xl font-bold leading-tight tracking-[-0.015em]">LURE AD CENTER</h2>
-</div>
-</div>
-<div class="flex items-center gap-2 sm:gap-4">
-<div class="text-xs text-slate-500 font-mono hidden sm:block" id="version-display">v20250915170325</div>
-<button id="refresh-btn" onclick="refreshData()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="重新載入資料">
-<span id="refresh-icon" class="material-symbols-outlined text-base sm:text-lg">refresh</span>
-</button>
-<button onclick="openSettingsModal()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="設定">
-<span class="material-symbols-outlined text-base sm:text-lg">settings</span>
-</button>
-</div>
-</header>
-<main class="flex flex-1 justify-center py-8 px-4 sm:px-6 lg:px-8 pt-24">
-<div class="layout-content-container flex flex-col w-full max-w-7xl">
-<div class="flex flex-col gap-4">
-<div class="flex flex-col lg:flex-row gap-4 lg:gap-6">
-<div class="w-full lg:w-80 lg:shrink-0 space-y-4 lg:sticky lg:top-24 lg:self-start">
-<!-- 總計卡片 -->
-<div class="rounded-md border border-slate-200 bg-slate-50">
-<div class="px-3 py-2 border-b border-slate-200">
-<p class="text-slate-700 text-xs font-medium">總計</p>
-</div>
-<div class="px-3 py-2">
-<div class="grid grid-cols-2 lg:block lg:space-y-3 gap-3 text-xs">
-<div class="flex items-center lg:flex-row">
-<div class="text-slate-500 w-16 lg:w-20 text-xs lg:text-xs">帳號數量</div>
-<div class="text-base lg:text-lg font-bold text-gray-800" id="total-accounts">-</div>
-</div>
-<div class="flex items-center lg:flex-row">
-<div class="text-slate-500 w-16 lg:w-20 text-xs lg:text-xs">總花費</div>
-<div class="text-base lg:text-lg font-bold text-gray-800" id="all-total-spend">-</div>
-</div>
-<div class="flex items-center lg:flex-row">
-<div class="text-slate-500 w-16 lg:w-20 text-xs lg:text-xs">%</div>
-<div class="text-base lg:text-lg font-bold text-gray-800" id="all-total-percentage">-</div>
-</div>
-<div class="flex items-center lg:flex-row">
-<div class="text-slate-500 w-16 lg:w-20 text-xs lg:text-xs">總花費+%</div>
-<div class="text-base lg:text-lg font-bold text-gray-800" id="all-total-spend-plus">-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- 廣告帳號卡片 -->
-<div class="rounded-md border border-slate-200 bg-white">
-<div class="px-3 py-2 bg-slate-50 border-b border-slate-200">
-<p class="text-slate-700 text-xs font-medium">廣告帳號</p>
-<div class="grid grid-cols-4 gap-1 sm:gap-2 mt-1 text-xs text-slate-500">
-<span class="truncate">名稱</span>
-<span class="text-right">數量</span>
-<span class="text-right">花費</span>
-<span class="text-right">花費+%</span>
-</div>
-</div>
-<nav id="sheet-tabs" class="flex flex-col divide-y divide-slate-200 max-h-[40vh] sm:max-h-none overflow-y-auto" aria-label="Sheets"></nav>
-</div>
-</div>
-<div class="flex-1">
-<div id="status" class="mb-3 text-sm text-slate-500">載入中...</div>
-
-<!-- 儀表板統計 -->
-<div class="mb-6 bg-white rounded-lg border border-gray-200 p-3 sm:p-4">
-  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-    <div class="text-center">
-      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="total-spend">-</div>
-      <div class="text-xs sm:text-sm text-gray-500">總花費</div>
-    </div>
-    <div class="text-center">
-      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="total-spend-plus">-</div>
-      <div class="text-xs sm:text-sm text-gray-500">總花費+%</div>
-    </div>
-    <div class="text-center">
-      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="avg-clicks">-</div>
-      <div class="text-xs sm:text-sm text-gray-500">平均點擊次數</div>
-    </div>
-    <div class="text-center">
-      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="avg-cpc">-</div>
-      <div class="text-xs sm:text-sm text-gray-500">平均點擊成本</div>
-    </div>
-    <div class="text-center">
-      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="avg-messages">-</div>
-      <div class="text-xs sm:text-sm text-gray-500">平均私訊數</div>
-    </div>
-    <div class="text-center">
-      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="avg-message-cost">-</div>
-      <div class="text-xs sm:text-sm text-gray-500">平均私訊成本</div>
+      <div
+        class="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-200 mt-3 sm:mt-4">
+        <button onclick="closeSettingsModal()"
+          class="px-3 sm:px-4 py-2 text-xs sm:text-sm text-gray-600 hover:text-gray-800 transition-colors order-2 sm:order-1">
+          取消
+        </button>
+        <button onclick="saveSheetConfig()"
+          class="px-3 sm:px-4 py-2 text-xs sm:text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors order-1 sm:order-2">
+          儲存設定
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-3">
-<label class="relative flex-col min-w-0 flex-1 sm:min-w-40 sm:max-w-64">
-<div class="flex w-full flex-1 items-stretch rounded-md h-8 sm:h-8">
-<div class="text-slate-400 flex border-none bg-slate-100 items-center justify-center pl-2 rounded-l-md border-r-0">
-<span class="material-symbols-outlined text-sm">search</span>
-</div>
-<input id="search-input" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-md text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 border-none bg-slate-100 h-full placeholder:text-slate-400 px-3 rounded-l-none border-l-0 pl-2 text-xs font-normal leading-normal" placeholder="搜尋活動名稱" value=""/>
-</div>
-</label>
-<div class="flex items-center justify-between sm:justify-end gap-3">
-<div id="table-info" class="text-xs text-slate-500 italic font-light flex-1 sm:flex-none"></div>
-<button id="download-btn" onclick="downloadTableData()" class="flex items-center gap-1 px-3 py-1.5 text-xs bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors whitespace-nowrap">
-<span class="material-symbols-outlined text-sm">download</span>
-<span class="hidden sm:inline">下載資料</span>
-<span class="sm:hidden">下載</span>
-</button>
-</div>
-</div>
-<div class="overflow-x-auto rounded-md border border-slate-200 bg-white">
-<table id="main-table" class="w-full text-left min-w-[800px]"></table>
-</div>
-</div>
-</div>
-</div>
-  </div>
-  </main>
-<script>
+  <div class="relative flex h-auto min-h-screen w-full flex-col bg-white group/design-root overflow-x-hidden"
+    style='font-family: Inter, "Noto Sans", sans-serif;'>
+    <div class="layout-container flex h-full grow flex-col">
+      <header
+        class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 px-4 sm:px-6 lg:px-10 py-3 bg-white">
+        <div class="flex items-center gap-2 sm:gap-4 lg:gap-8">
+          <div class="flex items-center gap-2 sm:gap-4 text-slate-900">
+            <h2 class="text-slate-900 text-lg sm:text-xl font-bold leading-tight tracking-[-0.015em]">LURE AD CENTER
+            </h2>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-4">
+          <div class="text-xs text-slate-500 font-mono hidden sm:block" id="version-display">v20250915170325</div>
+          <button id="refresh-btn" onclick="refreshData()"
+            class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors"
+            title="重新載入資料">
+            <span id="refresh-icon" class="material-symbols-outlined text-base sm:text-lg">refresh</span>
+          </button>
+          <button onclick="openSettingsModal()"
+            class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors"
+            title="設定">
+            <span class="material-symbols-outlined text-base sm:text-lg">settings</span>
+          </button>
+        </div>
+      </header>
+      <main class="flex flex-1 justify-center py-8 px-4 sm:px-6 lg:px-8 pt-24">
+        <div class="layout-content-container flex flex-col w-full max-w-7xl">
+          <div class="flex flex-col gap-4">
+            <div class="flex flex-col lg:flex-row gap-4 lg:gap-6">
+              <div class="w-full lg:w-80 lg:shrink-0 space-y-4 lg:sticky lg:top-24 lg:self-start">
+                <!-- 總計卡片 -->
+                <div class="rounded-md border border-slate-200 bg-slate-50">
+                  <div class="px-3 py-2 border-b border-slate-200">
+                    <p class="text-slate-700 text-xs font-medium">總計</p>
+                  </div>
+                  <div class="px-3 py-2">
+                    <div class="grid grid-cols-2 lg:block lg:space-y-3 gap-3 text-xs">
+                      <div class="flex items-center lg:flex-row">
+                        <div class="text-slate-500 w-16 lg:w-20 text-xs lg:text-xs">帳號數量</div>
+                        <div class="text-base lg:text-lg font-bold text-gray-800" id="total-accounts">-</div>
+                      </div>
+                      <div class="flex items-center lg:flex-row">
+                        <div class="text-slate-500 w-16 lg:w-20 text-xs lg:text-xs">總花費</div>
+                        <div class="text-base lg:text-lg font-bold text-gray-800" id="all-total-spend">-</div>
+                      </div>
+                      <div class="flex items-center lg:flex-row">
+                        <div class="text-slate-500 w-16 lg:w-20 text-xs lg:text-xs">%</div>
+                        <div class="text-base lg:text-lg font-bold text-gray-800" id="all-total-percentage">-</div>
+                      </div>
+                      <div class="flex items-center lg:flex-row">
+                        <div class="text-slate-500 w-16 lg:w-20 text-xs lg:text-xs">總花費+%</div>
+                        <div class="text-base lg:text-lg font-bold text-gray-800" id="all-total-spend-plus">-</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 廣告帳號卡片 -->
+                <div class="rounded-md border border-slate-200 bg-white">
+                  <div class="px-3 py-2 bg-slate-50 border-b border-slate-200">
+                    <p class="text-slate-700 text-xs font-medium">廣告帳號</p>
+                    <div class="grid grid-cols-4 gap-1 sm:gap-2 mt-1 text-xs text-slate-500">
+                      <span class="truncate">名稱</span>
+                      <span class="text-right">數量</span>
+                      <span class="text-right">花費</span>
+                      <span class="text-right">花費+%</span>
+                    </div>
+                  </div>
+                  <nav id="sheet-tabs"
+                    class="flex flex-col divide-y divide-slate-200 max-h-[40vh] sm:max-h-none overflow-y-auto"
+                    aria-label="Sheets"></nav>
+                </div>
+              </div>
+              <div class="flex-1">
+                <div id="status" class="mb-3 text-sm text-slate-500">載入中...</div>
+
+                <!-- 儀表板統計 -->
+                <div class="mb-6 bg-white rounded-lg border border-gray-200 p-3 sm:p-4">
+                  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+                    <div class="text-center">
+                      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="total-spend">-</div>
+                      <div class="text-xs sm:text-sm text-gray-500">總花費</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="total-spend-plus">-</div>
+                      <div class="text-xs sm:text-sm text-gray-500">總花費+%</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="avg-clicks">-</div>
+                      <div class="text-xs sm:text-sm text-gray-500">平均點擊次數</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="avg-cpc">-</div>
+                      <div class="text-xs sm:text-sm text-gray-500">平均點擊成本</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="avg-messages">-</div>
+                      <div class="text-xs sm:text-sm text-gray-500">平均私訊數</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800" id="avg-message-cost">-</div>
+                      <div class="text-xs sm:text-sm text-gray-500">平均私訊成本</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-3">
+                  <label class="relative flex-col min-w-0 flex-1 sm:min-w-40 sm:max-w-64">
+                    <div class="flex w-full flex-1 items-stretch rounded-md h-8 sm:h-8">
+                      <div
+                        class="text-slate-400 flex border-none bg-slate-100 items-center justify-center pl-2 rounded-l-md border-r-0">
+                        <span class="material-symbols-outlined text-sm">search</span>
+                      </div>
+                      <input id="search-input"
+                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-md text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 border-none bg-slate-100 h-full placeholder:text-slate-400 px-3 rounded-l-none border-l-0 pl-2 text-xs font-normal leading-normal"
+                        placeholder="搜尋活動名稱" value="" />
+                    </div>
+                  </label>
+                  <div class="flex items-center justify-between sm:justify-end gap-3">
+                    <div id="table-info" class="text-xs text-slate-500 italic font-light flex-1 sm:flex-none"></div>
+                    <button id="download-btn" onclick="downloadTableData()"
+                      class="flex items-center gap-1 px-3 py-1.5 text-xs bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors whitespace-nowrap">
+                      <span class="material-symbols-outlined text-sm">download</span>
+                      <span class="hidden sm:inline">下載資料</span>
+                      <span class="sm:hidden">下載</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="overflow-x-auto rounded-md border border-slate-200 bg-white">
+                  <table id="main-table" class="w-full text-left min-w-[800px]"></table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <script>
 
 
-(function() {
-  // Google Sheets 基礎連結和常見的工作表 GID
-  const SHEETS_BASE_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSImKWK9cURUKloCFw3mr759Id_QfTSHmd1_8DJrihHr8bichEC3ZeoYaHrxmLkLaPSfCkPsLnoka4c/pub?output=csv';
-  
-  // 所有工作表的 GID 配置
-  const ADDITIONAL_SHEET_GIDS = [
-    { name: '吸引力', gid: '1731918377' },
-    { name: '寰宇', gid: '186693734' },
-    { name: '藍蒂蔻', gid: '678515244' },
-    { name: '新技', gid: '1515508175' },
-    { name: '總部', gid: '2076528666' },
-    { name: '新城區', gid: '1314685146' },
-    { name: '第一事業部', gid: '2003263441' },
-    { name: '第二事業部', gid: '169051770' },
-    { name: '第三事業部', gid: '1585941268' },
-    { name: '第四事業部', gid: '1841114498' },
-    { name: '其他區部', gid: '2032331650' },
-    { name: '顏區', gid: '605760610' },
-    { name: '大里區', gid: '321162073' },
-    { name: '逢甲區', gid: '2039681828' },
-    { name: '基隆區', gid: '1871669787' }
-  ];
+        (function () {
+          // Google Sheets 基礎連結和常見的工作表 GID
+          const SHEETS_BASE_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSImKWK9cURUKloCFw3mr759Id_QfTSHmd1_8DJrihHr8bichEC3ZeoYaHrxmLkLaPSfCkPsLnoka4c/pub?output=csv';
 
-  const tabsContainer = document.getElementById('sheet-tabs');
-  const statusEl = document.getElementById('status');
-  const tableInfoEl = document.getElementById('table-info');
-  const mainTable = document.getElementById('main-table');
-  const searchInput = document.getElementById('search-input');
-  
-  // 儀表板元素
-  const totalSpendEl = document.getElementById('total-spend');
-  const totalSpendPlusEl = document.getElementById('total-spend-plus');
-  const avgClicksEl = document.getElementById('avg-clicks');
-  const avgCpcEl = document.getElementById('avg-cpc');
-  const avgMessagesEl = document.getElementById('avg-messages');
-  const avgMessageCostEl = document.getElementById('avg-message-cost');
-  
-  // 總計卡片元素
-  const totalAccountsEl = document.getElementById('total-accounts');
-  const allTotalSpendEl = document.getElementById('all-total-spend');
-  const allTotalPercentageEl = document.getElementById('all-total-percentage');
-  const allTotalSpendPlusEl = document.getElementById('all-total-spend-plus');
-  
-  let workbookCache = null;
-  let originalData = [];
-  
-  // 儲存百分比數據的物件，結構：{ sheetName: { rowId: percentage } }
-  let percentageStorage = {};
-  
-  // 儲存暱稱數據的物件，結構：{ sheetName: { originalName: nickname } }
-  let nicknameStorage = {};
-  
-  // 儲存顏色閾值設定（全域預設值）
-  let colorThresholds = {
-    messageCost: {
-      enabled: false,
-      green: 0,
-      red: 100
-    },
-    clickCost: {
-      enabled: false,
-      green: 0,
-      red: 10
-    }
-  };
-  
-  // 儲存每列的顏色閾值設定，結構：{ sheetName: { rowId: { messageCost: {...}, clickCost: {...} } } }
-  let rowColorThresholds = {};
+          // 所有工作表的 GID 配置
+          const ADDITIONAL_SHEET_GIDS = [
+            { name: '吸引力', gid: '1731918377' },
+            { name: '寰宇', gid: '186693734' },
+            { name: '藍蒂蔻', gid: '678515244' },
+            { name: '新技', gid: '1515508175' },
+            { name: '總部', gid: '2076528666' },
+            { name: '新城區', gid: '1314685146' },
+            { name: '第一事業部', gid: '2003263441' },
+            { name: '第二事業部', gid: '169051770' },
+            { name: '第三事業部', gid: '1585941268' },
+            { name: '第四事業部', gid: '1841114498' },
+            { name: '其他區部', gid: '2032331650' },
+            { name: '顏區', gid: '605760610' },
+            { name: '大里區', gid: '321162073' },
+            { name: '逢甲區', gid: '2039681828' },
+            { name: '基隆區', gid: '1871669787' }
+          ];
 
-  function setStatus(message, isError) {
-    if (!statusEl) return;
-    statusEl.textContent = message || '';
-    statusEl.className = 'mb-3 text-sm ' + (isError ? 'text-red-600' : 'text-slate-500');
-  }
+          const tabsContainer = document.getElementById('sheet-tabs');
+          const statusEl = document.getElementById('status');
+          const tableInfoEl = document.getElementById('table-info');
+          const mainTable = document.getElementById('main-table');
+          const searchInput = document.getElementById('search-input');
 
-  // 載入進度相關函式
-  function showLoadingModal() {
-    const modal = document.getElementById('loadingModal');
-    if (modal) {
-      modal.classList.remove('hidden');
-    }
-  }
+          // 儀表板元素
+          const totalSpendEl = document.getElementById('total-spend');
+          const totalSpendPlusEl = document.getElementById('total-spend-plus');
+          const avgClicksEl = document.getElementById('avg-clicks');
+          const avgCpcEl = document.getElementById('avg-cpc');
+          const avgMessagesEl = document.getElementById('avg-messages');
+          const avgMessageCostEl = document.getElementById('avg-message-cost');
 
-  function hideLoadingModal() {
-    const modal = document.getElementById('loadingModal');
-    if (modal) {
-      modal.classList.add('hidden');
-    }
-  }
+          // 總計卡片元素
+          const totalAccountsEl = document.getElementById('total-accounts');
+          const allTotalSpendEl = document.getElementById('all-total-spend');
+          const allTotalPercentageEl = document.getElementById('all-total-percentage');
+          const allTotalSpendPlusEl = document.getElementById('all-total-spend-plus');
 
-  function updateLoadingProgress(percentage, text) {
-    const progressBar = document.getElementById('loadingProgress');
-    const progressText = document.getElementById('loadingProgressText');
-    const loadingText = document.getElementById('loadingText');
-    
-    if (progressBar) {
-      progressBar.style.width = percentage + '%';
-    }
-    if (progressText) {
-      progressText.textContent = Math.round(percentage) + '%';
-    }
-    if (loadingText && text) {
-      loadingText.textContent = text;
-    }
-  }
+          let workbookCache = null;
+          let originalData = [];
 
-  function escapeHtml(value) {
-    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-    return String(value == null ? '' : value).replace(/[&<>"']/g, (m) => map[m]);
-  }
+          // 儲存百分比數據的物件，結構：{ sheetName: { rowId: percentage } }
+          let percentageStorage = {};
 
-  function parseCSV(csvText) {
-    const lines = csvText.split('\n');
-    const result = [];
-    
-    for (let line of lines) {
-      if (line.trim() === '') continue;
-      
-      const row = [];
-      let inQuotes = false;
-      let currentField = '';
-      
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        const nextChar = line[i + 1];
-        
-        if (char === '"') {
-          if (inQuotes && nextChar === '"') {
-            // 處理雙引號轉義
-            currentField += '"';
-            i++; // 跳過下一個引號
-          } else {
-            // 切換引號狀態
-            inQuotes = !inQuotes;
+          // 儲存暱稱數據的物件，結構：{ sheetName: { originalName: nickname } }
+          let nicknameStorage = {};
+
+          // 儲存顏色閾值設定（全域預設值）
+          let colorThresholds = {
+            messageCost: {
+              enabled: false,
+              green: 0,
+              red: 100
+            },
+            clickCost: {
+              enabled: false,
+              green: 0,
+              red: 10
+            }
+          };
+
+          // 儲存每列的顏色閾值設定，結構：{ sheetName: { rowId: { messageCost: {...}, clickCost: {...} } } }
+          let rowColorThresholds = {};
+
+          function setStatus(message, isError) {
+            if (!statusEl) return;
+            statusEl.textContent = message || '';
+            statusEl.className = 'mb-3 text-sm ' + (isError ? 'text-red-600' : 'text-slate-500');
           }
-        } else if (char === ',' && !inQuotes) {
-          // 欄位分隔符
-          row.push(currentField.trim());
-          currentField = '';
-        } else {
-          currentField += char;
-        }
-      }
-      
-      // 添加最後一個欄位
-      row.push(currentField.trim());
-      result.push(row);
-    }
-    
-    return result;
-  }
 
-  async function fetchSheetCSV(gid = null) {
-    const url = gid ? `${SHEETS_BASE_URL}&gid=${gid}` : SHEETS_BASE_URL;
-    try {
-      const resp = await fetch(url, { mode: 'cors' });
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
-      return await resp.text();
-    } catch (e) {
-      console.warn(`無法載入工作表 (gid=${gid}):`, e.message);
-      return null;
-    }
-  }
-
-  function isValidValue(value) {
-    // 檢查值是否為有效的非空數值
-    if (!value || value === '' || value === '-' || value === 'null' || value === 'undefined') {
-      return false;
-    }
-    // 移除逗號和貨幣符號後檢查是否為數字
-    const cleaned = String(value).replace(/[,$]/g, '');
-    const num = parseFloat(cleaned);
-    return !isNaN(num) && num >= 0; // 允許 0 值，但不允許負數
-  }
-
-  function updateDashboard() {
-    // 直接從表格 DOM 中讀取數據進行計算
-    const tableRows = mainTable.querySelectorAll('tbody tr');
-    
-    if (!tableRows || tableRows.length === 0) {
-      // 重置儀表板
-      if (totalSpendEl) totalSpendEl.textContent = '-';
-      if (totalSpendPlusEl) totalSpendPlusEl.textContent = '-';
-      if (avgClicksEl) avgClicksEl.textContent = '-';
-      if (avgCpcEl) avgCpcEl.textContent = '-';
-      if (avgMessagesEl) avgMessagesEl.textContent = '-';
-      if (avgMessageCostEl) avgMessageCostEl.textContent = '-';
-      return;
-    }
-
-    // 找到表頭中各欄位的位置
-    const headerCells = mainTable.querySelectorAll('thead th');
-    let spendIndex = -1, clicksIndex = -1, messagesIndex = -1, messageCostIndex = -1;
-    
-    headerCells.forEach((th, index) => {
-      const headerText = th.textContent.trim();
-      if (headerText.includes('花費金額')) spendIndex = index;
-      if (headerText.includes('連結點擊次數')) clicksIndex = index;
-      if (headerText.includes('私訊數') && !headerText.includes('成本')) messagesIndex = index;
-      if (headerText.includes('私訊成本')) messageCostIndex = index;
-    });
-
-    let totalSpend = 0;
-    let totalSpendPlus = 0;  // 總花費+%
-    let totalClicks = 0;
-    let totalMessages = 0;
-    let totalMessageCost = 0;
-    
-    // 分別計算各欄位的有效行數
-    let validSpendRows = 0;
-    let validClicksRows = 0;
-    let validMessagesRows = 0;
-    let validMessageCostRows = 0;
-
-    // 遍歷每一行數據
-    tableRows.forEach(row => {
-      const cells = row.querySelectorAll('td');
-      if (cells.length === 0) return;
-      
-      // 檢查是否為有效的數據行（第一欄不為空）
-      const firstCell = cells[0]?.textContent.trim();
-      if (!firstCell) return;
-
-      // 計算總花費（只計算有值的行）
-      if (spendIndex >= 0 && cells[spendIndex]) {
-        const spendText = cells[spendIndex].textContent.trim();
-        if (isValidValue(spendText)) {
-          const spend = parseFloat(spendText.replace(/[,$]/g, ''));
-          if (!isNaN(spend) && spend >= 0) {
-            totalSpend += spend;
-            validSpendRows++;
+          // 載入進度相關函式
+          function showLoadingModal() {
+            const modal = document.getElementById('loadingModal');
+            if (modal) {
+              modal.classList.remove('hidden');
+            }
           }
-        }
-      }
 
-      // 直接從表格中讀取「金額+%」欄位的值進行合計
-      const calculatedAmountCell = row.querySelector('.calculated-amount');
-      if (calculatedAmountCell) {
-        const calculatedText = calculatedAmountCell.textContent.trim();
-        if (calculatedText && calculatedText !== '-') {
-          // 如果有計算後的金額，使用該值
-          const calculatedAmount = parseFloat(calculatedText.replace(/[,$]/g, '')) || 0;
-          if (!isNaN(calculatedAmount) && calculatedAmount > 0) {
-            totalSpendPlus += calculatedAmount;
+          function hideLoadingModal() {
+            const modal = document.getElementById('loadingModal');
+            if (modal) {
+              modal.classList.add('hidden');
+            }
           }
-        } else {
-          // 如果「金額+%」顯示 "-"，則使用原始花費金額
-          if (spendIndex >= 0 && cells[spendIndex]) {
-            const spendText = cells[spendIndex].textContent.trim();
-            if (isValidValue(spendText)) {
-              const spend = parseFloat(spendText.replace(/[,$]/g, ''));
-              if (!isNaN(spend) && spend >= 0) {
-                totalSpendPlus += spend;
+
+          function updateLoadingProgress(percentage, text) {
+            const progressBar = document.getElementById('loadingProgress');
+            const progressText = document.getElementById('loadingProgressText');
+            const loadingText = document.getElementById('loadingText');
+
+            if (progressBar) {
+              progressBar.style.width = percentage + '%';
+            }
+            if (progressText) {
+              progressText.textContent = Math.round(percentage) + '%';
+            }
+            if (loadingText && text) {
+              loadingText.textContent = text;
+            }
+          }
+
+          function escapeHtml(value) {
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return String(value == null ? '' : value).replace(/[&<>"']/g, (m) => map[m]);
+          }
+
+          function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const result = [];
+
+            for (let line of lines) {
+              if (line.trim() === '') continue;
+
+              const row = [];
+              let inQuotes = false;
+              let currentField = '';
+
+              for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                const nextChar = line[i + 1];
+
+                if (char === '"') {
+                  if (inQuotes && nextChar === '"') {
+                    // 處理雙引號轉義
+                    currentField += '"';
+                    i++; // 跳過下一個引號
+                  } else {
+                    // 切換引號狀態
+                    inQuotes = !inQuotes;
+                  }
+                } else if (char === ',' && !inQuotes) {
+                  // 欄位分隔符
+                  row.push(currentField.trim());
+                  currentField = '';
+                } else {
+                  currentField += char;
+                }
               }
+
+              // 添加最後一個欄位
+              row.push(currentField.trim());
+              result.push(row);
+            }
+
+            return result;
+          }
+
+          async function fetchSheetCSV(gid = null) {
+            const url = gid ? `${SHEETS_BASE_URL}&gid=${gid}` : SHEETS_BASE_URL;
+            try {
+              const resp = await fetch(url, { mode: 'cors' });
+              if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+              return await resp.text();
+            } catch (e) {
+              console.warn(`無法載入工作表 (gid=${gid}):`, e.message);
+              return null;
             }
           }
-        }
-      }
 
-      // 計算總點擊次數（只計算有值的行）
-      if (clicksIndex >= 0 && cells[clicksIndex]) {
-        const clicksText = cells[clicksIndex].textContent.trim();
-        if (isValidValue(clicksText)) {
-          const clicks = parseFloat(clicksText.replace(/[,$]/g, ''));
-          if (!isNaN(clicks) && clicks >= 0) {
-            totalClicks += clicks;
-            validClicksRows++;
+          function isValidValue(value) {
+            // 檢查值是否為有效的非空數值
+            if (!value || value === '' || value === '-' || value === 'null' || value === 'undefined') {
+              return false;
+            }
+            // 移除逗號和貨幣符號後檢查是否為數字
+            const cleaned = String(value).replace(/[,$]/g, '');
+            const num = parseFloat(cleaned);
+            return !isNaN(num) && num >= 0; // 允許 0 值，但不允許負數
           }
-        }
-      }
 
-      // 計算總私訊數（只計算有值的行）
-      if (messagesIndex >= 0 && cells[messagesIndex]) {
-        const messagesText = cells[messagesIndex].textContent.trim();
-        if (isValidValue(messagesText)) {
-          const messages = parseFloat(messagesText.replace(/[,$]/g, ''));
-          if (!isNaN(messages) && messages >= 0) {
-            totalMessages += messages;
-            validMessagesRows++;
-          }
-        }
-      }
+          function updateDashboard() {
+            // 直接從表格 DOM 中讀取數據進行計算
+            const tableRows = mainTable.querySelectorAll('tbody tr');
 
-      // 計算總私訊成本（只計算有值的行）
-      if (messageCostIndex >= 0 && cells[messageCostIndex]) {
-        const messageCostText = cells[messageCostIndex].textContent.trim();
-        if (isValidValue(messageCostText)) {
-          const messageCost = parseFloat(messageCostText.replace(/[,$]/g, ''));
-          if (!isNaN(messageCost) && messageCost >= 0) {
-            totalMessageCost += messageCost;
-            validMessageCostRows++;
-          }
-        }
-      }
-    });
+            if (!tableRows || tableRows.length === 0) {
+              // 重置儀表板
+              if (totalSpendEl) totalSpendEl.textContent = '-';
+              if (totalSpendPlusEl) totalSpendPlusEl.textContent = '-';
+              if (avgClicksEl) avgClicksEl.textContent = '-';
+              if (avgCpcEl) avgCpcEl.textContent = '-';
+              if (avgMessagesEl) avgMessagesEl.textContent = '-';
+              if (avgMessageCostEl) avgMessageCostEl.textContent = '-';
+              return;
+            }
 
-    // 更新儀表板
-    if (totalSpendEl) {
-      totalSpendEl.textContent = totalSpend > 0 ? totalSpend.toLocaleString() : '-';
-    }
+            // 找到表頭中各欄位的位置
+            const headerCells = mainTable.querySelectorAll('thead th');
+            let spendIndex = -1, clicksIndex = -1, messagesIndex = -1, messageCostIndex = -1;
 
-    if (totalSpendPlusEl) {
-      totalSpendPlusEl.textContent = totalSpendPlus > 0 ? totalSpendPlus.toLocaleString() : '-';
-    }
+            headerCells.forEach((th, index) => {
+              const headerText = th.textContent.trim();
+              if (headerText.includes('花費金額')) spendIndex = index;
+              if (headerText.includes('連結點擊次數')) clicksIndex = index;
+              if (headerText.includes('私訊數') && !headerText.includes('成本')) messagesIndex = index;
+              if (headerText.includes('私訊成本')) messageCostIndex = index;
+            });
 
-    if (avgClicksEl) {
-      const avgClicks = validClicksRows > 0 ? Math.round(totalClicks / validClicksRows) : 0;
-      avgClicksEl.textContent = avgClicks > 0 ? avgClicks.toLocaleString() : '-';
-    }
+            let totalSpend = 0;
+            let totalSpendPlus = 0;  // 總花費+%
+            let totalClicks = 0;
+            let totalMessages = 0;
+            let totalMessageCost = 0;
 
-    if (avgCpcEl) {
-      // 計算平均點擊成本：直接從每行的點擊成本欄位計算平均值
-      let totalCpc = 0;
-      let validCpcRows = 0;
-      
-      tableRows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        if (cells.length === 0) return;
-        
-        // 檢查是否為有效的數據行（第一欄不為空）
-        const firstCell = cells[0]?.textContent.trim();
-        if (!firstCell) return;
-        
-        // 找到點擊成本欄位（CPC）
-        let cpcIndex = -1;
-        const headerCells = mainTable.querySelectorAll('thead th');
-        headerCells.forEach((th, index) => {
-          const headerText = th.textContent.trim();
-          if (headerText.includes('點擊成本') || headerText.includes('CPC')) {
-            cpcIndex = index;
-          }
-        });
-        
-        // 如果找到點擊成本欄位，計算該行的點擊成本
-        if (cpcIndex >= 0 && cells[cpcIndex]) {
-          const cpcText = cells[cpcIndex].textContent.trim();
-          if (isValidValue(cpcText)) {
-            const cpc = parseFloat(cpcText.replace(/[,$]/g, ''));
-            if (!isNaN(cpc) && cpc >= 0) {
-              totalCpc += cpc;
-              validCpcRows++;
+            // 分別計算各欄位的有效行數
+            let validSpendRows = 0;
+            let validClicksRows = 0;
+            let validMessagesRows = 0;
+            let validMessageCostRows = 0;
+
+            // 遍歷每一行數據
+            tableRows.forEach(row => {
+              const cells = row.querySelectorAll('td');
+              if (cells.length === 0) return;
+
+              // 檢查是否為有效的數據行（第一欄不為空）
+              const firstCell = cells[0]?.textContent.trim();
+              if (!firstCell) return;
+
+              // 計算總花費（只計算有值的行）
+              if (spendIndex >= 0 && cells[spendIndex]) {
+                const spendText = cells[spendIndex].textContent.trim();
+                if (isValidValue(spendText)) {
+                  const spend = parseFloat(spendText.replace(/[,$]/g, ''));
+                  if (!isNaN(spend) && spend >= 0) {
+                    totalSpend += spend;
+                    validSpendRows++;
+                  }
+                }
+              }
+
+              // 直接從表格中讀取「金額+%」欄位的值進行合計
+              const calculatedAmountCell = row.querySelector('.calculated-amount');
+              if (calculatedAmountCell) {
+                const calculatedText = calculatedAmountCell.textContent.trim();
+                if (calculatedText && calculatedText !== '-') {
+                  // 如果有計算後的金額，使用該值
+                  const calculatedAmount = parseFloat(calculatedText.replace(/[,$]/g, '')) || 0;
+                  if (!isNaN(calculatedAmount) && calculatedAmount > 0) {
+                    totalSpendPlus += calculatedAmount;
+                  }
+                } else {
+                  // 如果「金額+%」顯示 "-"，則使用原始花費金額
+                  if (spendIndex >= 0 && cells[spendIndex]) {
+                    const spendText = cells[spendIndex].textContent.trim();
+                    if (isValidValue(spendText)) {
+                      const spend = parseFloat(spendText.replace(/[,$]/g, ''));
+                      if (!isNaN(spend) && spend >= 0) {
+                        totalSpendPlus += spend;
+                      }
+                    }
+                  }
+                }
+              }
+
+              // 計算總點擊次數（只計算有值的行）
+              if (clicksIndex >= 0 && cells[clicksIndex]) {
+                const clicksText = cells[clicksIndex].textContent.trim();
+                if (isValidValue(clicksText)) {
+                  const clicks = parseFloat(clicksText.replace(/[,$]/g, ''));
+                  if (!isNaN(clicks) && clicks >= 0) {
+                    totalClicks += clicks;
+                    validClicksRows++;
+                  }
+                }
+              }
+
+              // 計算總私訊數（只計算有值的行）
+              if (messagesIndex >= 0 && cells[messagesIndex]) {
+                const messagesText = cells[messagesIndex].textContent.trim();
+                if (isValidValue(messagesText)) {
+                  const messages = parseFloat(messagesText.replace(/[,$]/g, ''));
+                  if (!isNaN(messages) && messages >= 0) {
+                    totalMessages += messages;
+                    validMessagesRows++;
+                  }
+                }
+              }
+
+              // 計算總私訊成本（只計算有值的行）
+              if (messageCostIndex >= 0 && cells[messageCostIndex]) {
+                const messageCostText = cells[messageCostIndex].textContent.trim();
+                if (isValidValue(messageCostText)) {
+                  const messageCost = parseFloat(messageCostText.replace(/[,$]/g, ''));
+                  if (!isNaN(messageCost) && messageCost >= 0) {
+                    totalMessageCost += messageCost;
+                    validMessageCostRows++;
+                  }
+                }
+              }
+            });
+
+            // 更新儀表板
+            if (totalSpendEl) {
+              totalSpendEl.textContent = totalSpend > 0 ? totalSpend.toLocaleString() : '-';
+            }
+
+            if (totalSpendPlusEl) {
+              totalSpendPlusEl.textContent = totalSpendPlus > 0 ? totalSpendPlus.toLocaleString() : '-';
+            }
+
+            if (avgClicksEl) {
+              const avgClicks = validClicksRows > 0 ? Math.round(totalClicks / validClicksRows) : 0;
+              avgClicksEl.textContent = avgClicks > 0 ? avgClicks.toLocaleString() : '-';
+            }
+
+            if (avgCpcEl) {
+              // 計算平均點擊成本：直接從每行的點擊成本欄位計算平均值
+              let totalCpc = 0;
+              let validCpcRows = 0;
+
+              tableRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length === 0) return;
+
+                // 檢查是否為有效的數據行（第一欄不為空）
+                const firstCell = cells[0]?.textContent.trim();
+                if (!firstCell) return;
+
+                // 找到點擊成本欄位（CPC）
+                let cpcIndex = -1;
+                const headerCells = mainTable.querySelectorAll('thead th');
+                headerCells.forEach((th, index) => {
+                  const headerText = th.textContent.trim();
+                  if (headerText.includes('點擊成本') || headerText.includes('CPC')) {
+                    cpcIndex = index;
+                  }
+                });
+
+                // 如果找到點擊成本欄位，計算該行的點擊成本
+                if (cpcIndex >= 0 && cells[cpcIndex]) {
+                  const cpcText = cells[cpcIndex].textContent.trim();
+                  if (isValidValue(cpcText)) {
+                    const cpc = parseFloat(cpcText.replace(/[,$]/g, ''));
+                    if (!isNaN(cpc) && cpc >= 0) {
+                      totalCpc += cpc;
+                      validCpcRows++;
+                    }
+                  }
+                }
+              });
+
+              const avgCpc = validCpcRows > 0 ? (totalCpc / validCpcRows) : 0;
+              avgCpcEl.textContent = avgCpc > 0 ? avgCpc.toFixed(1) : '-';
+            }
+
+            if (avgMessagesEl) {
+              const avgMessages = validMessagesRows > 0 ? (totalMessages / validMessagesRows) : 0;
+              avgMessagesEl.textContent = avgMessages > 0 ? avgMessages.toFixed(1) : '-';
+            }
+
+            if (avgMessageCostEl) {
+              const avgMessageCost = validMessageCostRows > 0 ? (totalMessageCost / validMessageCostRows) : 0;
+              avgMessageCostEl.textContent = avgMessageCost > 0 ? avgMessageCost.toFixed(1) : '-';
             }
           }
-        }
-      });
-      
-      const avgCpc = validCpcRows > 0 ? (totalCpc / validCpcRows) : 0;
-      avgCpcEl.textContent = avgCpc > 0 ? avgCpc.toFixed(1) : '-';
-    }
 
-    if (avgMessagesEl) {
-      const avgMessages = validMessagesRows > 0 ? (totalMessages / validMessagesRows) : 0;
-      avgMessagesEl.textContent = avgMessages > 0 ? avgMessages.toFixed(1) : '-';
-    }
+          function trimEmptyEdges(matrix) {
+            if (!matrix || !matrix.length) return matrix;
 
-    if (avgMessageCostEl) {
-      const avgMessageCost = validMessageCostRows > 0 ? (totalMessageCost / validMessageCostRows) : 0;
-      avgMessageCostEl.textContent = avgMessageCost > 0 ? avgMessageCost.toFixed(1) : '-';
-    }
-  }
+            // 找到最後一個非空欄位
+            let lastNonEmptyCol = -1;
+            for (let c = 0; c < matrix[0].length; c++) {
+              let any = false;
+              for (let r = 0; r < matrix.length; r++) {
+                const v = (matrix[r][c] ?? '').toString().trim();
+                if (v !== '') { any = true; break; }
+              }
+              if (any) lastNonEmptyCol = c;
+            }
 
-  function trimEmptyEdges(matrix) {
-    if (!matrix || !matrix.length) return matrix;
-    
-    // 找到最後一個非空欄位
-    let lastNonEmptyCol = -1;
-    for (let c = 0; c < matrix[0].length; c++) {
-      let any = false;
-      for (let r = 0; r < matrix.length; r++) {
-        const v = (matrix[r][c] ?? '').toString().trim();
-        if (v !== '') { any = true; break; }
-      }
-      if (any) lastNonEmptyCol = c;
-    }
-    
-    // 保留所有欄位，不要截斷（除非真的完全為空）
-    // 只移除完全空白的行
-    while (matrix.length && matrix[matrix.length - 1].every((v) => String(v || '').trim() === '')) {
-      matrix.pop();
-    }
-    
-    return matrix;
-  }
+            // 保留所有欄位，不要截斷（除非真的完全為空）
+            // 只移除完全空白的行
+            while (matrix.length && matrix[matrix.length - 1].every((v) => String(v || '').trim() === '')) {
+              matrix.pop();
+            }
 
-  let currentSort = { column: -1, ascending: true };
-  let currentData = [];
-
-  function buildTableHtml(matrix) {
-    if (!matrix || matrix.length === 0 || (matrix[0] || []).every((v) => String(v || '').trim() === '')) {
-      if (tableInfoEl) tableInfoEl.textContent = '';
-      return '<tbody><tr><td class="px-2 py-1.5 text-slate-500 text-xs">無資料</td></tr></tbody>';
-    }
-    
-    // 不再處理資訊行，因為已經在 renderTable 中移除了
-    let actualMatrix = matrix;
-    
-    // 調試資訊：顯示資料結構
-    console.log('表格資料結構:', {
-      totalRows: actualMatrix.length,
-      firstRowColumns: actualMatrix[0] ? actualMatrix[0].length : 0,
-      firstRowData: actualMatrix[0],
-      sampleDataRow: actualMatrix[1] || '無資料行'
-    });
-    
-    // 清空資訊文字
-    if (tableInfoEl) {
-      tableInfoEl.textContent = '';
-    }
-    
-    if (actualMatrix.length === 0) {
-      return '<tbody><tr><td class="px-2 py-1.5 text-slate-500 text-xs">無資料</td></tr></tbody>';
-    }
-    
-    currentData = actualMatrix;
-    
-    // 決定使用哪個表頭和資料
-    let header, body;
-    
-    // 檢查第一行是否為正確的表頭
-    const firstRow = actualMatrix[0];
-    const isValidHeader = firstRow && (
-      String(firstRow[0]).includes('活動名稱') ||
-      String(firstRow[0]).trim() === '活動名稱' ||
-      String(firstRow[0]).includes('Campaign name')
-    );
-    
-    let originalHeader, originalBody;
-    if (isValidHeader) {
-      // 第一行是正確的表頭，但重新排列欄位順序
-      const headerMapping = {};
-      firstRow.forEach((cell, index) => {
-        const cellStr = String(cell || '').trim();
-        // 統一表頭名稱並記錄索引
-        if (cellStr === 'Campaign name' || cellStr === '活動名稱') headerMapping['活動名稱'] = index;
-        if (cellStr === 'Reporting starts' || cellStr === '報告起始') headerMapping['報告起始'] = index;
-        if (cellStr === 'Reporting ends' || cellStr === '報告結束') headerMapping['報告結束'] = index;
-        if (cellStr === 'Amount spent' || cellStr === '花費金額') headerMapping['花費金額'] = index;
-        if (cellStr === 'Link clicks' || cellStr === '連結點擊次數') headerMapping['連結點擊次數'] = index;
-        if (cellStr === 'CPC (cost per link click)' || cellStr === '點擊成本') headerMapping['點擊成本'] = index;
-        if (cellStr === 'Messaging conversations started' || cellStr === '私訊數') headerMapping['私訊數'] = index;
-        if (cellStr === 'Cost per messaging conversations started' || cellStr === '私訊成本') headerMapping['私訊成本'] = index;
-      });
-      
-      // 按照指定順序重新排列表頭，在花費金額後插入 % 和 金額+% 欄位
-      const orderedHeaders = ['活動名稱', '報告起始', '報告結束', '花費金額', '%', '金額+%', '連結點擊次數', '點擊成本', '私訊數', '私訊成本'];
-      originalHeader = orderedHeaders.filter(header => headerMapping.hasOwnProperty(header) || header === '%' || header === '金額+%');
-      
-      // 重新排列資料行
-      originalBody = actualMatrix.slice(1).map((row, rowIndex) => {
-        return originalHeader.map(header => {
-          if (header === '%' || header === '金額+%') {
-            return ''; // 新欄位預設為空
+            return matrix;
           }
-          return row[headerMapping[header]] || '';
-        });
-      });
-    } else {
-      // 使用標準表頭 - 調整欄位順序，在花費金額後插入 % 和 金額+% 欄位
-      originalHeader = ['活動名稱', '報告起始', '報告結束', '花費金額', '%', '金額+%', '連結點擊次數', '點擊成本', '私訊數', '私訊成本'];
-      // 所有行都是資料行
-      originalBody = actualMatrix;
-    }
-    
-    // 動態添加 No. 欄位
-    header = ['No.', ...originalHeader];
-    body = originalBody;
-    
-    // 確保表頭和資料行欄位數量匹配
-    // 表頭：['No.', ...originalHeader] = 1 + originalHeader.length 個欄位
-    // 資料行：No. 欄位 + originalHeader.length 個資料欄位 = 1 + originalHeader.length 個欄位
-    
-    let html = '<thead class="bg-slate-50 sticky top-0 z-20"><tr>';
-    for (let i = 0; i < header.length; i++) {
-      const h = header[i];
-      const sortIcon = currentSort.column === i 
-        ? (currentSort.ascending ? '▲' : '▼') 
-        : '⇅';
-      
-      // 為「金額+%」欄位添加突出樣式
-      const isCalculatedAmount = h === '金額+%';
-      const headerClass = isCalculatedAmount 
-        ? "px-2 py-1.5 text-slate-600 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:bg-blue-100 select-none bg-blue-50 sticky top-0 z-20 border-b border-slate-200 border-l-2 border-blue-200"
-        : "px-2 py-1.5 text-slate-600 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:bg-slate-100 select-none bg-slate-50 sticky top-0 z-20 border-b border-slate-200";
-      
-      html += `<th class="${headerClass}" onclick="sortTable(${i})">
+
+          let currentSort = { column: -1, ascending: true };
+          let currentData = [];
+
+          function buildTableHtml(matrix) {
+            if (!matrix || matrix.length === 0 || (matrix[0] || []).every((v) => String(v || '').trim() === '')) {
+              if (tableInfoEl) tableInfoEl.textContent = '';
+              return '<tbody><tr><td class="px-2 py-1.5 text-slate-500 text-xs">無資料</td></tr></tbody>';
+            }
+
+            // 不再處理資訊行，因為已經在 renderTable 中移除了
+            let actualMatrix = matrix;
+
+            // 調試資訊：顯示資料結構
+            console.log('表格資料結構:', {
+              totalRows: actualMatrix.length,
+              firstRowColumns: actualMatrix[0] ? actualMatrix[0].length : 0,
+              firstRowData: actualMatrix[0],
+              sampleDataRow: actualMatrix[1] || '無資料行'
+            });
+
+            // 清空資訊文字
+            if (tableInfoEl) {
+              tableInfoEl.textContent = '';
+            }
+
+            if (actualMatrix.length === 0) {
+              return '<tbody><tr><td class="px-2 py-1.5 text-slate-500 text-xs">無資料</td></tr></tbody>';
+            }
+
+            currentData = actualMatrix;
+
+            // 決定使用哪個表頭和資料
+            let header, body;
+
+            // 檢查第一行是否為正確的表頭
+            const firstRow = actualMatrix[0];
+            const isValidHeader = firstRow && (
+              String(firstRow[0]).includes('活動名稱') ||
+              String(firstRow[0]).trim() === '活動名稱' ||
+              String(firstRow[0]).includes('Campaign name')
+            );
+
+            let originalHeader, originalBody;
+            if (isValidHeader) {
+              // 第一行是正確的表頭，但重新排列欄位順序
+              const headerMapping = {};
+              firstRow.forEach((cell, index) => {
+                const cellStr = String(cell || '').trim();
+                // 統一表頭名稱並記錄索引
+                if (cellStr === 'Campaign name' || cellStr === '活動名稱') headerMapping['活動名稱'] = index;
+                if (cellStr === 'Reporting starts' || cellStr === '報告起始') headerMapping['報告起始'] = index;
+                if (cellStr === 'Reporting ends' || cellStr === '報告結束') headerMapping['報告結束'] = index;
+                if (cellStr === 'Amount spent' || cellStr === '花費金額') headerMapping['花費金額'] = index;
+                if (cellStr === 'Link clicks' || cellStr === '連結點擊次數') headerMapping['連結點擊次數'] = index;
+                if (cellStr === 'CPC (cost per link click)' || cellStr === '點擊成本') headerMapping['點擊成本'] = index;
+                if (cellStr === 'Messaging conversations started' || cellStr === '私訊數') headerMapping['私訊數'] = index;
+                if (cellStr === 'Cost per messaging conversations started' || cellStr === '私訊成本') headerMapping['私訊成本'] = index;
+              });
+
+              // 按照指定順序重新排列表頭，在花費金額後插入 % 和 金額+% 欄位
+              const orderedHeaders = ['活動名稱', '報告起始', '報告結束', '花費金額', '%', '金額+%', '連結點擊次數', '點擊成本', '私訊數', '私訊成本'];
+              originalHeader = orderedHeaders.filter(header => headerMapping.hasOwnProperty(header) || header === '%' || header === '金額+%');
+
+              // 重新排列資料行
+              originalBody = actualMatrix.slice(1).map((row, rowIndex) => {
+                return originalHeader.map(header => {
+                  if (header === '%' || header === '金額+%') {
+                    return ''; // 新欄位預設為空
+                  }
+                  return row[headerMapping[header]] || '';
+                });
+              });
+            } else {
+              // 使用標準表頭 - 調整欄位順序，在花費金額後插入 % 和 金額+% 欄位
+              originalHeader = ['活動名稱', '報告起始', '報告結束', '花費金額', '%', '金額+%', '連結點擊次數', '點擊成本', '私訊數', '私訊成本'];
+              // 所有行都是資料行
+              originalBody = actualMatrix;
+            }
+
+            // 動態添加 No. 欄位
+            header = ['No.', ...originalHeader];
+            body = originalBody;
+
+            // 確保表頭和資料行欄位數量匹配
+            // 表頭：['No.', ...originalHeader] = 1 + originalHeader.length 個欄位
+            // 資料行：No. 欄位 + originalHeader.length 個資料欄位 = 1 + originalHeader.length 個欄位
+
+            let html = '<thead class="bg-slate-50 sticky top-0 z-20"><tr>';
+            for (let i = 0; i < header.length; i++) {
+              const h = header[i];
+              const sortIcon = currentSort.column === i
+                ? (currentSort.ascending ? '▲' : '▼')
+                : '⇅';
+
+              // 為「金額+%」欄位添加突出樣式
+              const isCalculatedAmount = h === '金額+%';
+              const headerClass = isCalculatedAmount
+                ? "px-2 py-1.5 text-slate-600 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:bg-blue-100 select-none bg-blue-50 sticky top-0 z-20 border-b border-slate-200 border-l-2 border-blue-200"
+                : "px-2 py-1.5 text-slate-600 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:bg-slate-100 select-none bg-slate-50 sticky top-0 z-20 border-b border-slate-200";
+
+              html += `<th class="${headerClass}" onclick="sortTable(${i})">
         <div class="flex items-center justify-between">
           <span>${escapeHtml(h)}</span>
           <span class="ml-1 text-slate-400 text-xs">${sortIcon}</span>
         </div>
       </th>`;
-    }
-    html += '</tr></thead><tbody class="divide-y divide-slate-200">';
-    
-    let rowNumber = 1;
-    for (const row of body) {
-      if (row.every((v) => String(v || '').trim() === '')) continue;
-      html += '<tr class="hover:bg-slate-50 transition-colors">';
-      // 第一個欄位是 No.，顯示行號
-      html += `<td class="px-2 py-1.5 text-slate-700 text-xs font-medium text-center">${rowNumber}</td>`;
-      
-      // 處理所有原始資料欄位，確保與表頭數量一致
-      for (let i = 0; i < originalHeader.length; i++) {
-        const header = originalHeader[i];
-        const cell = row[i] || '';
-        
-        if (header === '%') {
-          // % 欄位：輸入框
-          const campaignName = row[0] || '';
-          // 使用活動名稱作為唯一識別，不依賴行號
-          const rowId = `${campaignName}`;
-          const currentSheet = getCurrentSheetName();
-          const savedPercentage = (percentageStorage[currentSheet] && percentageStorage[currentSheet][rowId]) || '';
-          
-          // 找到花費金額欄位的值
-          const spendIndex = originalHeader.indexOf('花費金額');
-          const spendAmount = spendIndex >= 0 ? parseFloat(row[spendIndex]) || 0 : 0;
-          
-          html += `<td class="px-2 py-1.5 text-slate-700 text-xs">
+            }
+            html += '</tr></thead><tbody class="divide-y divide-slate-200">';
+
+            let rowNumber = 1;
+            for (const row of body) {
+              if (row.every((v) => String(v || '').trim() === '')) continue;
+              html += '<tr class="hover:bg-slate-50 transition-colors">';
+              // 第一個欄位是 No.，顯示行號
+              html += `<td class="px-2 py-1.5 text-slate-700 text-xs font-medium text-center">${rowNumber}</td>`;
+
+              // 處理所有原始資料欄位，確保與表頭數量一致
+              for (let i = 0; i < originalHeader.length; i++) {
+                const header = originalHeader[i];
+                const cell = row[i] || '';
+
+                if (header === '%') {
+                  // % 欄位：輸入框
+                  const campaignName = row[0] || '';
+                  // 使用活動名稱作為唯一識別，不依賴行號
+                  const rowId = `${campaignName}`;
+                  const currentSheet = getCurrentSheetName();
+                  const savedPercentage = (percentageStorage[currentSheet] && percentageStorage[currentSheet][rowId]) || '';
+
+                  // 找到花費金額欄位的值
+                  const spendIndex = originalHeader.indexOf('花費金額');
+                  const spendAmount = spendIndex >= 0 ? parseFloat(row[spendIndex]) || 0 : 0;
+
+                  html += `<td class="px-2 py-1.5 text-slate-700 text-xs">
             <input type="number" 
                    class="w-full px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" 
                    placeholder="%" 
@@ -857,31 +1083,31 @@
                    max="100" 
                    step="0.1">
           </td>`;
-        } else if (header === '金額+%') {
-          // 金額+% 欄位：計算後的金額
-          const campaignName = row[0] || '';
-          // 使用活動名稱作為唯一識別，不依賴行號
-          const rowId = `${campaignName}`;
-          const currentSheet = getCurrentSheetName();
-            const savedPercentage = (percentageStorage[currentSheet] && percentageStorage[currentSheet][rowId]) || 5;
-          
-          // 找到花費金額欄位的值
-          const spendIndex = originalHeader.indexOf('花費金額');
-          const originalAmount = spendIndex >= 0 ? parseFloat(row[spendIndex]) || 0 : 0;
-          const calculatedAmount = Math.ceil(originalAmount * (1 + parseFloat(savedPercentage) / 100));
-          
-          html += `<td class="px-2 py-1.5 text-slate-700 text-xs calculated-amount bg-blue-50 border-l-2 border-blue-200" data-row="${rowNumber}">
+                } else if (header === '金額+%') {
+                  // 金額+% 欄位：計算後的金額
+                  const campaignName = row[0] || '';
+                  // 使用活動名稱作為唯一識別，不依賴行號
+                  const rowId = `${campaignName}`;
+                  const currentSheet = getCurrentSheetName();
+                  const savedPercentage = (percentageStorage[currentSheet] && percentageStorage[currentSheet][rowId]) || 5;
+
+                  // 找到花費金額欄位的值
+                  const spendIndex = originalHeader.indexOf('花費金額');
+                  const originalAmount = spendIndex >= 0 ? parseFloat(row[spendIndex]) || 0 : 0;
+                  const calculatedAmount = Math.ceil(originalAmount * (1 + parseFloat(savedPercentage) / 100));
+
+                  html += `<td class="px-2 py-1.5 text-slate-700 text-xs calculated-amount bg-blue-50 border-l-2 border-blue-200" data-row="${rowNumber}">
             ${originalAmount > 0 ? calculatedAmount.toLocaleString() : '-'}
           </td>`;
-        } else if (header === '活動名稱') {
-          // 活動名稱欄位：支援編輯暱稱
-          const originalName = cell;
-          const currentSheet = getCurrentSheetName();
-          const nickname = (nicknameStorage[currentSheet] && nicknameStorage[currentSheet][originalName]) || '';
-          const displayName = nickname || originalName;
-          const hasNickname = nickname && nickname !== originalName;
-          
-          html += `<td class="px-2 py-1.5 text-slate-700 text-xs">
+                } else if (header === '活動名稱') {
+                  // 活動名稱欄位：支援編輯暱稱
+                  const originalName = cell;
+                  const currentSheet = getCurrentSheetName();
+                  const nickname = (nicknameStorage[currentSheet] && nicknameStorage[currentSheet][originalName]) || '';
+                  const displayName = nickname || originalName;
+                  const hasNickname = nickname && nickname !== originalName;
+
+                  html += `<td class="px-2 py-1.5 text-slate-700 text-xs">
             <div class="flex items-center justify-between group">
               <span class="${hasNickname ? 'font-medium' : ''}">${escapeHtml(displayName)}</span>
               <button onclick="editCampaignName(this.parentElement.parentElement, '${escapeHtml(originalName)}')" 
@@ -890,15 +1116,15 @@
               </button>
             </div>
           </td>`;
-        } else if (header === '私訊成本') {
-          // 私訊成本欄位：套用顏色標示並新增設定按鈕
-          const campaignName = row[0] || '';
-          const rowId = `${campaignName}`;
-          const colorClass = getColorClass(cell, 'messageCost', rowId);
-          const baseClass = 'px-2 py-1.5 text-slate-700 text-xs';
-          const finalClass = colorClass ? `${baseClass} ${colorClass} border rounded` : baseClass;
-          
-          html += `<td class="${finalClass}">
+                } else if (header === '私訊成本') {
+                  // 私訊成本欄位：套用顏色標示並新增設定按鈕
+                  const campaignName = row[0] || '';
+                  const rowId = `${campaignName}`;
+                  const colorClass = getColorClass(cell, 'messageCost', rowId);
+                  const baseClass = 'px-2 py-1.5 text-slate-700 text-xs';
+                  const finalClass = colorClass ? `${baseClass} ${colorClass} border rounded` : baseClass;
+
+                  html += `<td class="${finalClass}">
             <div class="flex items-center justify-between group">
               <span>${escapeHtml(cell)}</span>
               <button onclick="openRowColorSettings('${escapeHtml(rowId)}', 'messageCost')" 
@@ -907,15 +1133,15 @@
               </button>
             </div>
           </td>`;
-        } else if (header === '點擊成本') {
-          // 點擊成本欄位：套用顏色標示並新增設定按鈕
-          const campaignName = row[0] || '';
-          const rowId = `${campaignName}`;
-          const colorClass = getColorClass(cell, 'clickCost', rowId);
-          const baseClass = 'px-2 py-1.5 text-slate-700 text-xs';
-          const finalClass = colorClass ? `${baseClass} ${colorClass} border rounded` : baseClass;
-          
-          html += `<td class="${finalClass}">
+                } else if (header === '點擊成本') {
+                  // 點擊成本欄位：套用顏色標示並新增設定按鈕
+                  const campaignName = row[0] || '';
+                  const rowId = `${campaignName}`;
+                  const colorClass = getColorClass(cell, 'clickCost', rowId);
+                  const baseClass = 'px-2 py-1.5 text-slate-700 text-xs';
+                  const finalClass = colorClass ? `${baseClass} ${colorClass} border rounded` : baseClass;
+
+                  html += `<td class="${finalClass}">
             <div class="flex items-center justify-between group">
               <span>${escapeHtml(cell)}</span>
               <button onclick="openRowColorSettings('${escapeHtml(rowId)}', 'clickCost')" 
@@ -924,470 +1150,470 @@
               </button>
             </div>
           </td>`;
-        } else {
-          // 一般欄位
-          html += `<td class="px-2 py-1.5 text-slate-700 text-xs">${escapeHtml(cell)}</td>`;
-        }
-      }
-      
-      html += '</tr>';
-      rowNumber++;
-    }
-    html += '</tbody>';
-    return html;
-  }
+                } else {
+                  // 一般欄位
+                  html += `<td class="px-2 py-1.5 text-slate-700 text-xs">${escapeHtml(cell)}</td>`;
+                }
+              }
 
-  function isNumeric(str) {
-    if (!str || str === '') return false;
-    const cleaned = String(str).replace(/[,$%]/g, '');
-    return !isNaN(cleaned) && !isNaN(parseFloat(cleaned));
-  }
+              html += '</tr>';
+              rowNumber++;
+            }
+            html += '</tbody>';
+            return html;
+          }
 
-  function parseValue(str) {
-    if (!str || str === '') return '';
-    const cleaned = String(str).replace(/[,$%]/g, '');
-    return isNumeric(str) ? parseFloat(cleaned) : str.toLowerCase();
-  }
+          function isNumeric(str) {
+            if (!str || str === '') return false;
+            const cleaned = String(str).replace(/[,$%]/g, '');
+            return !isNaN(cleaned) && !isNaN(parseFloat(cleaned));
+          }
 
-  function sortTable(columnIndex) {
-    if (!currentData || currentData.length <= 1) return;
-    
-    // No. 欄位（索引 0）不參與排序
-    if (columnIndex === 0) return;
-    
-    const header = currentData[0];
-    let body = currentData.slice(1);
-    
-    // 過濾掉空行
-    body = body.filter(row => !row.every(v => String(v || '').trim() === ''));
-    
-    // 切換排序方向
-    if (currentSort.column === columnIndex) {
-      currentSort.ascending = !currentSort.ascending;
-    } else {
-      currentSort.column = columnIndex;
-      currentSort.ascending = true;
-    }
-    
-    // 排序（調整索引，因為實際資料比顯示少三欄：No.、%、金額+%）
-    body.sort((a, b) => {
-      let dataColumnIndex = columnIndex - 1; // 減去 No. 欄位
-      
-      // 如果是百分比欄位（索引4）或計算金額欄位（索引5），不進行排序
-      if (columnIndex === 4 || columnIndex === 5) return 0;
-      
-      // 如果是百分比欄位之後的欄位，需要再減去2（% 和 金額+% 欄位）
-      if (columnIndex > 5) {
-        dataColumnIndex = columnIndex - 3; // 減去 No.、%、金額+% 欄位
-      }
-      
-      const aVal = parseValue(a[dataColumnIndex]);
-      const bVal = parseValue(b[dataColumnIndex]);
-      
-      let result;
-      if (typeof aVal === 'number' && typeof bVal === 'number') {
-        result = aVal - bVal;
-      } else {
-        result = String(aVal).localeCompare(String(bVal));
-      }
-      
-      return currentSort.ascending ? result : -result;
-    });
-    
-    // 記住當前頁面滾動位置
-    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    
-    // 重新組合資料並渲染（保持資訊文字）
-    const sortedMatrix = [header, ...body];
-    
-    // 保持原有的資訊文字
-    const currentInfoText = tableInfoEl ? tableInfoEl.textContent : '';
-    
-    mainTable.innerHTML = buildTableHtml(sortedMatrix);
-    
-    // 恢復資訊文字
-    if (tableInfoEl && currentInfoText) {
-      tableInfoEl.textContent = currentInfoText;
-    }
-    
-    // 更新儀表板（延遲執行確保DOM已更新）
-    setTimeout(updateDashboard, 0);
-    
-    // 恢復頁面滾動位置
-    setTimeout(() => {
-      window.scrollTo(0, Math.max(0, currentScrollTop));
-    }, 0);
-  }
+          function parseValue(str) {
+            if (!str || str === '') return '';
+            const cleaned = String(str).replace(/[,$%]/g, '');
+            return isNumeric(str) ? parseFloat(cleaned) : str.toLowerCase();
+          }
 
-  // 將 sortTable 函式掛到全域，讓 onclick 可以呼叫
-  window.sortTable = sortTable;
-  
-  // 取得當前工作表名稱
-  function getCurrentSheetName() {
-    const activeTab = document.querySelector('#sheet-tabs button[aria-selected="true"]');
-    return activeTab ? activeTab.getAttribute('data-sheet') : 'default';
-  }
-  
-  // 儲存百分比並更新計算金額
-  function saveAndUpdatePercentage(input, originalAmount) {
-    const percentage = parseFloat(input.value) || 0;
-    const rowId = input.getAttribute('data-row-id');
-    const sheetName = input.getAttribute('data-sheet');
-    const row = input.getAttribute('data-row');
-    
-    // 儲存百分比到前端儲存
-    if (!percentageStorage[sheetName]) {
-      percentageStorage[sheetName] = {};
-    }
-    
-    // 允許 0% 或空值，空值時使用 5%，用戶明確輸入 0 時也保持 0%
-        const finalPercentage = (input.value.trim() === '' || isNaN(percentage)) ? 0 : percentage;
-    percentageStorage[sheetName][rowId] = finalPercentage;
-    
-    // 更新計算金額顯示（使用無條件進位）
-    const calculatedAmount = Math.ceil(originalAmount * (1 + finalPercentage / 100));
-    const calculatedCell = document.querySelector(`td.calculated-amount[data-row="${row}"]`);
-    
-    if (calculatedCell) {
-      if (originalAmount > 0) {
-        calculatedCell.textContent = calculatedAmount.toLocaleString('zh-TW', {
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0
-        });
-      } else {
-        calculatedCell.textContent = '-';
-      }
-    }
-    
-    // 儲存到 localStorage
-    try {
-      localStorage.setItem('adManagerPercentages', JSON.stringify(percentageStorage));
-    } catch (e) {
-      console.warn('無法儲存百分比到 localStorage:', e);
-    }
-    
-    // 立即更新儀表板統計
-    updateDashboard();
-    
-    // 更新分頁統計數據（使用已快取的資料）
-    setTimeout(() => {
-      try {
-        const wb = workbookCache;
-        if (wb) {
-          const currentSheet = getCurrentSheetName();
-          // 只更新統計數據，不重新載入
-          updateTabStatistics(wb, currentSheet);
-        }
-      } catch (e) {
-        console.warn('無法更新分頁統計:', e);
-      }
-    }, 100);
-  }
-  
-  // 從 localStorage 載入百分比資料
-  function loadPercentageStorage() {
-    try {
-      const stored = localStorage.getItem('adManagerPercentages');
-      if (stored) {
-        percentageStorage = JSON.parse(stored);
-      }
-    } catch (e) {
-      console.warn('無法從 localStorage 載入百分比資料:', e);
-      percentageStorage = {};
-    }
-  }
-  
-  // 從 localStorage 載入暱稱資料
-  function loadNicknameStorage() {
-    try {
-      const stored = localStorage.getItem('adManagerNicknames');
-      if (stored) {
-        nicknameStorage = JSON.parse(stored);
-      }
-    } catch (e) {
-      console.warn('無法從 localStorage 載入暱稱資料:', e);
-      nicknameStorage = {};
-    }
-  }
-  
-  // 從 localStorage 載入顏色閾值設定
-  function loadColorThresholds() {
-    try {
-      const stored = localStorage.getItem('adManagerColorThresholds');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        // 合併預設值和儲存的值
-        colorThresholds = {
-          messageCost: { ...colorThresholds.messageCost, ...parsed.messageCost },
-          clickCost: { ...colorThresholds.clickCost, ...parsed.clickCost }
-        };
-      }
-    } catch (e) {
-      console.warn('無法從 localStorage 載入顏色閾值設定:', e);
-    }
-  }
-  
-  // 儲存顏色閾值設定到 localStorage
-  function saveColorThresholds() {
-    try {
-      localStorage.setItem('adManagerColorThresholds', JSON.stringify(colorThresholds));
-    } catch (e) {
-      console.warn('無法儲存顏色閾值設定:', e);
-    }
-  }
-  
-  // 儲存每列顏色閾值設定到 localStorage
-  function saveRowColorThresholds() {
-    try {
-      localStorage.setItem('adManagerRowColorThresholds', JSON.stringify(rowColorThresholds));
-    } catch (e) {
-      console.warn('無法儲存每列顏色閾值設定:', e);
-    }
-  }
-  
-  // 從 localStorage 載入每列顏色閾值設定
-  function loadRowColorThresholds() {
-    try {
-      const stored = localStorage.getItem('adManagerRowColorThresholds');
-      if (stored) {
-        rowColorThresholds = JSON.parse(stored);
-      }
-    } catch (e) {
-      console.warn('無法載入每列顏色閾值設定:', e);
-      rowColorThresholds = {};
-    }
-  }
-  
-  // 根據數值判斷顏色類別
-  function getColorClass(value, thresholdType, rowId = null) {
-    if (!value || isNaN(value)) return '';
-    
-    const currentSheet = getCurrentSheetName();
-    let threshold = null;
-    
-    // 優先使用該列的設定，如果沒有則使用全域設定
-    if (rowId && rowColorThresholds[currentSheet] && rowColorThresholds[currentSheet][rowId]) {
-      threshold = rowColorThresholds[currentSheet][rowId][thresholdType];
-    }
-    
-    // 如果該列沒有設定，使用全域設定
-    if (!threshold) {
-      threshold = colorThresholds[thresholdType];
-    }
-    
-    if (!threshold || !threshold.enabled) return '';
-    
-    const numValue = parseFloat(value);
-    if (numValue < threshold.green) {
-      return 'bg-green-100 text-green-800 border-green-200';
-    } else if (numValue > threshold.red) {
-      return 'bg-red-100 text-red-800 border-red-200';
-    } else {
-      return 'bg-orange-100 text-orange-800 border-orange-200';
-    }
-  }
-  
-  // 儲存暱稱到 localStorage
-  function saveNicknameStorage() {
-    try {
-      localStorage.setItem('adManagerNicknames', JSON.stringify(nicknameStorage));
-    } catch (e) {
-      console.warn('無法儲存暱稱到 localStorage:', e);
-    }
-  }
-  
-  // 只更新分頁統計數據，不重新載入
-  function updateTabStatistics(wb, activeName) {
-    if (!wb || !wb.SheetNames) return;
-    
-    // 總計統計
-    let totalAccountsCount = 0;
-    let grandTotalSpend = 0;
-    let grandTotalSpendPlus = 0;
-    
-    // 為每個工作表計算統計
-    for (const name of wb.SheetNames) {
-      const matrix = getSheetMatrix(wb, name);
-      let sheetRows = 0;
-      let sheetTotalSpend = 0;
-      let sheetTotalSpendPlus = 0;
-      
-      if (matrix && matrix.length > 0) {
-        // 找到表頭行
-        let bodyStart = 0;
-        let spendColumnIndex = -1;
-        
-        for (let i = 0; i < matrix.length; i++) {
-          const row = matrix[i];
-          if (row && (String(row[0]).includes('活動名稱') || String(row[0]).trim() === '活動名稱' || String(row[0]).includes('Campaign name'))) {
-            // 找到花費金額欄位的索引
-            for (let j = 0; j < row.length; j++) {
-              if (String(row[j]).includes('花費金額') || String(row[j]).includes('Amount spent')) {
-                spendColumnIndex = j;
-                break;
+          function sortTable(columnIndex) {
+            if (!currentData || currentData.length <= 1) return;
+
+            // No. 欄位（索引 0）不參與排序
+            if (columnIndex === 0) return;
+
+            const header = currentData[0];
+            let body = currentData.slice(1);
+
+            // 過濾掉空行
+            body = body.filter(row => !row.every(v => String(v || '').trim() === ''));
+
+            // 切換排序方向
+            if (currentSort.column === columnIndex) {
+              currentSort.ascending = !currentSort.ascending;
+            } else {
+              currentSort.column = columnIndex;
+              currentSort.ascending = true;
+            }
+
+            // 排序（調整索引，因為實際資料比顯示少三欄：No.、%、金額+%）
+            body.sort((a, b) => {
+              let dataColumnIndex = columnIndex - 1; // 減去 No. 欄位
+
+              // 如果是百分比欄位（索引4）或計算金額欄位（索引5），不進行排序
+              if (columnIndex === 4 || columnIndex === 5) return 0;
+
+              // 如果是百分比欄位之後的欄位，需要再減去2（% 和 金額+% 欄位）
+              if (columnIndex > 5) {
+                dataColumnIndex = columnIndex - 3; // 減去 No.、%、金額+% 欄位
+              }
+
+              const aVal = parseValue(a[dataColumnIndex]);
+              const bVal = parseValue(b[dataColumnIndex]);
+
+              let result;
+              if (typeof aVal === 'number' && typeof bVal === 'number') {
+                result = aVal - bVal;
+              } else {
+                result = String(aVal).localeCompare(String(bVal));
+              }
+
+              return currentSort.ascending ? result : -result;
+            });
+
+            // 記住當前頁面滾動位置
+            const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            // 重新組合資料並渲染（保持資訊文字）
+            const sortedMatrix = [header, ...body];
+
+            // 保持原有的資訊文字
+            const currentInfoText = tableInfoEl ? tableInfoEl.textContent : '';
+
+            mainTable.innerHTML = buildTableHtml(sortedMatrix);
+
+            // 恢復資訊文字
+            if (tableInfoEl && currentInfoText) {
+              tableInfoEl.textContent = currentInfoText;
+            }
+
+            // 更新儀表板（延遲執行確保DOM已更新）
+            setTimeout(updateDashboard, 0);
+
+            // 恢復頁面滾動位置
+            setTimeout(() => {
+              window.scrollTo(0, Math.max(0, currentScrollTop));
+            }, 0);
+          }
+
+          // 將 sortTable 函式掛到全域，讓 onclick 可以呼叫
+          window.sortTable = sortTable;
+
+          // 取得當前工作表名稱
+          function getCurrentSheetName() {
+            const activeTab = document.querySelector('#sheet-tabs button[aria-selected="true"]');
+            return activeTab ? activeTab.getAttribute('data-sheet') : 'default';
+          }
+
+          // 儲存百分比並更新計算金額
+          function saveAndUpdatePercentage(input, originalAmount) {
+            const percentage = parseFloat(input.value) || 0;
+            const rowId = input.getAttribute('data-row-id');
+            const sheetName = input.getAttribute('data-sheet');
+            const row = input.getAttribute('data-row');
+
+            // 儲存百分比到前端儲存
+            if (!percentageStorage[sheetName]) {
+              percentageStorage[sheetName] = {};
+            }
+
+            // 允許 0% 或空值，空值時使用 5%，用戶明確輸入 0 時也保持 0%
+            const finalPercentage = (input.value.trim() === '' || isNaN(percentage)) ? 0 : percentage;
+            percentageStorage[sheetName][rowId] = finalPercentage;
+
+            // 更新計算金額顯示（使用無條件進位）
+            const calculatedAmount = Math.ceil(originalAmount * (1 + finalPercentage / 100));
+            const calculatedCell = document.querySelector(`td.calculated-amount[data-row="${row}"]`);
+
+            if (calculatedCell) {
+              if (originalAmount > 0) {
+                calculatedCell.textContent = calculatedAmount.toLocaleString('zh-TW', {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0
+                });
+              } else {
+                calculatedCell.textContent = '-';
               }
             }
-            bodyStart = i + 1;
-            break;
-          }
-        }
-        
-        // 如果找不到花費欄位，假設是第4個欄位（索引3）
-        if (spendColumnIndex === -1) {
-          spendColumnIndex = 3;
-        }
-        
-        // 計算有效資料行數和金額統計
-        for (let i = bodyStart; i < matrix.length; i++) {
-          const row = matrix[i];
-          if (row && !row.every(v => String(v || '').trim() === '') && String(row[0] || '').trim() !== '') {
-            sheetRows++;
-            
-            // 計算該行的花費金額
-            if (spendColumnIndex >= 0 && row[spendColumnIndex]) {
-              const spendText = String(row[spendColumnIndex] || '').trim();
-              const spend = parseFloat(spendText.replace(/[,$]/g, '')) || 0;
-              if (!isNaN(spend) && spend >= 0) {
-                sheetTotalSpend += spend;
-                
-                // 計算該行的花費+%金額
-                const campaignName = row[0] || '';
-                const rowId = `${campaignName}`;
-                const savedPercentage = (percentageStorage[name] && percentageStorage[name][rowId] !== undefined) ? percentageStorage[name][rowId] : 5;
-                
-                // 使用儲存的百分比計算花費+%（預設5%）
-                const spendPlusAmount = Math.ceil(spend * (1 + parseFloat(savedPercentage) / 100));
-                sheetTotalSpendPlus += spendPlusAmount;
+
+            // 儲存到 localStorage
+            try {
+              localStorage.setItem('adManagerPercentages', JSON.stringify(percentageStorage));
+            } catch (e) {
+              console.warn('無法儲存百分比到 localStorage:', e);
+            }
+
+            // 立即更新儀表板統計
+            updateDashboard();
+
+            // 更新分頁統計數據（使用已快取的資料）
+            setTimeout(() => {
+              try {
+                const wb = workbookCache;
+                if (wb) {
+                  const currentSheet = getCurrentSheetName();
+                  // 只更新統計數據，不重新載入
+                  updateTabStatistics(wb, currentSheet);
+                }
+              } catch (e) {
+                console.warn('無法更新分頁統計:', e);
               }
+            }, 100);
+          }
+
+          // 從 localStorage 載入百分比資料
+          function loadPercentageStorage() {
+            try {
+              const stored = localStorage.getItem('adManagerPercentages');
+              if (stored) {
+                percentageStorage = JSON.parse(stored);
+              }
+            } catch (e) {
+              console.warn('無法從 localStorage 載入百分比資料:', e);
+              percentageStorage = {};
             }
           }
-        }
-      }
-      
-      // 累加到總計中
-      if (sheetRows > 0) {
-        totalAccountsCount++;
-        grandTotalSpend += sheetTotalSpend;
-        grandTotalSpendPlus += sheetTotalSpendPlus;
-      }
-      
-      // 更新該分頁的統計顯示
-      const tabButton = document.querySelector(`button[data-sheet="${name}"]`);
-      if (tabButton) {
-        const gridDiv = tabButton.querySelector('.grid');
-        if (gridDiv) {
-          const cells = gridDiv.querySelectorAll('div');
-          if (cells.length >= 4) {
-            cells[1].textContent = sheetRows; // 數量
-            cells[2].textContent = sheetTotalSpend.toLocaleString(); // 花費
-            cells[3].textContent = sheetTotalSpendPlus.toLocaleString(); // 花費+%
-          }
-        }
-      }
-    }
-    
-    // 更新總計卡片
-    if (totalAccountsEl) {
-      totalAccountsEl.textContent = totalAccountsCount;
-    }
-    if (allTotalSpendEl) {
-      allTotalSpendEl.textContent = grandTotalSpend > 0 ? grandTotalSpend.toLocaleString() : '-';
-    }
-    if (allTotalPercentageEl) {
-      // 計算差距：總花費+% - 總花費
-      const difference = grandTotalSpendPlus - grandTotalSpend;
-      allTotalPercentageEl.textContent = difference > 0 ? difference.toLocaleString() : '-';
-    }
-    if (allTotalSpendPlusEl) {
-      allTotalSpendPlusEl.textContent = grandTotalSpendPlus > 0 ? grandTotalSpendPlus.toLocaleString() : '-';
-    }
-  }
 
-  // 編輯活動名稱暱稱
-  function editCampaignName(cell, originalName) {
-    const currentSheet = getCurrentSheetName();
-    const currentNickname = (nicknameStorage[currentSheet] && nicknameStorage[currentSheet][originalName]) || '';
-    
-    // 創建輸入框
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.value = currentNickname || originalName;
-    input.className = 'w-full px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500';
-    input.placeholder = '輸入暱稱';
-    
-    // 創建按鈕容器
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'flex gap-1 mt-1';
-    
-    const saveBtn = document.createElement('button');
-    saveBtn.textContent = '儲存';
-    saveBtn.className = 'px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600';
-    
-    const cancelBtn = document.createElement('button');
-    cancelBtn.textContent = '取消';
-    cancelBtn.className = 'px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600';
-    
-    // 儲存功能
-    saveBtn.onclick = () => {
-      const newNickname = input.value.trim();
-      
-      // 儲存到前端儲存
-      if (!nicknameStorage[currentSheet]) {
-        nicknameStorage[currentSheet] = {};
-      }
-      
-      if (newNickname && newNickname !== originalName) {
-        nicknameStorage[currentSheet][originalName] = newNickname;
-      } else {
-        delete nicknameStorage[currentSheet][originalName];
-      }
-      
-      // 儲存到 localStorage
-      saveNicknameStorage();
-      
-      // 更新顯示
-      updateCampaignNameDisplay(cell, originalName, newNickname);
-    };
-    
-    // 取消功能
-    cancelBtn.onclick = () => {
-      updateCampaignNameDisplay(cell, originalName, currentNickname);
-    };
-    
-    // 按 Enter 儲存
-    input.onkeypress = (e) => {
-      if (e.key === 'Enter') {
-        saveBtn.click();
-      }
-    };
-    
-    // 按 Escape 取消
-    input.onkeydown = (e) => {
-      if (e.key === 'Escape') {
-        cancelBtn.click();
-      }
-    };
-    
-    buttonContainer.appendChild(saveBtn);
-    buttonContainer.appendChild(cancelBtn);
-    
-    // 替換內容
-    cell.innerHTML = '';
-    cell.appendChild(input);
-    cell.appendChild(buttonContainer);
-    
-    // 聚焦到輸入框
-    input.focus();
-    input.select();
-  }
-  
-  // 更新活動名稱顯示
-  function updateCampaignNameDisplay(cell, originalName, nickname) {
-    const currentSheet = getCurrentSheetName();
-    const displayName = nickname || originalName;
-    const hasNickname = nickname && nickname !== originalName;
-    
-    cell.innerHTML = `
+          // 從 localStorage 載入暱稱資料
+          function loadNicknameStorage() {
+            try {
+              const stored = localStorage.getItem('adManagerNicknames');
+              if (stored) {
+                nicknameStorage = JSON.parse(stored);
+              }
+            } catch (e) {
+              console.warn('無法從 localStorage 載入暱稱資料:', e);
+              nicknameStorage = {};
+            }
+          }
+
+          // 從 localStorage 載入顏色閾值設定
+          function loadColorThresholds() {
+            try {
+              const stored = localStorage.getItem('adManagerColorThresholds');
+              if (stored) {
+                const parsed = JSON.parse(stored);
+                // 合併預設值和儲存的值
+                colorThresholds = {
+                  messageCost: { ...colorThresholds.messageCost, ...parsed.messageCost },
+                  clickCost: { ...colorThresholds.clickCost, ...parsed.clickCost }
+                };
+              }
+            } catch (e) {
+              console.warn('無法從 localStorage 載入顏色閾值設定:', e);
+            }
+          }
+
+          // 儲存顏色閾值設定到 localStorage
+          function saveColorThresholds() {
+            try {
+              localStorage.setItem('adManagerColorThresholds', JSON.stringify(colorThresholds));
+            } catch (e) {
+              console.warn('無法儲存顏色閾值設定:', e);
+            }
+          }
+
+          // 儲存每列顏色閾值設定到 localStorage
+          function saveRowColorThresholds() {
+            try {
+              localStorage.setItem('adManagerRowColorThresholds', JSON.stringify(rowColorThresholds));
+            } catch (e) {
+              console.warn('無法儲存每列顏色閾值設定:', e);
+            }
+          }
+
+          // 從 localStorage 載入每列顏色閾值設定
+          function loadRowColorThresholds() {
+            try {
+              const stored = localStorage.getItem('adManagerRowColorThresholds');
+              if (stored) {
+                rowColorThresholds = JSON.parse(stored);
+              }
+            } catch (e) {
+              console.warn('無法載入每列顏色閾值設定:', e);
+              rowColorThresholds = {};
+            }
+          }
+
+          // 根據數值判斷顏色類別
+          function getColorClass(value, thresholdType, rowId = null) {
+            if (!value || isNaN(value)) return '';
+
+            const currentSheet = getCurrentSheetName();
+            let threshold = null;
+
+            // 優先使用該列的設定，如果沒有則使用全域設定
+            if (rowId && rowColorThresholds[currentSheet] && rowColorThresholds[currentSheet][rowId]) {
+              threshold = rowColorThresholds[currentSheet][rowId][thresholdType];
+            }
+
+            // 如果該列沒有設定，使用全域設定
+            if (!threshold) {
+              threshold = colorThresholds[thresholdType];
+            }
+
+            if (!threshold || !threshold.enabled) return '';
+
+            const numValue = parseFloat(value);
+            if (numValue < threshold.green) {
+              return 'bg-green-100 text-green-800 border-green-200';
+            } else if (numValue > threshold.red) {
+              return 'bg-red-100 text-red-800 border-red-200';
+            } else {
+              return 'bg-orange-100 text-orange-800 border-orange-200';
+            }
+          }
+
+          // 儲存暱稱到 localStorage
+          function saveNicknameStorage() {
+            try {
+              localStorage.setItem('adManagerNicknames', JSON.stringify(nicknameStorage));
+            } catch (e) {
+              console.warn('無法儲存暱稱到 localStorage:', e);
+            }
+          }
+
+          // 只更新分頁統計數據，不重新載入
+          function updateTabStatistics(wb, activeName) {
+            if (!wb || !wb.SheetNames) return;
+
+            // 總計統計
+            let totalAccountsCount = 0;
+            let grandTotalSpend = 0;
+            let grandTotalSpendPlus = 0;
+
+            // 為每個工作表計算統計
+            for (const name of wb.SheetNames) {
+              const matrix = getSheetMatrix(wb, name);
+              let sheetRows = 0;
+              let sheetTotalSpend = 0;
+              let sheetTotalSpendPlus = 0;
+
+              if (matrix && matrix.length > 0) {
+                // 找到表頭行
+                let bodyStart = 0;
+                let spendColumnIndex = -1;
+
+                for (let i = 0; i < matrix.length; i++) {
+                  const row = matrix[i];
+                  if (row && (String(row[0]).includes('活動名稱') || String(row[0]).trim() === '活動名稱' || String(row[0]).includes('Campaign name'))) {
+                    // 找到花費金額欄位的索引
+                    for (let j = 0; j < row.length; j++) {
+                      if (String(row[j]).includes('花費金額') || String(row[j]).includes('Amount spent')) {
+                        spendColumnIndex = j;
+                        break;
+                      }
+                    }
+                    bodyStart = i + 1;
+                    break;
+                  }
+                }
+
+                // 如果找不到花費欄位，假設是第4個欄位（索引3）
+                if (spendColumnIndex === -1) {
+                  spendColumnIndex = 3;
+                }
+
+                // 計算有效資料行數和金額統計
+                for (let i = bodyStart; i < matrix.length; i++) {
+                  const row = matrix[i];
+                  if (row && !row.every(v => String(v || '').trim() === '') && String(row[0] || '').trim() !== '') {
+                    sheetRows++;
+
+                    // 計算該行的花費金額
+                    if (spendColumnIndex >= 0 && row[spendColumnIndex]) {
+                      const spendText = String(row[spendColumnIndex] || '').trim();
+                      const spend = parseFloat(spendText.replace(/[,$]/g, '')) || 0;
+                      if (!isNaN(spend) && spend >= 0) {
+                        sheetTotalSpend += spend;
+
+                        // 計算該行的花費+%金額
+                        const campaignName = row[0] || '';
+                        const rowId = `${campaignName}`;
+                        const savedPercentage = (percentageStorage[name] && percentageStorage[name][rowId] !== undefined) ? percentageStorage[name][rowId] : 5;
+
+                        // 使用儲存的百分比計算花費+%（預設5%）
+                        const spendPlusAmount = Math.ceil(spend * (1 + parseFloat(savedPercentage) / 100));
+                        sheetTotalSpendPlus += spendPlusAmount;
+                      }
+                    }
+                  }
+                }
+              }
+
+              // 累加到總計中
+              if (sheetRows > 0) {
+                totalAccountsCount++;
+                grandTotalSpend += sheetTotalSpend;
+                grandTotalSpendPlus += sheetTotalSpendPlus;
+              }
+
+              // 更新該分頁的統計顯示
+              const tabButton = document.querySelector(`button[data-sheet="${name}"]`);
+              if (tabButton) {
+                const gridDiv = tabButton.querySelector('.grid');
+                if (gridDiv) {
+                  const cells = gridDiv.querySelectorAll('div');
+                  if (cells.length >= 4) {
+                    cells[1].textContent = sheetRows; // 數量
+                    cells[2].textContent = sheetTotalSpend.toLocaleString(); // 花費
+                    cells[3].textContent = sheetTotalSpendPlus.toLocaleString(); // 花費+%
+                  }
+                }
+              }
+            }
+
+            // 更新總計卡片
+            if (totalAccountsEl) {
+              totalAccountsEl.textContent = totalAccountsCount;
+            }
+            if (allTotalSpendEl) {
+              allTotalSpendEl.textContent = grandTotalSpend > 0 ? grandTotalSpend.toLocaleString() : '-';
+            }
+            if (allTotalPercentageEl) {
+              // 計算差距：總花費+% - 總花費
+              const difference = grandTotalSpendPlus - grandTotalSpend;
+              allTotalPercentageEl.textContent = difference > 0 ? difference.toLocaleString() : '-';
+            }
+            if (allTotalSpendPlusEl) {
+              allTotalSpendPlusEl.textContent = grandTotalSpendPlus > 0 ? grandTotalSpendPlus.toLocaleString() : '-';
+            }
+          }
+
+          // 編輯活動名稱暱稱
+          function editCampaignName(cell, originalName) {
+            const currentSheet = getCurrentSheetName();
+            const currentNickname = (nicknameStorage[currentSheet] && nicknameStorage[currentSheet][originalName]) || '';
+
+            // 創建輸入框
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentNickname || originalName;
+            input.className = 'w-full px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500';
+            input.placeholder = '輸入暱稱';
+
+            // 創建按鈕容器
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'flex gap-1 mt-1';
+
+            const saveBtn = document.createElement('button');
+            saveBtn.textContent = '儲存';
+            saveBtn.className = 'px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600';
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = '取消';
+            cancelBtn.className = 'px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600';
+
+            // 儲存功能
+            saveBtn.onclick = () => {
+              const newNickname = input.value.trim();
+
+              // 儲存到前端儲存
+              if (!nicknameStorage[currentSheet]) {
+                nicknameStorage[currentSheet] = {};
+              }
+
+              if (newNickname && newNickname !== originalName) {
+                nicknameStorage[currentSheet][originalName] = newNickname;
+              } else {
+                delete nicknameStorage[currentSheet][originalName];
+              }
+
+              // 儲存到 localStorage
+              saveNicknameStorage();
+
+              // 更新顯示
+              updateCampaignNameDisplay(cell, originalName, newNickname);
+            };
+
+            // 取消功能
+            cancelBtn.onclick = () => {
+              updateCampaignNameDisplay(cell, originalName, currentNickname);
+            };
+
+            // 按 Enter 儲存
+            input.onkeypress = (e) => {
+              if (e.key === 'Enter') {
+                saveBtn.click();
+              }
+            };
+
+            // 按 Escape 取消
+            input.onkeydown = (e) => {
+              if (e.key === 'Escape') {
+                cancelBtn.click();
+              }
+            };
+
+            buttonContainer.appendChild(saveBtn);
+            buttonContainer.appendChild(cancelBtn);
+
+            // 替換內容
+            cell.innerHTML = '';
+            cell.appendChild(input);
+            cell.appendChild(buttonContainer);
+
+            // 聚焦到輸入框
+            input.focus();
+            input.select();
+          }
+
+          // 更新活動名稱顯示
+          function updateCampaignNameDisplay(cell, originalName, nickname) {
+            const currentSheet = getCurrentSheetName();
+            const displayName = nickname || originalName;
+            const hasNickname = nickname && nickname !== originalName;
+
+            cell.innerHTML = `
       <div class="flex items-center justify-between group">
         <span class="text-slate-700 text-xs ${hasNickname ? 'font-medium' : ''}">${escapeHtml(displayName)}</span>
         <button onclick="editCampaignName(this.parentElement.parentElement, '${escapeHtml(originalName)}')" 
@@ -1396,102 +1622,102 @@
         </button>
       </div>
     `;
-  }
-  
-  // 下載表格資料
-  function downloadTableData() {
-    const currentSheet = getCurrentSheetName();
-    const tableRows = mainTable.querySelectorAll('tbody tr');
-    
-    if (!tableRows || tableRows.length === 0) {
-      alert('沒有資料可以下載');
-      return;
-    }
-    
-    // 獲取表頭
-    const headerCells = mainTable.querySelectorAll('thead th');
-    const headers = Array.from(headerCells).map(th => th.textContent.trim().replace('⇅', '').replace('▲', '').replace('▼', '').trim());
-    
-    // 準備 CSV 資料
-    const csvData = [];
-    csvData.push(headers); // 添加表頭
-    
-    // 處理每一行資料
-    tableRows.forEach(row => {
-      const cells = row.querySelectorAll('td');
-      if (cells.length === 0) return;
-      
-      const rowData = [];
-      
-      // 處理每個欄位
-      for (let i = 0; i < cells.length; i++) {
-        const cell = cells[i];
-        const header = headers[i];
-        
-        if (header === '活動名稱') {
-          // 活動名稱：顯示暱稱或原始名稱
-          const span = cell.querySelector('span');
-          const displayName = span ? span.textContent.trim() : cell.textContent.trim();
-          rowData.push(`"${displayName}"`);
-        } else if (header === '%') {
-          // 百分比：從輸入框獲取值
-          const input = cell.querySelector('input');
-          const percentage = input ? input.value : '';
-          rowData.push(percentage || '');
-        } else if (header === '金額+%') {
-          // 金額+%：顯示計算後的金額
-          const amount = cell.textContent.trim();
-          rowData.push(amount === '-' ? '' : amount.replace(/,/g, ''));
-        } else {
-          // 其他欄位：直接取文字內容
-          const text = cell.textContent.trim();
-          rowData.push(`"${text}"`);
-        }
-      }
-      
-      csvData.push(rowData);
-    });
-    
-    // 轉換為 CSV 格式
-    const csvContent = csvData.map(row => row.join(',')).join('\n');
-    
-    // 創建並下載檔案
-    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `廣告資料_${currentSheet}_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-  
-  // 設定彈窗相關函式
-  function openSettingsModal() {
-    const modal = document.getElementById('settingsModal');
-    if (modal) {
-      modal.classList.remove('hidden');
-      loadSheetConfig();
-    }
-  }
-  
-  function closeSettingsModal() {
-    const modal = document.getElementById('settingsModal');
-    if (modal) {
-      modal.classList.add('hidden');
-    }
-  }
-  
-  function loadSheetConfig() {
-    const configList = document.getElementById('sheetConfigList');
-    if (!configList) return;
-    
-    // 從 ADDITIONAL_SHEET_GIDS 載入現有配置
-    let html = '';
-    ADDITIONAL_SHEET_GIDS.forEach((sheet, index) => {
-      const uniqueId = `sheet-${index}-${Date.now()}`;
-      html += `
+          }
+
+          // 下載表格資料
+          function downloadTableData() {
+            const currentSheet = getCurrentSheetName();
+            const tableRows = mainTable.querySelectorAll('tbody tr');
+
+            if (!tableRows || tableRows.length === 0) {
+              alert('沒有資料可以下載');
+              return;
+            }
+
+            // 獲取表頭
+            const headerCells = mainTable.querySelectorAll('thead th');
+            const headers = Array.from(headerCells).map(th => th.textContent.trim().replace('⇅', '').replace('▲', '').replace('▼', '').trim());
+
+            // 準備 CSV 資料
+            const csvData = [];
+            csvData.push(headers); // 添加表頭
+
+            // 處理每一行資料
+            tableRows.forEach(row => {
+              const cells = row.querySelectorAll('td');
+              if (cells.length === 0) return;
+
+              const rowData = [];
+
+              // 處理每個欄位
+              for (let i = 0; i < cells.length; i++) {
+                const cell = cells[i];
+                const header = headers[i];
+
+                if (header === '活動名稱') {
+                  // 活動名稱：顯示暱稱或原始名稱
+                  const span = cell.querySelector('span');
+                  const displayName = span ? span.textContent.trim() : cell.textContent.trim();
+                  rowData.push(`"${displayName}"`);
+                } else if (header === '%') {
+                  // 百分比：從輸入框獲取值
+                  const input = cell.querySelector('input');
+                  const percentage = input ? input.value : '';
+                  rowData.push(percentage || '');
+                } else if (header === '金額+%') {
+                  // 金額+%：顯示計算後的金額
+                  const amount = cell.textContent.trim();
+                  rowData.push(amount === '-' ? '' : amount.replace(/,/g, ''));
+                } else {
+                  // 其他欄位：直接取文字內容
+                  const text = cell.textContent.trim();
+                  rowData.push(`"${text}"`);
+                }
+              }
+
+              csvData.push(rowData);
+            });
+
+            // 轉換為 CSV 格式
+            const csvContent = csvData.map(row => row.join(',')).join('\n');
+
+            // 創建並下載檔案
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `廣告資料_${currentSheet}_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }
+
+          // 設定彈窗相關函式
+          function openSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) {
+              modal.classList.remove('hidden');
+              loadSheetConfig();
+            }
+          }
+
+          function closeSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) {
+              modal.classList.add('hidden');
+            }
+          }
+
+          function loadSheetConfig() {
+            const configList = document.getElementById('sheetConfigList');
+            if (!configList) return;
+
+            // 從 ADDITIONAL_SHEET_GIDS 載入現有配置
+            let html = '';
+            ADDITIONAL_SHEET_GIDS.forEach((sheet, index) => {
+              const uniqueId = `sheet-${index}-${Date.now()}`;
+              html += `
         <div class="flex items-center gap-2 p-2 sm:p-3 rounded-lg" data-sheet-id="${uniqueId}">
           <div class="flex-1 grid grid-cols-2 gap-2">
             <div>
@@ -1514,41 +1740,41 @@
           </button>
         </div>
       `;
-    });
-    
-    configList.innerHTML = html;
-    
-    // 載入顏色閾值設定到表單
-    loadColorThresholdsToForm();
-  }
-  
-  // 載入顏色閾值設定到表單
-  function loadColorThresholdsToForm() {
-    // 私訊成本設定
-    const messageCostEnabled = document.getElementById('enableMessageCostColor');
-    const messageCostGreen = document.getElementById('messageCostGreen');
-    const messageCostRed = document.getElementById('messageCostRed');
-    
-    if (messageCostEnabled) messageCostEnabled.checked = colorThresholds.messageCost.enabled;
-    if (messageCostGreen) messageCostGreen.value = colorThresholds.messageCost.green;
-    if (messageCostRed) messageCostRed.value = colorThresholds.messageCost.red;
-    
-    // 點擊成本設定
-    const clickCostEnabled = document.getElementById('enableClickCostColor');
-    const clickCostGreen = document.getElementById('clickCostGreen');
-    const clickCostRed = document.getElementById('clickCostRed');
-    
-    if (clickCostEnabled) clickCostEnabled.checked = colorThresholds.clickCost.enabled;
-    if (clickCostGreen) clickCostGreen.value = colorThresholds.clickCost.green;
-    if (clickCostRed) clickCostRed.value = colorThresholds.clickCost.red;
-  }
-  
-  function addNewSheet() {
-    const configList = document.getElementById('sheetConfigList');
-    if (!configList) return;
-    
-    const uniqueId = `new-sheet-${Date.now()}`;
-    const newSheetHtml = `
+            });
+
+            configList.innerHTML = html;
+
+            // 載入顏色閾值設定到表單
+            loadColorThresholdsToForm();
+          }
+
+          // 載入顏色閾值設定到表單
+          function loadColorThresholdsToForm() {
+            // 私訊成本設定
+            const messageCostEnabled = document.getElementById('enableMessageCostColor');
+            const messageCostGreen = document.getElementById('messageCostGreen');
+            const messageCostRed = document.getElementById('messageCostRed');
+
+            if (messageCostEnabled) messageCostEnabled.checked = colorThresholds.messageCost.enabled;
+            if (messageCostGreen) messageCostGreen.value = colorThresholds.messageCost.green;
+            if (messageCostRed) messageCostRed.value = colorThresholds.messageCost.red;
+
+            // 點擊成本設定
+            const clickCostEnabled = document.getElementById('enableClickCostColor');
+            const clickCostGreen = document.getElementById('clickCostGreen');
+            const clickCostRed = document.getElementById('clickCostRed');
+
+            if (clickCostEnabled) clickCostEnabled.checked = colorThresholds.clickCost.enabled;
+            if (clickCostGreen) clickCostGreen.value = colorThresholds.clickCost.green;
+            if (clickCostRed) clickCostRed.value = colorThresholds.clickCost.red;
+          }
+
+          function addNewSheet() {
+            const configList = document.getElementById('sheetConfigList');
+            if (!configList) return;
+
+            const uniqueId = `new-sheet-${Date.now()}`;
+            const newSheetHtml = `
       <div class="flex items-center gap-2 p-2 sm:p-3 rounded-lg bg-blue-50" data-sheet-id="${uniqueId}">
         <div class="flex-1 grid grid-cols-2 gap-2">
           <div>
@@ -1571,593 +1797,593 @@
         </button>
       </div>
     `;
-    
-    // 將新增的工作表放在最上方
-    configList.insertAdjacentHTML('afterbegin', newSheetHtml);
-  }
-  
-  function removeSheetConfig(sheetId) {
-    const configList = document.getElementById('sheetConfigList');
-    if (!configList) return;
-    
-    // 使用唯一 ID 來精確找到要刪除的項目
-    const targetElement = configList.querySelector(`[data-sheet-id="${sheetId}"]`);
-    if (targetElement) {
-      targetElement.remove();
-    }
-  }
-  
-  function saveSheetConfig() {
-    
-    const configList = document.getElementById('sheetConfigList');
-    if (!configList) return;
-    
-    const newConfig = [];
-    const items = configList.children;
-    
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      const nameInput = item.querySelector('input[data-field="name"]');
-      const gidInput = item.querySelector('input[data-field="gid"]');
-      
-      if (nameInput && gidInput) {
-        const name = nameInput.value.trim();
-        const gid = gidInput.value.trim();
-        
-        if (name && gid) {
-          newConfig.push({ name, gid });
-        }
-      }
-    }
-    
-    // 更新 ADDITIONAL_SHEET_GIDS
-    ADDITIONAL_SHEET_GIDS.length = 0;
-    ADDITIONAL_SHEET_GIDS.push(...newConfig);
-    
-    // 儲存工作表配置到 localStorage
-    try {
-      localStorage.setItem('adManagerSheetConfig', JSON.stringify(newConfig));
-    } catch (e) {
-      console.warn('無法儲存工作表配置:', e);
-    }
-    
-    // 儲存顏色閾值設定
-    saveColorThresholdsFromForm();
-    
-    // 關閉彈窗
-    closeSettingsModal();
-    
-    // 重新載入資料
-    if (confirm('設定已儲存，是否重新載入資料？')) {
-      location.reload();
-    }
-  }
-  
-  // 從表單儲存顏色閾值設定
-  function saveColorThresholdsFromForm() {
-    // 私訊成本設定
-    const messageCostEnabled = document.getElementById('enableMessageCostColor');
-    const messageCostGreen = document.getElementById('messageCostGreen');
-    const messageCostRed = document.getElementById('messageCostRed');
-    
-    if (messageCostEnabled && messageCostGreen && messageCostRed) {
-      colorThresholds.messageCost.enabled = messageCostEnabled.checked;
-      colorThresholds.messageCost.green = parseFloat(messageCostGreen.value) || 0;
-      colorThresholds.messageCost.red = parseFloat(messageCostRed.value) || 100;
-    }
-    
-    // 點擊成本設定
-    const clickCostEnabled = document.getElementById('enableClickCostColor');
-    const clickCostGreen = document.getElementById('clickCostGreen');
-    const clickCostRed = document.getElementById('clickCostRed');
-    
-    if (clickCostEnabled && clickCostGreen && clickCostRed) {
-      colorThresholds.clickCost.enabled = clickCostEnabled.checked;
-      colorThresholds.clickCost.green = parseFloat(clickCostGreen.value) || 0;
-      colorThresholds.clickCost.red = parseFloat(clickCostRed.value) || 10;
-    }
-    
-    // 儲存到 localStorage
-    saveColorThresholds();
-  }
-  
-  // 載入儲存的工作表配置
-  function loadStoredSheetConfig() {
-    try {
-      const stored = localStorage.getItem('adManagerSheetConfig');
-      if (stored) {
-        const config = JSON.parse(stored);
-        ADDITIONAL_SHEET_GIDS.length = 0;
-        ADDITIONAL_SHEET_GIDS.push(...config);
-      }
-    } catch (e) {
-      console.warn('無法載入工作表配置:', e);
-    }
-  }
-  
-  // 重新載入資料功能
-  async function refreshData() {
-    const refreshBtn = document.getElementById('refresh-btn');
-    const refreshIcon = document.getElementById('refresh-icon');
-    
-    if (!refreshBtn || !refreshIcon) return;
-    
-    // 禁用按鈕並顯示載入狀態
-    refreshBtn.disabled = true;
-    refreshBtn.classList.add('opacity-50', 'cursor-not-allowed');
-    refreshIcon.classList.add('animate-spin');
-    
-    try {
-      // 重新載入資料（每次都從 Google Sheets 獲取最新資料）
-      setStatus('正在重新載入資料...');
-      const wb = await loadWorkbook();
-      const names = wb.SheetNames || [];
-      
-      if (!names.length) { 
-        setStatus('沒有可用的工作表', true); 
-        return; 
-      }
-      
-      // 重新渲染分頁
-      const firstSheet = names[0];
-      await renderTabs(names, firstSheet);
-      
-      // 載入第一個工作表資料
-      const matrix = getSheetMatrix(wb, firstSheet);
-      renderTable(matrix);
-      setStatus('資料已更新');
-      
-      // 短暫顯示成功訊息後清除
-      setTimeout(() => {
-        setStatus('');
-      }, 2000);
-      
-    } catch (err) {
-      console.error('重新載入資料失敗:', err);
-      setStatus(`重新載入失敗: ${err.message}`, true);
-    } finally {
-      // 恢復按鈕狀態
-      refreshBtn.disabled = false;
-      refreshBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-      refreshIcon.classList.remove('animate-spin');
-    }
-  }
 
-  
-  // 每列顏色設定相關變數
-  let currentRowColorSettings = {
-    rowId: null,
-    thresholdType: null
-  };
-  
-  // 開啟每列顏色設定彈窗
-  function openRowColorSettings(rowId, thresholdType) {
-    currentRowColorSettings.rowId = rowId;
-    currentRowColorSettings.thresholdType = thresholdType;
-    
-    const modal = document.getElementById('rowColorModal');
-    const title = document.getElementById('rowColorModalTitle');
-    const typeTitle = document.getElementById('rowColorTypeTitle');
-    const enabledCheckbox = document.getElementById('rowColorEnabled');
-    const greenInput = document.getElementById('rowColorGreen');
-    const redInput = document.getElementById('rowColorRed');
-    
-    if (!modal || !title || !typeTitle || !enabledCheckbox || !greenInput || !redInput) return;
-    
-    // 設定標題
-    title.textContent = `為「${rowId}」設定專屬的顏色閾值`;
-    typeTitle.textContent = thresholdType === 'messageCost' ? '私訊成本標示' : '點擊成本標示';
-    
-    // 載入現有設定或預設值
-    const currentSheet = getCurrentSheetName();
-    let currentSettings = null;
-    
-    if (rowColorThresholds[currentSheet] && rowColorThresholds[currentSheet][rowId]) {
-      currentSettings = rowColorThresholds[currentSheet][rowId][thresholdType];
-    }
-    
-    if (currentSettings) {
-      // 使用該列的設定
-      enabledCheckbox.checked = currentSettings.enabled;
-      greenInput.value = currentSettings.green;
-      redInput.value = currentSettings.red;
-    } else {
-      // 使用全域預設設定
-      const defaultSettings = colorThresholds[thresholdType];
-      enabledCheckbox.checked = defaultSettings.enabled;
-      greenInput.value = defaultSettings.green;
-      redInput.value = defaultSettings.red;
-    }
-    
-    modal.classList.remove('hidden');
-  }
-  
-  // 關閉每列顏色設定彈窗
-  function closeRowColorModal() {
-    const modal = document.getElementById('rowColorModal');
-    if (modal) {
-      modal.classList.add('hidden');
-    }
-    currentRowColorSettings.rowId = null;
-    currentRowColorSettings.thresholdType = null;
-  }
-  
-  // 儲存每列顏色設定
-  function saveRowColorSettings() {
-    const enabledCheckbox = document.getElementById('rowColorEnabled');
-    const greenInput = document.getElementById('rowColorGreen');
-    const redInput = document.getElementById('rowColorRed');
-    
-    if (!enabledCheckbox || !greenInput || !redInput) return;
-    
-    const { rowId, thresholdType } = currentRowColorSettings;
-    if (!rowId || !thresholdType) return;
-    
-    const currentSheet = getCurrentSheetName();
-    
-    // 初始化資料結構
-    if (!rowColorThresholds[currentSheet]) {
-      rowColorThresholds[currentSheet] = {};
-    }
-    if (!rowColorThresholds[currentSheet][rowId]) {
-      rowColorThresholds[currentSheet][rowId] = {};
-    }
-    
-    // 儲存設定
-    rowColorThresholds[currentSheet][rowId][thresholdType] = {
-      enabled: enabledCheckbox.checked,
-      green: parseFloat(greenInput.value) || 0,
-      red: parseFloat(redInput.value) || 100
-    };
-    
-    // 儲存到 localStorage
-    saveRowColorThresholds();
-    
-    // 關閉彈窗
-    closeRowColorModal();
-    
-    // 重新渲染表格以套用新設定
-    if (originalData && originalData.length > 0) {
-      mainTable.innerHTML = buildTableHtml(originalData);
-      setTimeout(updateDashboard, 0);
-    }
-  }
-  
-  // 切換設定標籤頁
-  function switchSettingsTab(tabName) {
-    // 移除所有標籤頁的 active 樣式
-    const allTabs = document.querySelectorAll('#settingsModal button[id$="-tab"]');
-    allTabs.forEach(tab => {
-      tab.className = 'flex-1 sm:w-full text-left px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-50';
-    });
-    
-    // 移除所有內容區域的顯示
-    const allContents = document.querySelectorAll('#settingsModal div[id$="-content"]');
-    allContents.forEach(content => {
-      content.classList.add('hidden');
-    });
-    
-    // 設定當前標籤頁為 active
-    const currentTab = document.getElementById(`${tabName}-tab`);
-    if (currentTab) {
-      currentTab.className = 'flex-1 sm:w-full text-left px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-md bg-blue-100 text-blue-700 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600';
-    }
-    
-    // 顯示對應的內容區域
-    const currentContent = document.getElementById(`${tabName}-content`);
-    if (currentContent) {
-      currentContent.classList.remove('hidden');
-    }
-  }
-  
-  // 將函式掛到全域
-  window.saveAndUpdatePercentage = saveAndUpdatePercentage;
-  window.getCurrentSheetName = getCurrentSheetName;
-  window.editCampaignName = editCampaignName;
-  window.downloadTableData = downloadTableData;
-  window.openSettingsModal = openSettingsModal;
-  window.closeSettingsModal = closeSettingsModal;
-  window.addNewSheet = addNewSheet;
-  window.removeSheetConfig = removeSheetConfig;
-  window.saveSheetConfig = saveSheetConfig;
-  window.refreshData = refreshData;
-  window.openRowColorSettings = openRowColorSettings;
-  window.closeRowColorModal = closeRowColorModal;
-  window.saveRowColorSettings = saveRowColorSettings;
-  window.switchSettingsTab = switchSettingsTab;
+            // 將新增的工作表放在最上方
+            configList.insertAdjacentHTML('afterbegin', newSheetHtml);
+          }
 
-  // 版本管理相關函式
-  // 手動設定的版本號 - 每次程式碼改動時需要手動更新
-  const APP_VERSION = '20250923.02';
-  
-  function updateVersionDisplay() {
-    const versionEl = document.getElementById('version-display');
-    if (versionEl) {
-      versionEl.textContent = `v${APP_VERSION}`;
-    }
-  }
-  
-  // 生成新版本號的輔助函式（供開發者使用）
-  function generateNewVersion() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    
-    return `${year}${month}${day}${hours}${minutes}${seconds}`;
-  }
-  
-  // 將版本函數掛到全域
-  window.updateVersionDisplay = updateVersionDisplay;
-  window.generateNewVersion = generateNewVersion;
+          function removeSheetConfig(sheetId) {
+            const configList = document.getElementById('sheetConfigList');
+            if (!configList) return;
 
-
-  async function loadWorkbook() {
-    // 顯示載入彈窗
-    showLoadingModal();
-    updateLoadingProgress(0, '正在載入 Google Sheets 資料...');
-    
-    const HTMLSheets = {};
-    const SheetNames = [];
-    
-    try {
-      // 直接載入配置的工作表，不載入主要工作表
-      if (ADDITIONAL_SHEET_GIDS.length === 0) {
-        throw new Error('沒有配置任何工作表');
-      }
-      
-      updateLoadingProgress(10, `正在並行載入 ${ADDITIONAL_SHEET_GIDS.length} 個工作表...`);
-      
-      // 並行載入所有工作表
-      const loadPromises = ADDITIONAL_SHEET_GIDS.map(async (sheet, index) => {
-        try {
-          const csvText = await fetchSheetCSV(sheet.gid);
-          if (csvText && !csvText.includes('<!DOCTYPE html>') && !csvText.includes('找不到網頁')) {
-            const csvData = parseCSV(csvText);
-            if (csvData.length > 1) { // 至少要有表頭和一行資料
-              return { name: sheet.name, data: csvData, success: true };
+            // 使用唯一 ID 來精確找到要刪除的項目
+            const targetElement = configList.querySelector(`[data-sheet-id="${sheetId}"]`);
+            if (targetElement) {
+              targetElement.remove();
             }
           }
-          return { name: sheet.name, data: null, success: false };
-        } catch (e) {
-          console.warn(`無法載入工作表 ${sheet.name} (gid=${sheet.gid}):`, e.message);
-          return { name: sheet.name, data: null, success: false };
-        }
-      });
-      
-      // 等待所有載入完成，並即時更新進度
-      let completedCount = 0;
-      const totalSheets = ADDITIONAL_SHEET_GIDS.length;
-      
-      // 使用 Promise.allSettled 等待所有請求完成
-      const results = await Promise.allSettled(loadPromises);
-      
-      // 處理結果
-      for (const result of results) {
-        if (result.status === 'fulfilled' && result.value.success) {
-          HTMLSheets[result.value.name] = result.value.data;
-          SheetNames.push(result.value.name);
-        }
-        completedCount++;
-        
-        // 更新進度 (10-90%)
-        const progress = 10 + (completedCount / totalSheets) * 80;
-        updateLoadingProgress(progress, `已載入 ${completedCount}/${totalSheets} 個工作表`);
-      }
-      
-      console.log(`成功載入 ${SheetNames.length} 個工作表`);
-      
-      // 構建「仿 Workbook」結構供後續流程使用
-      updateLoadingProgress(95, '正在處理資料...');
-      const wb = { __CSV__: true, SheetNames, HTMLSheets };
-      workbookCache = wb;
-      
-      updateLoadingProgress(100, '載入完成！');
-      setTimeout(() => {
-        hideLoadingModal();
-      }, 500);
-      
-      return wb;
-      
-    } catch (e) {
-      console.error('載入工作表失敗：', e);
-      hideLoadingModal();
-      setStatus(`🚫 Google Sheets 連線失敗：${e.message}。請檢查：1) 試算表是否公開 2) 網路連線狀態 3) 試算表連結是否正確`, true);
-      throw e;
-    }
-  }
-  function getSheetMatrix(workbook, sheetName) {
-    // 支援 CSV 仿 Workbook（主要用於 Google Sheets CSV）
-    if (workbook && (workbook.__CSV__ || workbook.__HTML__)) {
-      const aoa = workbook.HTMLSheets[sheetName] || [];
-      return aoa;
-    }
-    
-    // 如果不是 CSV/HTML 格式且沒有 XLSX 函式庫，返回空陣列
-    if (typeof XLSX === 'undefined') {
-      console.warn('XLSX library not available, only CSV/HTML format supported');
-      return [];
-    }
-    
-    // XLSX 格式支援（備用）
-    const ws = workbook.Sheets[sheetName];
-    if (!ws) {
-      return [];
-    }
-    const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false });
-    return aoa;
-  }
 
-  function renderTable(matrix) {
-    matrix = trimEmptyEdges(matrix);
-    
-    // 清理和處理資料矩陣
-    if (matrix && matrix.length > 0) {
-      let processedMatrix = [];
-      
-      for (let i = 0; i < matrix.length; i++) {
-        const row = matrix[i];
-        
-        // 跳過各種資訊行和空行
-        const firstCell = String(row[0] || '').trim();
-        
-        // 跳過以下類型的行：
-        // 1. Facebook Ads Import 資訊行
-        // 2. Last updated 資訊行  
-        // 3. 空行或只有空白的行
-        if (firstCell.includes('Facebook Ads Import') ||
-            firstCell.includes('Last updated') ||
-            firstCell === '' ||
-            row.every(cell => String(cell || '').trim() === '')) {
-          continue;
-        }
-        
-        // 保持原始資料結構，確保所有欄位都被保留
-        processedMatrix.push(row);
-      }
-      
-      matrix = processedMatrix;
-    }
-    
-    // 儲存原始資料
-    originalData = matrix;
-    // 重置排序狀態
-    currentSort = { column: -1, ascending: true };
-    // 重置搜尋框
-    if (searchInput) searchInput.value = '';
-    mainTable.innerHTML = buildTableHtml(matrix);
-    // 更新儀表板（延遲執行確保DOM已更新）
-    setTimeout(updateDashboard, 0);
-  }
+          function saveSheetConfig() {
 
+            const configList = document.getElementById('sheetConfigList');
+            if (!configList) return;
 
-  function filterData(searchTerm) {
-    if (!originalData || originalData.length <= 1) return originalData;
-    
-    if (!searchTerm || searchTerm.trim() === '') {
-      return originalData;
-    }
-    
-    const header = originalData[0];
-    const body = originalData.slice(1);
-    const searchLower = searchTerm.toLowerCase().trim();
-    
-    // 單一工作表格式：只搜尋活動名稱（第一欄）
-    const filteredBody = body.filter(row => {
-      const campaignName = String(row[0] || '').toLowerCase(); // 活動名稱
-      return campaignName.includes(searchLower);
-    });
-    
-    return [header, ...filteredBody];
-  }
+            const newConfig = [];
+            const items = configList.children;
 
-  function performSearch() {
-    if (!searchInput) return;
-    
-    const searchTerm = searchInput.value;
-    const filteredData = filterData(searchTerm);
-    
-    // 保持原有的資訊文字
-    const currentInfoText = tableInfoEl ? tableInfoEl.textContent : '';
-    
-    // 重置排序狀態
-    currentSort = { column: -1, ascending: true };
-    
-    // 建立表格（會自動使用正確的表頭）
-    mainTable.innerHTML = buildTableHtml(filteredData);
-    
-    // 恢復資訊文字
-    if (tableInfoEl && currentInfoText) {
-      tableInfoEl.textContent = currentInfoText;
-    }
-    
-    // 更新儀表板（延遲執行確保DOM已更新）
-    setTimeout(updateDashboard, 0);
-  }
+            for (let i = 0; i < items.length; i++) {
+              const item = items[i];
+              const nameInput = item.querySelector('input[data-field="name"]');
+              const gidInput = item.querySelector('input[data-field="gid"]');
 
+              if (nameInput && gidInput) {
+                const name = nameInput.value.trim();
+                const gid = gidInput.value.trim();
 
-  async function renderTabs(sheetNames, activeName) {
-    const parts = [];
-    // 使用已快取的 workbook，避免重複載入
-    const wb = workbookCache || await loadWorkbook();
-    
-    // 總計統計
-    let totalAccountsCount = 0;
-    let grandTotalSpend = 0;
-    let grandTotalSpendPlus = 0;
-    
-    // 為每個工作表計算行數和金額統計
-    for (const name of sheetNames) {
-      const matrix = getSheetMatrix(wb, name);
-      let sheetRows = 0;
-      let sheetTotalSpend = 0;
-      let sheetTotalSpendPlus = 0;
-      
-      if (matrix && matrix.length > 0) {
-        // 找到表頭行
-        let bodyStart = 0;
-        let spendColumnIndex = -1;
-        
-        for (let i = 0; i < matrix.length; i++) {
-          const row = matrix[i];
-          if (row && (String(row[0]).includes('活動名稱') || String(row[0]).trim() === '活動名稱' || String(row[0]).includes('Campaign'))) {
-            // 找到花費金額欄位的索引
-            for (let j = 0; j < row.length; j++) {
-              if (String(row[j]).includes('花費金額') || String(row[j]).includes('Amount spent')) {
-                spendColumnIndex = j;
-                break;
+                if (name && gid) {
+                  newConfig.push({ name, gid });
+                }
               }
             }
-            bodyStart = i + 1;
-            break;
-          }
-        }
-        
-        // 如果找不到花費欄位，假設是第4個欄位（索引3）
-        if (spendColumnIndex === -1) {
-          spendColumnIndex = 3;
-        }
-        
-        // 計算有效資料行數和金額統計
-        for (let i = bodyStart; i < matrix.length; i++) {
-          const row = matrix[i];
-          if (row && !row.every(v => String(v || '').trim() === '') && String(row[0] || '').trim() !== '') {
-            sheetRows++;
-            
-            // 計算該行的花費金額
-            if (spendColumnIndex >= 0 && row[spendColumnIndex]) {
-              const spendText = String(row[spendColumnIndex] || '').trim();
-              const spend = parseFloat(spendText.replace(/[,$]/g, '')) || 0;
-              if (!isNaN(spend) && spend >= 0) {
-                sheetTotalSpend += spend;
-                
-                // 計算該行的花費+%金額
-                const campaignName = row[0] || '';
-                const rowId = `${campaignName}`;
-                const savedPercentage = (percentageStorage[name] && percentageStorage[name][rowId] !== undefined) ? percentageStorage[name][rowId] : 5;
-                
-                // 使用儲存的百分比計算花費+%（預設5%）
-                const spendPlusAmount = Math.ceil(spend * (1 + parseFloat(savedPercentage) / 100));
-                sheetTotalSpendPlus += spendPlusAmount;
-              }
+
+            // 更新 ADDITIONAL_SHEET_GIDS
+            ADDITIONAL_SHEET_GIDS.length = 0;
+            ADDITIONAL_SHEET_GIDS.push(...newConfig);
+
+            // 儲存工作表配置到 localStorage
+            try {
+              localStorage.setItem('adManagerSheetConfig', JSON.stringify(newConfig));
+            } catch (e) {
+              console.warn('無法儲存工作表配置:', e);
+            }
+
+            // 儲存顏色閾值設定
+            saveColorThresholdsFromForm();
+
+            // 關閉彈窗
+            closeSettingsModal();
+
+            // 重新載入資料
+            if (confirm('設定已儲存，是否重新載入資料？')) {
+              location.reload();
             }
           }
-        }
-      }
-      
-      // 累加到總計中
-      if (sheetRows > 0) {
-        totalAccountsCount++;
-        grandTotalSpend += sheetTotalSpend;
-        grandTotalSpendPlus += sheetTotalSpendPlus;
-      }
-      
-      const active = String(name) === String(activeName);
-      parts.push(
-        `<button type="button" data-sheet="${escapeHtml(name)}" aria-selected="${active ? 'true' : 'false'}" class="text-left px-2 py-2 text-xs ${active ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}">
+
+          // 從表單儲存顏色閾值設定
+          function saveColorThresholdsFromForm() {
+            // 私訊成本設定
+            const messageCostEnabled = document.getElementById('enableMessageCostColor');
+            const messageCostGreen = document.getElementById('messageCostGreen');
+            const messageCostRed = document.getElementById('messageCostRed');
+
+            if (messageCostEnabled && messageCostGreen && messageCostRed) {
+              colorThresholds.messageCost.enabled = messageCostEnabled.checked;
+              colorThresholds.messageCost.green = parseFloat(messageCostGreen.value) || 0;
+              colorThresholds.messageCost.red = parseFloat(messageCostRed.value) || 100;
+            }
+
+            // 點擊成本設定
+            const clickCostEnabled = document.getElementById('enableClickCostColor');
+            const clickCostGreen = document.getElementById('clickCostGreen');
+            const clickCostRed = document.getElementById('clickCostRed');
+
+            if (clickCostEnabled && clickCostGreen && clickCostRed) {
+              colorThresholds.clickCost.enabled = clickCostEnabled.checked;
+              colorThresholds.clickCost.green = parseFloat(clickCostGreen.value) || 0;
+              colorThresholds.clickCost.red = parseFloat(clickCostRed.value) || 10;
+            }
+
+            // 儲存到 localStorage
+            saveColorThresholds();
+          }
+
+          // 載入儲存的工作表配置
+          function loadStoredSheetConfig() {
+            try {
+              const stored = localStorage.getItem('adManagerSheetConfig');
+              if (stored) {
+                const config = JSON.parse(stored);
+                ADDITIONAL_SHEET_GIDS.length = 0;
+                ADDITIONAL_SHEET_GIDS.push(...config);
+              }
+            } catch (e) {
+              console.warn('無法載入工作表配置:', e);
+            }
+          }
+
+          // 重新載入資料功能
+          async function refreshData() {
+            const refreshBtn = document.getElementById('refresh-btn');
+            const refreshIcon = document.getElementById('refresh-icon');
+
+            if (!refreshBtn || !refreshIcon) return;
+
+            // 禁用按鈕並顯示載入狀態
+            refreshBtn.disabled = true;
+            refreshBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            refreshIcon.classList.add('animate-spin');
+
+            try {
+              // 重新載入資料（每次都從 Google Sheets 獲取最新資料）
+              setStatus('正在重新載入資料...');
+              const wb = await loadWorkbook();
+              const names = wb.SheetNames || [];
+
+              if (!names.length) {
+                setStatus('沒有可用的工作表', true);
+                return;
+              }
+
+              // 重新渲染分頁
+              const firstSheet = names[0];
+              await renderTabs(names, firstSheet);
+
+              // 載入第一個工作表資料
+              const matrix = getSheetMatrix(wb, firstSheet);
+              renderTable(matrix);
+              setStatus('資料已更新');
+
+              // 短暫顯示成功訊息後清除
+              setTimeout(() => {
+                setStatus('');
+              }, 2000);
+
+            } catch (err) {
+              console.error('重新載入資料失敗:', err);
+              setStatus(`重新載入失敗: ${err.message}`, true);
+            } finally {
+              // 恢復按鈕狀態
+              refreshBtn.disabled = false;
+              refreshBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+              refreshIcon.classList.remove('animate-spin');
+            }
+          }
+
+
+          // 每列顏色設定相關變數
+          let currentRowColorSettings = {
+            rowId: null,
+            thresholdType: null
+          };
+
+          // 開啟每列顏色設定彈窗
+          function openRowColorSettings(rowId, thresholdType) {
+            currentRowColorSettings.rowId = rowId;
+            currentRowColorSettings.thresholdType = thresholdType;
+
+            const modal = document.getElementById('rowColorModal');
+            const title = document.getElementById('rowColorModalTitle');
+            const typeTitle = document.getElementById('rowColorTypeTitle');
+            const enabledCheckbox = document.getElementById('rowColorEnabled');
+            const greenInput = document.getElementById('rowColorGreen');
+            const redInput = document.getElementById('rowColorRed');
+
+            if (!modal || !title || !typeTitle || !enabledCheckbox || !greenInput || !redInput) return;
+
+            // 設定標題
+            title.textContent = `為「${rowId}」設定專屬的顏色閾值`;
+            typeTitle.textContent = thresholdType === 'messageCost' ? '私訊成本標示' : '點擊成本標示';
+
+            // 載入現有設定或預設值
+            const currentSheet = getCurrentSheetName();
+            let currentSettings = null;
+
+            if (rowColorThresholds[currentSheet] && rowColorThresholds[currentSheet][rowId]) {
+              currentSettings = rowColorThresholds[currentSheet][rowId][thresholdType];
+            }
+
+            if (currentSettings) {
+              // 使用該列的設定
+              enabledCheckbox.checked = currentSettings.enabled;
+              greenInput.value = currentSettings.green;
+              redInput.value = currentSettings.red;
+            } else {
+              // 使用全域預設設定
+              const defaultSettings = colorThresholds[thresholdType];
+              enabledCheckbox.checked = defaultSettings.enabled;
+              greenInput.value = defaultSettings.green;
+              redInput.value = defaultSettings.red;
+            }
+
+            modal.classList.remove('hidden');
+          }
+
+          // 關閉每列顏色設定彈窗
+          function closeRowColorModal() {
+            const modal = document.getElementById('rowColorModal');
+            if (modal) {
+              modal.classList.add('hidden');
+            }
+            currentRowColorSettings.rowId = null;
+            currentRowColorSettings.thresholdType = null;
+          }
+
+          // 儲存每列顏色設定
+          function saveRowColorSettings() {
+            const enabledCheckbox = document.getElementById('rowColorEnabled');
+            const greenInput = document.getElementById('rowColorGreen');
+            const redInput = document.getElementById('rowColorRed');
+
+            if (!enabledCheckbox || !greenInput || !redInput) return;
+
+            const { rowId, thresholdType } = currentRowColorSettings;
+            if (!rowId || !thresholdType) return;
+
+            const currentSheet = getCurrentSheetName();
+
+            // 初始化資料結構
+            if (!rowColorThresholds[currentSheet]) {
+              rowColorThresholds[currentSheet] = {};
+            }
+            if (!rowColorThresholds[currentSheet][rowId]) {
+              rowColorThresholds[currentSheet][rowId] = {};
+            }
+
+            // 儲存設定
+            rowColorThresholds[currentSheet][rowId][thresholdType] = {
+              enabled: enabledCheckbox.checked,
+              green: parseFloat(greenInput.value) || 0,
+              red: parseFloat(redInput.value) || 100
+            };
+
+            // 儲存到 localStorage
+            saveRowColorThresholds();
+
+            // 關閉彈窗
+            closeRowColorModal();
+
+            // 重新渲染表格以套用新設定
+            if (originalData && originalData.length > 0) {
+              mainTable.innerHTML = buildTableHtml(originalData);
+              setTimeout(updateDashboard, 0);
+            }
+          }
+
+          // 切換設定標籤頁
+          function switchSettingsTab(tabName) {
+            // 移除所有標籤頁的 active 樣式
+            const allTabs = document.querySelectorAll('#settingsModal button[id$="-tab"]');
+            allTabs.forEach(tab => {
+              tab.className = 'flex-1 sm:w-full text-left px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-50';
+            });
+
+            // 移除所有內容區域的顯示
+            const allContents = document.querySelectorAll('#settingsModal div[id$="-content"]');
+            allContents.forEach(content => {
+              content.classList.add('hidden');
+            });
+
+            // 設定當前標籤頁為 active
+            const currentTab = document.getElementById(`${tabName}-tab`);
+            if (currentTab) {
+              currentTab.className = 'flex-1 sm:w-full text-left px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-md bg-blue-100 text-blue-700 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600';
+            }
+
+            // 顯示對應的內容區域
+            const currentContent = document.getElementById(`${tabName}-content`);
+            if (currentContent) {
+              currentContent.classList.remove('hidden');
+            }
+          }
+
+          // 將函式掛到全域
+          window.saveAndUpdatePercentage = saveAndUpdatePercentage;
+          window.getCurrentSheetName = getCurrentSheetName;
+          window.editCampaignName = editCampaignName;
+          window.downloadTableData = downloadTableData;
+          window.openSettingsModal = openSettingsModal;
+          window.closeSettingsModal = closeSettingsModal;
+          window.addNewSheet = addNewSheet;
+          window.removeSheetConfig = removeSheetConfig;
+          window.saveSheetConfig = saveSheetConfig;
+          window.refreshData = refreshData;
+          window.openRowColorSettings = openRowColorSettings;
+          window.closeRowColorModal = closeRowColorModal;
+          window.saveRowColorSettings = saveRowColorSettings;
+          window.switchSettingsTab = switchSettingsTab;
+
+          // 版本管理相關函式
+          // 手動設定的版本號 - 每次程式碼改動時需要手動更新
+          const APP_VERSION = '20250923.02';
+
+          function updateVersionDisplay() {
+            const versionEl = document.getElementById('version-display');
+            if (versionEl) {
+              versionEl.textContent = `v${APP_VERSION}`;
+            }
+          }
+
+          // 生成新版本號的輔助函式（供開發者使用）
+          function generateNewVersion() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            return `${year}${month}${day}${hours}${minutes}${seconds}`;
+          }
+
+          // 將版本函數掛到全域
+          window.updateVersionDisplay = updateVersionDisplay;
+          window.generateNewVersion = generateNewVersion;
+
+
+          async function loadWorkbook() {
+            // 顯示載入彈窗
+            showLoadingModal();
+            updateLoadingProgress(0, '正在載入 Google Sheets 資料...');
+
+            const HTMLSheets = {};
+            const SheetNames = [];
+
+            try {
+              // 直接載入配置的工作表，不載入主要工作表
+              if (ADDITIONAL_SHEET_GIDS.length === 0) {
+                throw new Error('沒有配置任何工作表');
+              }
+
+              updateLoadingProgress(10, `正在並行載入 ${ADDITIONAL_SHEET_GIDS.length} 個工作表...`);
+
+              // 並行載入所有工作表
+              const loadPromises = ADDITIONAL_SHEET_GIDS.map(async (sheet, index) => {
+                try {
+                  const csvText = await fetchSheetCSV(sheet.gid);
+                  if (csvText && !csvText.includes('<!DOCTYPE html>') && !csvText.includes('找不到網頁')) {
+                    const csvData = parseCSV(csvText);
+                    if (csvData.length > 1) { // 至少要有表頭和一行資料
+                      return { name: sheet.name, data: csvData, success: true };
+                    }
+                  }
+                  return { name: sheet.name, data: null, success: false };
+                } catch (e) {
+                  console.warn(`無法載入工作表 ${sheet.name} (gid=${sheet.gid}):`, e.message);
+                  return { name: sheet.name, data: null, success: false };
+                }
+              });
+
+              // 等待所有載入完成，並即時更新進度
+              let completedCount = 0;
+              const totalSheets = ADDITIONAL_SHEET_GIDS.length;
+
+              // 使用 Promise.allSettled 等待所有請求完成
+              const results = await Promise.allSettled(loadPromises);
+
+              // 處理結果
+              for (const result of results) {
+                if (result.status === 'fulfilled' && result.value.success) {
+                  HTMLSheets[result.value.name] = result.value.data;
+                  SheetNames.push(result.value.name);
+                }
+                completedCount++;
+
+                // 更新進度 (10-90%)
+                const progress = 10 + (completedCount / totalSheets) * 80;
+                updateLoadingProgress(progress, `已載入 ${completedCount}/${totalSheets} 個工作表`);
+              }
+
+              console.log(`成功載入 ${SheetNames.length} 個工作表`);
+
+              // 構建「仿 Workbook」結構供後續流程使用
+              updateLoadingProgress(95, '正在處理資料...');
+              const wb = { __CSV__: true, SheetNames, HTMLSheets };
+              workbookCache = wb;
+
+              updateLoadingProgress(100, '載入完成！');
+              setTimeout(() => {
+                hideLoadingModal();
+              }, 500);
+
+              return wb;
+
+            } catch (e) {
+              console.error('載入工作表失敗：', e);
+              hideLoadingModal();
+              setStatus(`🚫 Google Sheets 連線失敗：${e.message}。請檢查：1) 試算表是否公開 2) 網路連線狀態 3) 試算表連結是否正確`, true);
+              throw e;
+            }
+          }
+          function getSheetMatrix(workbook, sheetName) {
+            // 支援 CSV 仿 Workbook（主要用於 Google Sheets CSV）
+            if (workbook && (workbook.__CSV__ || workbook.__HTML__)) {
+              const aoa = workbook.HTMLSheets[sheetName] || [];
+              return aoa;
+            }
+
+            // 如果不是 CSV/HTML 格式且沒有 XLSX 函式庫，返回空陣列
+            if (typeof XLSX === 'undefined') {
+              console.warn('XLSX library not available, only CSV/HTML format supported');
+              return [];
+            }
+
+            // XLSX 格式支援（備用）
+            const ws = workbook.Sheets[sheetName];
+            if (!ws) {
+              return [];
+            }
+            const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false });
+            return aoa;
+          }
+
+          function renderTable(matrix) {
+            matrix = trimEmptyEdges(matrix);
+
+            // 清理和處理資料矩陣
+            if (matrix && matrix.length > 0) {
+              let processedMatrix = [];
+
+              for (let i = 0; i < matrix.length; i++) {
+                const row = matrix[i];
+
+                // 跳過各種資訊行和空行
+                const firstCell = String(row[0] || '').trim();
+
+                // 跳過以下類型的行：
+                // 1. Facebook Ads Import 資訊行
+                // 2. Last updated 資訊行  
+                // 3. 空行或只有空白的行
+                if (firstCell.includes('Facebook Ads Import') ||
+                  firstCell.includes('Last updated') ||
+                  firstCell === '' ||
+                  row.every(cell => String(cell || '').trim() === '')) {
+                  continue;
+                }
+
+                // 保持原始資料結構，確保所有欄位都被保留
+                processedMatrix.push(row);
+              }
+
+              matrix = processedMatrix;
+            }
+
+            // 儲存原始資料
+            originalData = matrix;
+            // 重置排序狀態
+            currentSort = { column: -1, ascending: true };
+            // 重置搜尋框
+            if (searchInput) searchInput.value = '';
+            mainTable.innerHTML = buildTableHtml(matrix);
+            // 更新儀表板（延遲執行確保DOM已更新）
+            setTimeout(updateDashboard, 0);
+          }
+
+
+          function filterData(searchTerm) {
+            if (!originalData || originalData.length <= 1) return originalData;
+
+            if (!searchTerm || searchTerm.trim() === '') {
+              return originalData;
+            }
+
+            const header = originalData[0];
+            const body = originalData.slice(1);
+            const searchLower = searchTerm.toLowerCase().trim();
+
+            // 單一工作表格式：只搜尋活動名稱（第一欄）
+            const filteredBody = body.filter(row => {
+              const campaignName = String(row[0] || '').toLowerCase(); // 活動名稱
+              return campaignName.includes(searchLower);
+            });
+
+            return [header, ...filteredBody];
+          }
+
+          function performSearch() {
+            if (!searchInput) return;
+
+            const searchTerm = searchInput.value;
+            const filteredData = filterData(searchTerm);
+
+            // 保持原有的資訊文字
+            const currentInfoText = tableInfoEl ? tableInfoEl.textContent : '';
+
+            // 重置排序狀態
+            currentSort = { column: -1, ascending: true };
+
+            // 建立表格（會自動使用正確的表頭）
+            mainTable.innerHTML = buildTableHtml(filteredData);
+
+            // 恢復資訊文字
+            if (tableInfoEl && currentInfoText) {
+              tableInfoEl.textContent = currentInfoText;
+            }
+
+            // 更新儀表板（延遲執行確保DOM已更新）
+            setTimeout(updateDashboard, 0);
+          }
+
+
+          async function renderTabs(sheetNames, activeName) {
+            const parts = [];
+            // 使用已快取的 workbook，避免重複載入
+            const wb = workbookCache || await loadWorkbook();
+
+            // 總計統計
+            let totalAccountsCount = 0;
+            let grandTotalSpend = 0;
+            let grandTotalSpendPlus = 0;
+
+            // 為每個工作表計算行數和金額統計
+            for (const name of sheetNames) {
+              const matrix = getSheetMatrix(wb, name);
+              let sheetRows = 0;
+              let sheetTotalSpend = 0;
+              let sheetTotalSpendPlus = 0;
+
+              if (matrix && matrix.length > 0) {
+                // 找到表頭行
+                let bodyStart = 0;
+                let spendColumnIndex = -1;
+
+                for (let i = 0; i < matrix.length; i++) {
+                  const row = matrix[i];
+                  if (row && (String(row[0]).includes('活動名稱') || String(row[0]).trim() === '活動名稱' || String(row[0]).includes('Campaign'))) {
+                    // 找到花費金額欄位的索引
+                    for (let j = 0; j < row.length; j++) {
+                      if (String(row[j]).includes('花費金額') || String(row[j]).includes('Amount spent')) {
+                        spendColumnIndex = j;
+                        break;
+                      }
+                    }
+                    bodyStart = i + 1;
+                    break;
+                  }
+                }
+
+                // 如果找不到花費欄位，假設是第4個欄位（索引3）
+                if (spendColumnIndex === -1) {
+                  spendColumnIndex = 3;
+                }
+
+                // 計算有效資料行數和金額統計
+                for (let i = bodyStart; i < matrix.length; i++) {
+                  const row = matrix[i];
+                  if (row && !row.every(v => String(v || '').trim() === '') && String(row[0] || '').trim() !== '') {
+                    sheetRows++;
+
+                    // 計算該行的花費金額
+                    if (spendColumnIndex >= 0 && row[spendColumnIndex]) {
+                      const spendText = String(row[spendColumnIndex] || '').trim();
+                      const spend = parseFloat(spendText.replace(/[,$]/g, '')) || 0;
+                      if (!isNaN(spend) && spend >= 0) {
+                        sheetTotalSpend += spend;
+
+                        // 計算該行的花費+%金額
+                        const campaignName = row[0] || '';
+                        const rowId = `${campaignName}`;
+                        const savedPercentage = (percentageStorage[name] && percentageStorage[name][rowId] !== undefined) ? percentageStorage[name][rowId] : 5;
+
+                        // 使用儲存的百分比計算花費+%（預設5%）
+                        const spendPlusAmount = Math.ceil(spend * (1 + parseFloat(savedPercentage) / 100));
+                        sheetTotalSpendPlus += spendPlusAmount;
+                      }
+                    }
+                  }
+                }
+              }
+
+              // 累加到總計中
+              if (sheetRows > 0) {
+                totalAccountsCount++;
+                grandTotalSpend += sheetTotalSpend;
+                grandTotalSpendPlus += sheetTotalSpendPlus;
+              }
+
+              const active = String(name) === String(activeName);
+              parts.push(
+                `<button type="button" data-sheet="${escapeHtml(name)}" aria-selected="${active ? 'true' : 'false'}" class="text-left px-2 py-2 text-xs ${active ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}">
           <div class="grid grid-cols-4 gap-2 items-center w-full">
             <div class="font-medium truncate">${escapeHtml(name)}</div>
             <div class="text-right text-slate-400">${sheetRows}</div>
@@ -2165,115 +2391,119 @@
             <div class="text-right text-slate-400">${sheetTotalSpendPlus.toLocaleString()}</div>
           </div>
         </button>`
-      );
-    }
-    tabsContainer.innerHTML = parts.join('');
-    Array.from(tabsContainer.querySelectorAll('button[data-sheet]')).forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        const sheet = btn.getAttribute('data-sheet');
-        Array.from(tabsContainer.children).forEach((el) => {
-          el.setAttribute('aria-selected', el === btn ? 'true' : 'false');
-          el.className = 'text-left px-2 py-2 text-xs ' + (el === btn ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50');
-        });
-        try {
-          setStatus('切換工作表中...');
-          // 使用已快取的 workbook，避免重複載入
-          const wb = workbookCache;
-          if (!wb) {
-            setStatus('資料尚未載入，請重新整理頁面', true);
-            return;
+              );
+            }
+            tabsContainer.innerHTML = parts.join('');
+            Array.from(tabsContainer.querySelectorAll('button[data-sheet]')).forEach((btn) => {
+              btn.addEventListener('click', async () => {
+                const sheet = btn.getAttribute('data-sheet');
+                Array.from(tabsContainer.children).forEach((el) => {
+                  el.setAttribute('aria-selected', el === btn ? 'true' : 'false');
+                  el.className = 'text-left px-2 py-2 text-xs ' + (el === btn ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50');
+                });
+                try {
+                  setStatus('切換工作表中...');
+                  // 使用已快取的 workbook，避免重複載入
+                  const wb = workbookCache;
+                  if (!wb) {
+                    setStatus('資料尚未載入，請重新整理頁面', true);
+                    return;
+                  }
+
+                  // 載入單一工作表資料
+                  const matrix = getSheetMatrix(wb, sheet);
+
+                  renderTable(matrix);
+
+                  setStatus('');
+                } catch (e) {
+                  setStatus('讀取資料失敗，請稍後再試或檢查權限/連線。', true);
+                }
+              });
+            });
+
+            // 更新總計卡片
+            if (totalAccountsEl) {
+              totalAccountsEl.textContent = totalAccountsCount;
+            }
+            if (allTotalSpendEl) {
+              allTotalSpendEl.textContent = grandTotalSpend > 0 ? grandTotalSpend.toLocaleString() : '-';
+            }
+            if (allTotalPercentageEl) {
+              // 計算差距：總花費+% - 總花費
+              const difference = grandTotalSpendPlus - grandTotalSpend;
+              allTotalPercentageEl.textContent = difference > 0 ? difference.toLocaleString() : '-';
+            }
+            if (allTotalSpendPlusEl) {
+              allTotalSpendPlusEl.textContent = grandTotalSpendPlus > 0 ? grandTotalSpendPlus.toLocaleString() : '-';
+            }
           }
-          
-          // 載入單一工作表資料
-          const matrix = getSheetMatrix(wb, sheet);
-          
-          renderTable(matrix);
-          
-          setStatus('');
-        } catch (e) {
-          setStatus('讀取資料失敗，請稍後再試或檢查權限/連線。', true);
-        }
-      });
-    });
-    
-    // 更新總計卡片
-    if (totalAccountsEl) {
-      totalAccountsEl.textContent = totalAccountsCount;
-    }
-    if (allTotalSpendEl) {
-      allTotalSpendEl.textContent = grandTotalSpend > 0 ? grandTotalSpend.toLocaleString() : '-';
-    }
-    if (allTotalPercentageEl) {
-      // 計算差距：總花費+% - 總花費
-      const difference = grandTotalSpendPlus - grandTotalSpend;
-      allTotalPercentageEl.textContent = difference > 0 ? difference.toLocaleString() : '-';
-    }
-    if (allTotalSpendPlusEl) {
-      allTotalSpendPlusEl.textContent = grandTotalSpendPlus > 0 ? grandTotalSpendPlus.toLocaleString() : '-';
-    }
-  }
 
-  async function init() {
-    
-    // 更新版本號顯示
-    updateVersionDisplay();
-    
-    // 載入儲存的百分比資料
-    loadPercentageStorage();
-    
-    // 載入儲存的暱稱資料
-    loadNicknameStorage();
-    
-    // 載入儲存的工作表配置
-    loadStoredSheetConfig();
-    
-    // 載入顏色閾值設定
-    loadColorThresholds();
-    
-    // 載入每列顏色閾值設定
-    loadRowColorThresholds();
-    
-    try {
-      setStatus('載入試算表與工作表中...');
-      const wb = await loadWorkbook();
-      const names = wb.SheetNames || [];
-      if (!names.length) { 
-        setStatus('沒有可用的工作表', true); 
-        return; 
-      }
-      
-      // 渲染分頁並設定第一個工作表為 active
-      const firstSheet = names[0];
-      await renderTabs(names, firstSheet);
-      
-      // 載入第一個工作表資料
-      const matrix = getSheetMatrix(wb, firstSheet);
-      renderTable(matrix);
-      setStatus('');
-    } catch (err) {
-      setStatus(`無法載入 Google Sheets 資料: ${err.message}`, true);
-    }
-  }
+          async function init() {
 
-  function setupSearch() {
-    if (searchInput) {
-      searchInput.addEventListener('input', performSearch);
-      searchInput.addEventListener('keyup', performSearch);
-    }
-  }
+            // 更新版本號顯示
+            updateVersionDisplay();
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      init();
-      setupSearch();
-    });
-  } else {
-    init();
-    setupSearch();
-  }
-})();
-</script>
-</div>
-</div>
-</body></html>
-</body></html>
+            // 載入儲存的百分比資料
+            loadPercentageStorage();
+
+            // 載入儲存的暱稱資料
+            loadNicknameStorage();
+
+            // 載入儲存的工作表配置
+            loadStoredSheetConfig();
+
+            // 載入顏色閾值設定
+            loadColorThresholds();
+
+            // 載入每列顏色閾值設定
+            loadRowColorThresholds();
+
+            try {
+              setStatus('載入試算表與工作表中...');
+              const wb = await loadWorkbook();
+              const names = wb.SheetNames || [];
+              if (!names.length) {
+                setStatus('沒有可用的工作表', true);
+                return;
+              }
+
+              // 渲染分頁並設定第一個工作表為 active
+              const firstSheet = names[0];
+              await renderTabs(names, firstSheet);
+
+              // 載入第一個工作表資料
+              const matrix = getSheetMatrix(wb, firstSheet);
+              renderTable(matrix);
+              setStatus('');
+            } catch (err) {
+              setStatus(`無法載入 Google Sheets 資料: ${err.message}`, true);
+            }
+          }
+
+          function setupSearch() {
+            if (searchInput) {
+              searchInput.addEventListener('input', performSearch);
+              searchInput.addEventListener('keyup', performSearch);
+            }
+          }
+
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+              init();
+              setupSearch();
+            });
+          } else {
+            init();
+            setupSearch();
+          }
+        })();
+      </script>
+    </div>
+  </div>
+</body>
+
+</html>
+</body>
+
+</html>
