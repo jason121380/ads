@@ -1367,10 +1367,11 @@
                 // 計算有效資料行數和金額統計
                 for (let i = bodyStart; i < matrix.length; i++) {
                   const row = matrix[i];
-                  const fc = String(row && row[0] || '').trim();
-                  if (!row || row.every(v => String(v || '').trim() === '') || fc === '') continue;
-                  if (fc.includes('Facebook Ads Import') || fc.toLowerCase().includes('meta ads import') || fc.includes('Last updated')) continue;
-sheetRows++;
+                  const _fc = String(row && row[0] || '').trim();
+                  if (!row || row.every(v => String(v || '').trim() === '') || _fc === '') continue;
+                  if (_fc.includes('Facebook Ads Import') || _fc.toLowerCase().includes('meta ads import') || _fc.includes('Last updated')) continue;
+                  if (_fc !== '') {
+                    sheetRows++;
 
                     // 計算該行的花費金額
                     if (spendColumnIndex >= 0 && row[spendColumnIndex]) {
@@ -2254,7 +2255,7 @@ sheetRows++;
             let grandTotalSpendPlus = 0;
 
             // 為每個工作表計算行數和金額統計
-            let sheetIndex = 0;
+            let _sheetIdx = 0;
           for (const name of sheetNames) {
               const matrix = getSheetMatrix(wb, name);
               let sheetRows = 0;
@@ -2289,10 +2290,11 @@ sheetRows++;
                 // 計算有效資料行數和金額統計
                 for (let i = bodyStart; i < matrix.length; i++) {
                   const row = matrix[i];
-                  const fc = String(row && row[0] || '').trim();
-                  if (!row || row.every(v => String(v || '').trim() === '') || fc === '') continue;
-                  if (fc.includes('Facebook Ads Import') || fc.toLowerCase().includes('meta ads import') || fc.includes('Last updated')) continue;
-sheetRows++;
+                  const _fc = String(row && row[0] || '').trim();
+                  if (!row || row.every(v => String(v || '').trim() === '') || _fc === '') continue;
+                  if (_fc.includes('Facebook Ads Import') || _fc.toLowerCase().includes('meta ads import') || _fc.includes('Last updated')) continue;
+                  if (_fc !== '') {
+                    sheetRows++;
 
                     // 計算該行的花費金額
                     if (spendColumnIndex >= 0 && row[spendColumnIndex]) {
@@ -2326,7 +2328,7 @@ sheetRows++;
               parts.push(
                 `<button type="button" data-sheet="${escapeHtml(name)}" aria-selected="${active ? 'true' : 'false'}" class="text-left px-2 py-2 text-xs ${active ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}">
           <div class="grid grid-cols-5 gap-2 items-center w-full">
-            <div class="text-center text-slate-400 font-mono">${sheetIndex + 1}</div>
+            <div class="text-center text-slate-400 font-mono">${_sheetIdx + 1}</div>
             <div class="font-medium truncate">${escapeHtml(name)}</div>
             <div class="text-right text-slate-400">${sheetRows}</div>
             <div class="text-right text-slate-400">${sheetTotalSpend.toLocaleString()}</div>
@@ -2334,7 +2336,7 @@ sheetRows++;
           </div>
         </button>`
               );
-              sheetIndex++;
+              _sheetIdx++;
             }
             tabsContainer.innerHTML = parts.join('');
             Array.from(tabsContainer.querySelectorAll('button[data-sheet]')).forEach((btn) => {
