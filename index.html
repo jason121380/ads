@@ -2075,41 +2075,43 @@
 
               updateLoadingProgress(10, `正在並行載入 ${ADDITIONAL_SHEET_GIDS.length} 個工作表...`);
 
-              // 並行載入所有工作表
-              const loadPromises = ADDITIONAL_SHEET_GIDS.map(async (sheet, index) => {
+              // 並行載入所有工作表，即時更新進度
+              let completedCount = 0;
+              const totalSheets = ADDITIONAL_SHEET_GIDS.length;
+
+              const loadPromises = ADDITIONAL_SHEET_GIDS.map(async (sheet) => {
+                let result = null;
                 try {
                   const csvText = await fetchSheetCSV(sheet.gid);
                   if (csvText && !csvText.includes('<!DOCTYPE html>') && !csvText.includes('找不到網頁')) {
                     const csvData = parseCSV(csvText);
                     if (csvData.length > 1) { // 至少要有表頭和一行資料
-                      return { name: sheet.name, data: csvData, success: true };
+                      result = { name: sheet.name, data: csvData, success: true };
                     }
                   }
-                  return { name: sheet.name, data: null, success: false };
+                  if (!result) result = { name: sheet.name, data: null, success: false };
                 } catch (e) {
                   console.warn(`無法載入工作表 ${sheet.name} (gid=${sheet.gid}):`, e.message);
-                  return { name: sheet.name, data: null, success: false };
+                  result = { name: sheet.name, data: null, success: false };
                 }
+
+                // 單一請求完成時，立即累加與更新進度條
+                completedCount++;
+                const progress = 10 + (completedCount / totalSheets) * 80;
+                updateLoadingProgress(progress, `已載入 ${completedCount}/${totalSheets} 個工作表`);
+
+                return result;
               });
 
-              // 等待所有載入完成，並即時更新進度
-              let completedCount = 0;
-              const totalSheets = ADDITIONAL_SHEET_GIDS.length;
-
-              // 使用 Promise.allSettled 等待所有請求完成
+              // 等待全部完成
               const results = await Promise.allSettled(loadPromises);
 
-              // 處理結果
+              // 處理結果，只提取成功的資料
               for (const result of results) {
                 if (result.status === 'fulfilled' && result.value.success) {
                   HTMLSheets[result.value.name] = result.value.data;
                   SheetNames.push(result.value.name);
                 }
-                completedCount++;
-
-                // 更新進度 (10-90%)
-                const progress = 10 + (completedCount / totalSheets) * 80;
-                updateLoadingProgress(progress, `已載入 ${completedCount}/${totalSheets} 個工作表`);
               }
 
               console.log(`成功載入 ${SheetNames.length} 個工作表`);
@@ -2253,7 +2255,7 @@
 
             // 總計統計
             let totalAccountsCount = 0;
-            let grandTotalSpend = 0;
+            let lSpend = 0;
             let grandTotalSpendPlus = 0;
 
             // 為每個工作表計算行數和金額統計
